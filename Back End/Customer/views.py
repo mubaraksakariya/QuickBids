@@ -1,22 +1,31 @@
-from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import User, UserSerializer 
-# Create your views here.
+from .models import User
+from .models import UserSerializer
+from rest_framework.decorators import action
 
-class UserDetails(APIView):
-    permission_classes = [IsAuthenticated]
+class UserViewSet(viewsets.ViewSet):
+    def get_permissions(self):
+        if self.action in ['signup']:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
-    def get(self, request):
-        return Response({"message": "Hello, world!"})
+    def list(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
-class SignUp(APIView):
-    # to bypass global permissions st in  settings.py
-    permission_classes = [AllowAny]
+    def retrieve(self, request, pk=None):
+        user = User.objects.get(pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
-    def post(self,request):
-        serializer = UserSerializer (data=request.data)
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    def signup(self, request):
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
