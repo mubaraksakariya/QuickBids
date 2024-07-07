@@ -1,0 +1,6 @@
+/* Ensure the html and body elements take up the full viewport */
+/* html,
+body {
+	height: 100%;
+	margin: 0;
+} */
