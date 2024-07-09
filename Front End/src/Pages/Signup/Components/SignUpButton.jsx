@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-function SignUpButton({ onClick, isBtnLoading }) {
+function SignUpButton({ onClick, isBtnLoading, text = 'Sign Up' }) {
 	const [showLoading, setShowLoading] = useState(false);
 	useEffect(() => {
 		isBtnLoading ? setShowLoading(true) : setShowLoading(false);
@@ -16,7 +16,7 @@ function SignUpButton({ onClick, isBtnLoading }) {
 					? ' bg-buttonColour2'
 					: 'hover:bg-buttonColour2 active:bg-buttonColour3 bg-buttonColour1 '
 			}  `}>
-			{showLoading ? 'Please wait' : 'Sign Up'}
+			{showLoading ? 'Please wait' : text}
 		</button>
 	);
 }

@@ -13,8 +13,8 @@ function SignUp() {
 			</div>
 			<div className='flex-1 flex justify-center items-center'>
 				<div className='w-[50%]'>
-					<div className='mb-5'>
-						<h1 className=' text-center text-5xl font-semibold py-2'>
+					<div className='mb-4'>
+						<h1 className=' text-center text-5xl font-semibold '>
 							Sign up
 						</h1>
 						<p className=' text-center'>Do business with us</p>
@@ -22,8 +22,8 @@ function SignUp() {
 					<div className='pb-4'>
 						<GoogleSignup />
 					</div>
-					<div className='flex justify-center'>
-						<p className=' opacity-55 pb-4'>
+					<div className=''>
+						<p className=' opacity-55 text-center'>
 							------ or sign up below -------
 						</p>
 					</div>

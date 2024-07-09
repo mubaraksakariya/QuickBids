@@ -4,6 +4,8 @@ import PasswordInput from '../../../Components/Form/PasswordInput';
 import EmailInput from '../../../Components/Form/EmailInput';
 import SignUpButton from './SignUpButton';
 import { validateForm } from './validateForm';
+import useApi from '../../../Context/AxiosContext';
+import { useNavigate } from 'react-router-dom';
 function SignUpForm({ isLoading, setIsLoading }) {
 	const [firstName, setFirstName] = useState('');
 	const [firstNameError, setFirstNameError] = useState('');
@@ -15,6 +17,9 @@ function SignUpForm({ isLoading, setIsLoading }) {
 	const [passwordError, setPasswordError] = useState();
 	const [repassword, setRePassword] = useState();
 	const [repasswordError, setRePasswordError] = useState();
+	const navigate = useNavigate();
+	const api = useApi();
+
 	const resetErrors = () => {
 		setFirstNameError('');
 		setLastNameError('');
@@ -22,7 +27,8 @@ function SignUpForm({ isLoading, setIsLoading }) {
 		setPasswordError('');
 		setRePasswordError('');
 	};
-	const manageSubmit = () => {
+	const manageSubmit = async () => {
+		setIsLoading(true);
 		resetErrors();
 		const formData = {
 			firstName,
@@ -36,18 +42,50 @@ function SignUpForm({ isLoading, setIsLoading }) {
 		const currentTime = new Date().toLocaleString();
 
 		if (!validationResult.isValid) {
-			for (const error in validationResult.errors) {
+			for (const key in validationResult.errors) {
 				// adding time, for dependance array to change for useeffect to run
-				const errorString = `${currentTime}: ${validationResult.errors[error]}`;
-				if (error == 'firstName') setFirstNameError(errorString);
-				if (error == 'lastName') setLastNameError(errorString);
-				if (error == 'email') setEmailError(errorString);
-				if (error == 'password') setPasswordError(errorString);
-				if (error == 'repassword') setRePasswordError(errorString);
+				const errorString = `${currentTime}: ${validationResult.errors[key]}`;
+				if (key == 'firstName') setFirstNameError(errorString);
+				if (key == 'lastName') setLastNameError(errorString);
+				if (key == 'email') setEmailError(errorString);
+				if (key == 'password') setPasswordError(errorString);
+				if (key == 'repassword') setRePasswordError(errorString);
 			}
+			setIsLoading(false);
 			return;
 		}
-		console.log(formData);
+
+		// Send data to server, POST
+		try {
+			const response = await api.post('api/users/signup/', {
+				first_name: firstName,
+				last_name: lastName,
+				email: email,
+				password: password,
+			});
+			setIsLoading(false);
+			// console.log(response.statusText);
+			if (response.statusText === 'Created') {
+				navigate('/login/');
+			}
+		} catch (error) {
+			// console.log('Error during signup:', error);
+			// Handle error during signup (e.g., display error message)
+			if (error.response) {
+				const serverErrors = error.response.data;
+				for (const key in serverErrors) {
+					const errorString = `${currentTime}: ${serverErrors[
+						key
+					].join(', ')}`;
+					if (key === 'firstName') setFirstNameError(errorString);
+					if (key === 'lastName') setLastNameError(errorString);
+					if (key === 'email') setEmailError(errorString);
+					if (key === 'password') setPasswordError(errorString);
+					if (key === 'repassword') setRePasswordError(errorString);
+				}
+			}
+			setIsLoading(false);
+		}
 	};
 	return (
 		<div>
