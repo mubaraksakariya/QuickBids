@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from rest_framework.serializers import ModelSerializer, CharField
@@ -22,11 +24,14 @@ class CustomUser(AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
-    
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -47,7 +52,7 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'password', 'id']
+        fields = ['first_name', 'last_name', 'email', 'password', 'id','is_verified','profile_picture']
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
@@ -57,3 +62,15 @@ class UserSerializer(ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+class OTP(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        return timezone.now() < self.created_at + timedelta(minutes=10)
+
+    def __str__(self):
+        return f'OTP for {self.user.email}'

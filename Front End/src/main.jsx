@@ -9,12 +9,12 @@ import AuthProvider from './Context/AuthContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<AuthProvider>
-				<ApiProvider>
+		<ApiProvider>
+			<Provider store={store}>
+				<AuthProvider>
 					<App />
-				</ApiProvider>
-			</AuthProvider>
-		</Provider>
+				</AuthProvider>
+			</Provider>
+		</ApiProvider>
 	</React.StrictMode>
 );

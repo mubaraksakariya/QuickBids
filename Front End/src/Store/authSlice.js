@@ -14,10 +14,24 @@ export const authSlice = createSlice({
 			// console.log(action.payload);
 			state.accessToken = action.payload.accessToken;
 			state.refreshToken = action.payload.refreshToken;
-			state.user = action.payload.user;
 			localStorage.setItem('accessToken', action.payload.accessToken);
 			localStorage.setItem('refreshToken', action.payload.refreshToken);
-			localStorage.setItem('user', JSON.stringify(action.payload.user));
+			if (action.payload.user) {
+				state.user = action.payload.user;
+				localStorage.setItem(
+					'user',
+					JSON.stringify(action.payload.user)
+				);
+			}
+		},
+		update_user: (state, action) => {
+			if (action.payload.user) {
+				state.user = action.payload.user;
+				localStorage.setItem(
+					'user',
+					JSON.stringify(action.payload.user)
+				);
+			}
 		},
 		logout: (state) => {
 			state.isAuthenticated = false;
@@ -32,6 +46,6 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { login, logout } = authSlice.actions;
+export const { login, logout, update_user } = authSlice.actions;
 
 export default authSlice.reducer;

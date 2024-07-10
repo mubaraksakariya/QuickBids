@@ -9,6 +9,7 @@ import DashBoard from './Pages/Admin/Home/DashBoard';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { useAuth } from './Context/AuthContext';
+import VerifyOtp from './Pages/Signup/VerifyOtp';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -42,6 +43,11 @@ function App() {
 					),
 					// loader: teamLoader,
 				},
+				{
+					path: 'verify',
+					element: <VerifyOtp />,
+					// loader: teamLoader,
+				},
 
 				//For admin side
 
@@ -60,7 +66,7 @@ function App() {
 	]);
 	return (
 		<>
-			<div className=' flex flex-col justify-center items-center min-h-[100dvh] bg-themeBgColour'>
+			<div className='flex flex-col justify-center items-center min-h-[100dvh] bg-themeBgColour'>
 				<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
 					{isLoading ? (
 						<div className=' text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>

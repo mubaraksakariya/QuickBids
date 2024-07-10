@@ -66,7 +66,7 @@ function SignUpForm({ isLoading, setIsLoading }) {
 			setIsLoading(false);
 			// console.log(response.statusText);
 			if (response.statusText === 'Created') {
-				navigate('/login/');
+				navigate('/verify/', { state: { email } });
 			}
 		} catch (error) {
 			// console.log('Error during signup:', error);
