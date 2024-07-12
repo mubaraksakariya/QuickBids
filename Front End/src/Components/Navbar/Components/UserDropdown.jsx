@@ -36,7 +36,7 @@ const UserDropdown = ({ user }) => {
 				<span className='sr-only'>Open user menu</span>
 				{user.profile_picture ? (
 					<img
-						className='w-8 h-8 rounded-full'
+						className='w-10 h-10 rounded-full'
 						src={`${baseUrl}${user.profile_picture}`}
 						alt='user photo'
 					/>
