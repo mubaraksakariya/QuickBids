@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import SignUpForm from './Components/SignUpForm';
 import GoogleSignup from './Components/GoogleSignup';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function SignUp() {
 	const [isLoading, setIsLoading] = useState(false);
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const location = useLocation();
+	const from = location.state?.from || '/';
+	if (isAuthenticated) {
+		return <Navigate to={from} replace={true} />;
+	}
 	return (
 		<div className='md:flex items-center'>
 			<div className='flex-1 flex justify-center items-center '>

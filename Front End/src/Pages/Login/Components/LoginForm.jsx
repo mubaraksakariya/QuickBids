@@ -6,7 +6,6 @@ import { validateLoginForm } from './validateLoginForm';
 import useApi from '../../../Context/AxiosContext';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../Store/authSlice';
-import { useNavigate } from 'react-router-dom';
 
 function LoginForm({ isLoading, setIsLoading }) {
 	const [email, setEmail] = useState();
@@ -16,7 +15,6 @@ function LoginForm({ isLoading, setIsLoading }) {
 	const [otherError, setOtherError] = useState();
 	const api = useApi();
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 
 	const resetErrors = () => {
 		setEmailError('');
@@ -53,8 +51,8 @@ function LoginForm({ isLoading, setIsLoading }) {
 				const refreshToken = response.data.refresh;
 				const user = false;
 				dispatch(login({ accessToken, refreshToken, user }));
-				response = await api.get('api/users/logged_in_user/');
-				console.log(response);
+				// response = await api.get('api/users/logged_in_user/');
+				// console.log(response);
 			}
 			setIsLoading(false);
 		} catch (error) {

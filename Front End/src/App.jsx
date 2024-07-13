@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+	createBrowserRouter,
+	RouterProvider,
+	useLocation,
+} from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
@@ -10,6 +14,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { useAuth } from './Context/AuthContext';
 import VerifyOtp from './Pages/Signup/VerifyOtp';
+import CreateProduct from './Pages/Product/CreateProduct';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -23,32 +28,41 @@ function App() {
 				{
 					path: '',
 					element: <Home />,
-					// loader: teamLoader,
+					// loader: Loader,
 				},
 				{
 					path: 'login',
-					element: isAuthenticated ? (
-						<Navigate to='/' replace={true} />
-					) : (
-						<Login />
-					),
-					// loader: teamLoader,
+					element: <Login />,
+					// loader: Loader,
 				},
 				{
 					path: 'signup',
-					element: isAuthenticated ? (
-						<Navigate to='/' replace={true} />
-					) : (
-						<SignUp />
-					),
-					// loader: teamLoader,
+					element: <SignUp />,
+					// loader: Loader,
 				},
 				{
 					path: 'verify',
 					element: <VerifyOtp />,
-					// loader: teamLoader,
+					// loader: Loader,
 				},
-
+				{
+					path: 'product',
+					children: [
+						{
+							path: 'create',
+							element: isAuthenticated ? (
+								<CreateProduct />
+							) : (
+								<Navigate
+									to='/login'
+									replace={true}
+									state={{ from: '/product/create' }}
+								/>
+							),
+							// loader: Loader,
+						},
+					],
+				},
 				//For admin side
 
 				{
@@ -57,27 +71,26 @@ function App() {
 						{
 							path: '',
 							element: <DashBoard />,
-							// loader: teamLoader,
+							// loader: Loader,
 						},
 					],
 				},
 			],
 		},
 	]);
+
 	return (
-		<>
-			<div className='flex flex-col justify-center items-center min-h-[100dvh] bg-themeBgColour'>
-				<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-					{isLoading ? (
-						<div className=' text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>
-							Loading
-						</div>
-					) : (
-						<RouterProvider router={router} />
-					)}
-				</GoogleOAuthProvider>
-			</div>
-		</>
+		<div className='flex flex-col justify-center items-center min-h-[100dvh] bg-themeBgColour'>
+			<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+				{isLoading ? (
+					<div className='text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>
+						Loading
+					</div>
+				) : (
+					<RouterProvider router={router} />
+				)}
+			</GoogleOAuthProvider>
+		</div>
 	);
 }
 

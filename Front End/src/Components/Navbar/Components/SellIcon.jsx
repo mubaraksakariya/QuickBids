@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SellIcon() {
+	const navigate = useNavigate();
 	const manageCreate = () => {
-		console.log('create');
+		navigate('/product/create/');
 	};
 	return (
 		<button
