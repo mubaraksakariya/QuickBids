@@ -69,19 +69,25 @@ function SignUpForm({ isLoading, setIsLoading }) {
 				navigate('/verify/', { state: { email } });
 			}
 		} catch (error) {
+			setIsLoading(false);
 			// console.log('Error during signup:', error);
 			// Handle error during signup (e.g., display error message)
 			if (error.response) {
 				const serverErrors = error.response.data;
-				for (const key in serverErrors) {
-					const errorString = `${currentTime}: ${serverErrors[
-						key
-					].join(', ')}`;
-					if (key === 'firstName') setFirstNameError(errorString);
-					if (key === 'lastName') setLastNameError(errorString);
-					if (key === 'email') setEmailError(errorString);
-					if (key === 'password') setPasswordError(errorString);
-					if (key === 'repassword') setRePasswordError(errorString);
+				try {
+					for (const key in serverErrors) {
+						const errorString = `${currentTime}: ${serverErrors[
+							key
+						].join(', ')}`;
+						if (key === 'firstName') setFirstNameError(errorString);
+						if (key === 'lastName') setLastNameError(errorString);
+						if (key === 'email') setEmailError(errorString);
+						if (key === 'password') setPasswordError(errorString);
+						if (key === 'repassword')
+							setRePasswordError(errorString);
+					}
+				} catch (error) {
+					console.log(error);
 				}
 			}
 			setIsLoading(false);

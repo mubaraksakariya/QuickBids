@@ -18,7 +18,7 @@ function PriceInput({
 	}, [initialPrize, buyNowPrize]);
 
 	return (
-		<div className='p-4 max-w-md mx-auto  rounded-xl space-y-4 relative'>
+		<div className='mx-auto  rounded-xl space-y-4 relative w-full'>
 			<div>
 				<label
 					className='block text-sm font-medium text-gray-700'
@@ -30,7 +30,7 @@ function PriceInput({
 					id='initialPrize'
 					value={initialPrize}
 					onChange={(e) => setInitialPrize(e.target.value)}
-					className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+					className='mt-1 block w-full py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
 				/>
 			</div>
 			<div>
@@ -44,7 +44,7 @@ function PriceInput({
 					id='buyNowPrize'
 					value={buyNowPrize}
 					onChange={(e) => setBuyNowPrize(e.target.value)}
-					className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+					className='mt-1 block w-full py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
 				/>
 			</div>
 			{error && (

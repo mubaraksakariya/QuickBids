@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import CategoryItem from './CategoryItem'; // Adjust the path as needed
 
-function CategoryInput({ setCategory }) {
+function CategoryInput({ setCategory, category, error }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState(null);
 	const [newCategory, setNewCategory] = useState(null);
@@ -55,7 +55,7 @@ function CategoryInput({ setCategory }) {
 	}, [isDropdownOpen]);
 
 	return (
-		<div className=' pb-3'>
+		<div className='pb-3 w-full relative'>
 			<div
 				className='relative inline-block text-left pb-4 w-full'
 				ref={dropdownRef}>
@@ -131,12 +131,13 @@ function CategoryInput({ setCategory }) {
 						onChange={manageNewCategory}
 						type='text'
 						id='category'
-						className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+						className='bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 						placeholder='New Category'
-						required
+						required={category == null}
 					/>
 				</div>
 			</div>
+			<span className=' absolute text-errorColour text-sm'>{error}</span>
 		</div>
 	);
 }

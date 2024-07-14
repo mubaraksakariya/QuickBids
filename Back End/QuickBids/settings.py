@@ -15,6 +15,8 @@ import os
 from dotenv import load_dotenv # type: ignore
 load_dotenv()  # Load environment variables from .env file
 
+# print(f"EMAIL_HOST_USER: {os.getenv('TEST')}")
+# print(f"EMAIL_HOST_PASSWORD: {os.getenv('EMAIL_HOST_APP_PASSWORD')}")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -204,4 +206,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_APP_PASSWORD')

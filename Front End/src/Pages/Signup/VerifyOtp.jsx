@@ -16,7 +16,6 @@ function VerifyOtp() {
 	const api = useApi();
 	useEffect(() => {
 		if (!email) navigate('/signup/');
-		else console.log(`email send to ${email}`);
 	}, [email]);
 
 	const manageSubmit = async () => {
@@ -27,15 +26,15 @@ function VerifyOtp() {
 				email: email,
 				otp: otp,
 			});
-			if ((response.statusText == ok) | (response.status == 200)) {
+			if ((response.statusText == 'OK') | (response.status == 200)) {
 				navigate('/login/');
 			}
 		} catch (error) {
-			if (error.response.data.error) {
+			if (error?.response?.data?.error) {
 				const errorString = `${currentTime}: ${error.response.data.error}`;
 				setOtpError(errorString);
 			} else {
-				console.log(error);
+				console.error(error);
 			}
 		}
 		setIsLoading(false);
