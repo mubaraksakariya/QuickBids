@@ -42,9 +42,6 @@ const AuthProvider = ({ children }) => {
 
 	// Handle logout on localStorage change (e.g., user logs out)
 	useEffect(() => {
-		if (!storedAccessToken && !storedRefreshToken) {
-			dispatch(logout());
-		}
 		// update user, when not updated incase, eg: when loged in
 		if (storedRefreshToken && !storedUser) {
 			updateUser();

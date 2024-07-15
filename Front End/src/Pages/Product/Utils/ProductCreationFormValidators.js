@@ -6,8 +6,8 @@ export const validateCategory = (category) => {
 };
 
 export const validateTitle = (title) => {
-	if (!title || title.trim().split(' ').length > 1) {
-		return 'Title should not be empty or more than a word';
+	if (!title) {
+		return 'Title should not be empty';
 	}
 	return '';
 };
@@ -25,7 +25,7 @@ export const validateDates = (startDate, endDate) => {
 
 export const validatePrices = (initialPrize, buyNowPrize) => {
 	if (initialPrize >= buyNowPrize) {
-		return 'Initial prize should be greater than buy now prize';
+		return 'Initial prize should  be greater than buy now prize';
 	}
 	return '';
 };

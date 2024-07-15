@@ -14,7 +14,7 @@ function GoogleSignup() {
 			const response = await api.post('api/users/google_login/', {
 				credentialResponse: credentialResponse,
 			});
-			console.log(response);
+			// console.log(response);
 			const accessToken = response.data.access;
 			const refreshToken = response.data.refresh;
 			const user = response.data.user;

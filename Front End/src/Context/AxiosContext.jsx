@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import axios from 'axios';
-import { refreshToken } from './HelperApi/axiosHelpers';
+import { requestNewToken } from './HelperApi/axiosHelpers';
 
 // Create the ApiContext
 const ApiContext = createContext();
@@ -31,14 +31,18 @@ const createApi = () => {
 			return response;
 		},
 		async (error) => {
-			console.log(error);
+			// console.log(error);
 			const originalRequest = error.config;
 			if (error.response.status === 401 && !originalRequest._retry) {
 				originalRequest._retry = true;
 				try {
 					const refreshToken = localStorage.getItem('refreshToken');
+					localStorage.removeItem('accessToken');
 					if (refreshToken) {
-						const newAccessToken = await refreshToken();
+						const newAccessToken = await requestNewToken(
+							refreshToken
+						);
+						localStorage.setItem('accessToken', newAccessToken);
 						axios.defaults.headers.common[
 							'Authorization'
 						] = `Bearer ${newAccessToken}`;

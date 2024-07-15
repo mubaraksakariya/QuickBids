@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const refreshToken = async (refreshToken) => {
+const requestNewToken = async (refreshToken) => {
 	try {
 		const response = await axios.post(
-			`${import.meta.env.VITE_SERVER_BASE_URL}/api/token/refresh/`,
+			`${import.meta.env.VITE_SERVER_BASE_URL}/api/refresh/`,
 			{
-				refreshToken,
+				refresh: refreshToken,
 			}
 		);
 		localStorage.setItem('accessToken', response.data.access);
@@ -16,4 +16,4 @@ const refreshToken = async (refreshToken) => {
 		throw error;
 	}
 };
-export { refreshToken };
+export { requestNewToken };

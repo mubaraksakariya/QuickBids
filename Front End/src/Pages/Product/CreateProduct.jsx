@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Nav from './Components/Nav';
 import CategoryInput from './Components/CategoryInput';
 import ProductDetails from './Components/ProductDetails';
@@ -17,8 +17,15 @@ import {
 } from './Utils/ProductCreationFormValidators';
 import useFormState from '../../CustomHooks/useFormState';
 import useValidation from '../../CustomHooks/useValidation';
+import useApi from '../../Context/AxiosContext';
+import { useNavigate } from 'react-router-dom';
+import Modal from '../../Components/Utilities/Model';
 
 function CreateProduct() {
+	const [isLoading, setIsLoading] = useState(false);
+	const [isCreationSuccess, setIsCreationSuccess] = useState(false);
+	const navigate = useNavigate();
+	const api = useApi();
 	const [formState, handleChange] = useFormState({
 		category: '',
 		title: '',
@@ -35,8 +42,7 @@ function CreateProduct() {
 	const validators = {
 		category: validateCategory,
 		title: validateTitle,
-		// startDate: () => validateDates(formState.startDate, formState.endDate),
-		// endDate: () => validateDates(formState.startDate, formState.endDate),
+		endDate: () => validateDates(formState.startDate, formState.endDate),
 		initialPrize: () =>
 			validatePrices(formState.initialPrize, formState.buyNowPrize),
 		images: () => validateImages(formState.images),
@@ -49,24 +55,68 @@ function CreateProduct() {
 
 	const [errors, validate] = useValidation(validators);
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
+		setIsLoading(true);
 		const validationErrors = validate(formState);
 		if (Object.keys(validationErrors).length === 0) {
-			const formData = new FormData();
-			for (const [key, value] of Object.entries(formState)) {
-				console.log(key, ' : ', value);
-				if (key === 'images') {
-					value.forEach((image, index) => {
-						formData.append(`image${index}`, image);
+			try {
+				// Step 1: Create Product, with new or existing category
+				const productData = {
+					category: formState.category,
+					title: formState.title,
+					description: formState.description,
+					initial_prize: formState.initialPrize,
+					buy_now_prize: formState.buyNowPrize,
+					selected_state: formState.selectedState,
+					current_location: formState.currentLocation
+						? JSON.stringify(formState.currentLocation)
+						: null,
+					start_date: formState.startDate,
+					end_date: formState.endDate,
+				};
+				console.log('Product Data:', productData);
+
+				const productResponse = await api.post(
+					'/api/products/',
+					productData
+				);
+				const product = productResponse.data;
+				console.log('Product Created:', product);
+
+				// Step 2: Upload Images
+				if (formState.images.length > 0) {
+					const formData = new FormData();
+					formState.images.forEach((image, index) => {
+						formData.append(`images[${index}]`, image);
 					});
-				} else {
-					formData.append(key, value);
+
+					const uploadResponse = await api.post(
+						`/api/product-images/upload/${product.id}/`,
+						formData,
+						{
+							headers: {
+								'Content-Type': 'multipart/form-data',
+							},
+						}
+					);
+					console.log('Image Upload Response:', uploadResponse);
 				}
+
+				console.log('Product created successfully with images');
+			} catch (error) {
+				console.error(
+					'Error creating product:',
+					error.response ? error.response.data : error.message
+				);
+			} finally {
+				setIsLoading(false);
+				setIsCreationSuccess(true);
+				// navigate('/');
 			}
-			console.log('Form Data:', formData);
 		} else {
 			console.log('Form has errors. Please fix them.');
 			console.log(validationErrors);
+			setIsLoading(false);
 		}
 	};
 
@@ -127,7 +177,7 @@ function CreateProduct() {
 								target: { name: 'buyNowPrize', value },
 							})
 						}
-						// error={errors.initialPrize}
+						error={errors.initialPrize}
 					/>
 					<ImageGridInput
 						images={formState.images}
@@ -154,12 +204,22 @@ function CreateProduct() {
 					<div className='w-full flex justify-start mt-4'>
 						<button
 							onClick={handleSubmit}
+							disabled={isLoading}
 							className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-md'>
-							Submit
+							{isLoading ? 'Wait' : 'Submit'}
 						</button>
 					</div>
 				</div>
 			</div>
+			<Modal
+				show={isCreationSuccess}
+				onClose={() => navigate('/')}
+				autoCloseAfter={5000}>
+				<h2 className='text-2xl font-bold mb-4 text-center'>
+					Congratulations !!
+				</h2>
+				<p>Bidding on your Product will start on time</p>
+			</Modal>
 		</div>
 	);
 }

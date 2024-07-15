@@ -148,7 +148,6 @@ class UserViewSet(viewsets.ViewSet):
                 user.save()
             # create token
             refresh = RefreshToken.for_user(user)
-
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),

@@ -65,7 +65,7 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 			setEndDate(newEndDate);
 
 			// Update external state in parent component
-			externalSetEndDate(newEndDate);
+			setEndDate(newEndDate);
 		}
 	};
 

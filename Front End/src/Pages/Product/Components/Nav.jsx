@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Nav() {
+	const navigate = useNavigate();
 	return (
 		<nav className='flex items-center p-3 border-bA'>
-			<button>
+			<button onClick={() => navigate('/')}>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
 					viewBox='0 0 20 20'
