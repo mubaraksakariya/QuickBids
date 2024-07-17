@@ -11,7 +11,7 @@ const Navbar = () => {
 	const user = useSelector((state) => state.auth.user);
 	const navigate = useNavigate();
 	return (
-		<nav className='p-4 bg-themeBgColour border-b-2 '>
+		<nav className='p-4 mb-2 bg-themeBgColour border-b-2 '>
 			<div className='flex items-center justify-between flex-wrap gap-4'>
 				<NavIcon />
 				<div className='block lg:hidden'>

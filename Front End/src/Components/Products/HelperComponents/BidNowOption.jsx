@@ -1,15 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TimeRemaining from './TimeRemaining';
 
-function BidNowOption() {
+function BidNowOption({ product }) {
 	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
+	const [isTimeOver, setIsTimeOver] = useState(false);
 	const overlayRef = useRef(null);
 
 	const currentBid = 100;
-	const buyNowValue = 200;
-	const productName = 'Product Name';
-	const productDiscreption =
-		'Here are the biggest enterprise technology acquisitions';
+	const buyNowValue = product.buy_now_prize;
+	const productName = product.title;
+	const productDiscreption = product.description;
+	const manageTimeover = () => {
+		setIsTimeOver(true);
+	};
 	const toggleBiddingWindow = () => {
 		setIsBiddingOpen(!isBiddingOpen);
 	};
@@ -42,6 +45,7 @@ function BidNowOption() {
 			<section className='flex justify-between items-center'>
 				<p>Current Bid : Rs{currentBid}</p>
 				<button
+					disabled={isTimeOver}
 					onClick={toggleBiddingWindow}
 					type='button'
 					className='text-white bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-yellow-900'>
@@ -65,7 +69,7 @@ function BidNowOption() {
 								<h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
 									{productName}
 								</h5>
-								<p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
+								<p className='mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3'>
 									{productDiscreption}
 								</p>
 							</div>
@@ -75,7 +79,10 @@ function BidNowOption() {
 									<p>{currentBid}</p>
 								</div>
 								<div>
-									<TimeRemaining />
+									<TimeRemaining
+										bidEndTime={product.end_date}
+										timerEnded={manageTimeover}
+									/>
 								</div>
 							</div>
 							<div>
@@ -103,6 +110,7 @@ function BidNowOption() {
 									</div>
 									<div className='flex flex-col justify-end ps-5'>
 										<button
+											disabled={isTimeOver}
 											type='submit'
 											className='text-white bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-yellow-900'>
 											Update
