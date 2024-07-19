@@ -2,7 +2,6 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from rest_framework.serializers import ModelSerializer, CharField
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -47,21 +46,7 @@ class CustomUser(AbstractBaseUser):
         return self.is_superuser
 
 
-class UserSerializer(ModelSerializer):
-    password = CharField(write_only=True)
 
-    class Meta:
-        model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'password', 'id','is_verified','profile_picture']
-
-    def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
 
 
 class OTP(models.Model):

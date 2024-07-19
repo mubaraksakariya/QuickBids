@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import SignUpForm from './Components/SignUpForm';
 import GoogleSignup from './Components/GoogleSignup';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function SignUp() {
 	const [isLoading, setIsLoading] = useState(false);
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	const location = useLocation();
+	const navigate = useNavigate();
 	const from = location.state?.from || '/';
 	if (isAuthenticated) {
 		return <Navigate to={from} replace={true} />;
@@ -40,6 +41,15 @@ function SignUp() {
 							isLoading={isLoading}
 							setIsLoading={setIsLoading}
 						/>
+						<div>
+							Or{' '}
+							<span
+								className=' cursor-pointer underline'
+								onClick={() => navigate('/login/')}>
+								SignIn
+							</span>{' '}
+							here
+						</div>
 					</div>
 				</div>
 			</div>

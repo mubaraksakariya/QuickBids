@@ -42,7 +42,7 @@ function LoginForm({ isLoading, setIsLoading }) {
 		}
 		// Send data to server, POST
 		try {
-			let response = await api.post('api/users/login', {
+			let response = await api.post('api/login/', {
 				email: email,
 				password: password,
 			});
