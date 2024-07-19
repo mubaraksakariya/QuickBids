@@ -24,8 +24,8 @@ export const validateDates = (startDate, endDate) => {
 };
 
 export const validatePrices = (initialPrize, buyNowPrize) => {
-	if (initialPrize >= buyNowPrize) {
-		return 'Initial prize should  be greater than buy now prize';
+	if (Number(initialPrize) >= Number(buyNowPrize)) {
+		return 'Initial prize should not be greater than buy now prize';
 	}
 	return '';
 };

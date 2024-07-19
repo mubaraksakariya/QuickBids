@@ -22,14 +22,22 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 
+from Auction.views import AuctionViewSet
 from Customer.views import UserViewSet
 from Product.views import ProductViewSet, CategoryViewSet, ProductImageViewSet
+from Bids.views import BidViewSet, ProxyBidViewSet
+from Wallet.views import TransactionViewSet, WalletViewSet
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='product')
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'product-images', ProductImageViewSet)
+router.register(r'auctions', AuctionViewSet)
+router.register(r'bids', BidViewSet)
+router.register(r'proxy-bids', ProxyBidViewSet)
+router.register(r'wallets', WalletViewSet, basename='wallet')
+router.register(r'transactions', TransactionViewSet, basename='transaction')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

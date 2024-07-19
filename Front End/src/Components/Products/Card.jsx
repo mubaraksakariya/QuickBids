@@ -1,17 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BidNowOption from './HelperComponents/BidNowOption';
 import BuyNowOption from './HelperComponents/BuyNowOption';
 import TimeRemaining from './HelperComponents/TimeRemaining';
+import useAuction from '../../CustomHooks/useAuction';
+import useHighestBid from '../../CustomHooks/useHighestBid';
+import useUpdateBid from '../../CustomHooks/useUpdateBid';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
+	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
+	const [highestBid, setHighestBid] = useState(null);
+	const [highestBidError, setHighestBidError] = useState(null);
+
+	// get Auction detail for this product
+	const {
+		data: auction,
+		error: auctionError,
+		isLoading: isAuctionLoading,
+	} = useAuction(product.id);
+	// get current highest bid details
+	const {
+		data: highestBidData,
+		error: highestBidErrorData,
+		isLoading: isHighestBidLoading,
+	} = useHighestBid(auction?.id);
+	// to update auction
+	const { mutate: updateBid, isLoading: isUpdating } = useUpdateBid();
+
+	useEffect(() => {
+		if (highestBidData) setHighestBid(highestBidData);
+		if (highestBidErrorData)
+			setHighestBidError(highestBidErrorData.response.data.detail);
+	}, [highestBidData, highestBidErrorData]);
+
+	const toggleBiddingWindow = useCallback(() => {
+		setIsBiddingOpen((prev) => !prev);
+	}, []);
+
+	const handleUpdateBid = (newBidAmount) => {
+		const bidData = { auctionId: auction.id, amount: newBidAmount };
+		updateBid(bidData, {
+			onSuccess: (response) => {
+				setHighestBid(response);
+				toggleBiddingWindow();
+			},
+			onError: (error) => {
+				console.error('Failed to update bid:', error);
+			},
+		});
+	};
+
 	const manageTimeover = () => {
 		setIsTimeOver(true);
 	};
+
 	const manageProductOpen = (e) => {
 		e.preventDefault();
 		console.log('product open');
+		console.log(auction);
+		console.log(highestBid);
 	};
+
 	return (
 		<div className='max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
 			<div
@@ -26,8 +75,10 @@ function Card({ product }) {
 
 			<div className='px-5 relative'>
 				<div className='border-b mb-2'>
-					<a className=' cursor-pointer' onClick={manageProductOpen}>
-						<h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+					<a className='cursor-pointer' onClick={manageProductOpen}>
+						<h5
+							title={product.title}
+							className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-wrap overflow-hidden max-h-8'>
 							{product.title}
 						</h5>
 					</a>
@@ -40,18 +91,28 @@ function Card({ product }) {
 				<div>
 					<div className='flex justify-between pb-2'>
 						<p>Starting Bid:</p>
-						<p>{product.initial_prize}</p>
+						<p>{auction?.initial_prize}</p>
 					</div>
 					<TimeRemaining
-						bidEndTime={product.end_date}
+						bidEndTime={auction?.end_time}
 						timerEnded={manageTimeover}
 					/>
 				</div>
 				<div className='pt-4'>
 					{!isTimeOver && (
-						<BidNowOption product={product} isTimerActive={false} />
+						<BidNowOption
+							product={product}
+							auction={auction}
+							isBiddingOpen={isBiddingOpen}
+							highestBid={highestBid}
+							highestBidError={highestBidError}
+							isHighestBidLoading={isHighestBidLoading}
+							toggleBiddingWindow={toggleBiddingWindow}
+							handleUpdateBid={handleUpdateBid}
+							isUpdating={isUpdating}
+						/>
 					)}
-					<BuyNowOption product={product} />
+					<BuyNowOption product={product} highestBid={highestBid} />
 				</div>
 			</div>
 		</div>

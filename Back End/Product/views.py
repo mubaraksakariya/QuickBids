@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from django.db import transaction
+
+from Auction.serializers import AuctionSerializer
 from .models import Category, Product, ProductImage
 from .serializers import CategorySerializer, ProductSerializer, ProductImageSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -45,8 +47,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
-
-
+ 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
@@ -60,9 +61,22 @@ class ProductViewSet(viewsets.ModelViewSet):
             # Step 2: Create Product
             product_data = request.data.copy()
             product_data['category_id'] = category.id
+            product_data['owner_id'] = request.user.id
             product_serializer = self.get_serializer(data=product_data)
             product_serializer.is_valid(raise_exception=True)
             product = product_serializer.save()
+
+            # Step 3: Create Auction
+            auction_data = {
+                'product': product.id,  
+                'initial_prize': request.data.get('initial_prize'),
+                'start_time': request.data.get('start_time'),
+                'end_time': request.data.get('end_time')
+            }
+            auction_serializer = AuctionSerializer(data=auction_data)
+            auction_serializer.is_valid(raise_exception=True)
+            print(auction_serializer)
+            auction_serializer.save()
 
             return Response(self.get_serializer(product).data, status=status.HTTP_201_CREATED)
 
@@ -86,13 +100,11 @@ class ProductImageViewSet(viewsets.ModelViewSet):
 
         # Fetch all files with keys starting with 'images'
         images = [file for key, file in request.FILES.items() if key.startswith('images')]
-        # print("Received images:", images)  
 
         if not images:
             return Response({'detail': 'No images provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         for image in images:
-            # print("Processing image:", image)  
             ProductImage.objects.create(product=product, image=image)
 
         return Response({'detail': 'Images uploaded successfully'}, status=status.HTTP_200_OK)

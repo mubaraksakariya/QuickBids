@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router-dom';
 import SellIcon from './Components/SellIcon';
 
-const Navbar = () => {
+const Navbar = ({ setSearchSTring }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const user = useSelector((state) => state.auth.user);
 	const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Navbar = () => {
 						isOpen ? '' : 'hidden'
 					}`}>
 					<div className='ml-auto lg:flex items-center'>
-						<SearchBar />
+						<SearchBar setSearchSTring={setSearchSTring} />
 						{user ? (
 							<UserDropdown user={user} />
 						) : (

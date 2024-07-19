@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Nav from './Components/Nav';
 import CategoryInput from './Components/CategoryInput';
 import ProductDetails from './Components/ProductDetails';
@@ -6,118 +6,18 @@ import PriceInput from './Components/PriceInput';
 import ImageGridInput from './Components/ImageGridInput';
 import Location from './Components/Location';
 import DateRangeInput from './Components/DateRangeInput';
-
-import {
-	validateCategory,
-	validateTitle,
-	validateDates,
-	validatePrices,
-	validateImages,
-	validateLocation,
-} from './Utils/ProductCreationFormValidators';
-import useFormState from '../../CustomHooks/useFormState';
-import useValidation from '../../CustomHooks/useValidation';
-import useApi from '../../Context/AxiosContext';
-import { useNavigate } from 'react-router-dom';
 import Modal from '../../Components/Utilities/Model';
+import { useNavigate } from 'react-router-dom';
+import useProductForm from './Hooks/useProductForm';
+import useCreateProduct from './Hooks/useCreateProduct';
 
 function CreateProduct() {
-	const [isLoading, setIsLoading] = useState(false);
-	const [isCreationSuccess, setIsCreationSuccess] = useState(false);
 	const navigate = useNavigate();
-	const api = useApi();
-	const [formState, handleChange] = useFormState({
-		category: '',
-		title: '',
-		description: '',
-		initialPrize: 0,
-		buyNowPrize: 0,
-		images: [],
-		selectedState: '',
-		currentLocation: null,
-		startDate: '',
-		endDate: '',
-	});
+	const { formState, handleChange, errors, validate } = useProductForm();
+	const { isLoading, isCreationSuccess, createProduct } = useCreateProduct();
 
-	const validators = {
-		category: validateCategory,
-		title: validateTitle,
-		endDate: () => validateDates(formState.startDate, formState.endDate),
-		initialPrize: () =>
-			validatePrices(formState.initialPrize, formState.buyNowPrize),
-		images: () => validateImages(formState.images),
-		location: () =>
-			validateLocation(
-				formState.selectedState,
-				formState.currentLocation
-			),
-	};
-
-	const [errors, validate] = useValidation(validators);
-
-	const handleSubmit = async () => {
-		setIsLoading(true);
-		const validationErrors = validate(formState);
-		if (Object.keys(validationErrors).length === 0) {
-			try {
-				// Step 1: Create Product, with new or existing category
-				const productData = {
-					category: formState.category,
-					title: formState.title,
-					description: formState.description,
-					initial_prize: formState.initialPrize,
-					buy_now_prize: formState.buyNowPrize,
-					selected_state: formState.selectedState,
-					current_location: formState.currentLocation
-						? JSON.stringify(formState.currentLocation)
-						: null,
-					start_date: formState.startDate,
-					end_date: formState.endDate,
-				};
-				console.log('Product Data:', productData);
-
-				const productResponse = await api.post(
-					'/api/products/',
-					productData
-				);
-				const product = productResponse.data;
-				console.log('Product Created:', product);
-
-				// Step 2: Upload Images
-				if (formState.images.length > 0) {
-					const formData = new FormData();
-					formState.images.forEach((image, index) => {
-						formData.append(`images[${index}]`, image);
-					});
-
-					const uploadResponse = await api.post(
-						`/api/product-images/upload/${product.id}/`,
-						formData,
-						{
-							headers: {
-								'Content-Type': 'multipart/form-data',
-							},
-						}
-					);
-					console.log('Image Upload Response:', uploadResponse);
-				}
-
-				console.log('Product created successfully with images');
-			} catch (error) {
-				console.error(
-					'Error creating product:',
-					error.response ? error.response.data : error.message
-				);
-			} finally {
-				setIsLoading(false);
-				setIsCreationSuccess(true);
-				// navigate('/');
-			}
-		} else {
-			console.log('Form has errors. Please fix them.');
-			console.log(validationErrors);
-			setIsLoading(false);
-		}
+	const handleSubmit = () => {
+		createProduct(formState, validate, navigate);
 	};
 
 	return (
@@ -161,8 +61,7 @@ function CreateProduct() {
 						setEndDate={(value) =>
 							handleChange({ target: { name: 'endDate', value } })
 						}
-						// startDateError={errors.startDate}
-						// endDateError={errors.endDate}
+						error={errors.endDate}
 					/>
 					<PriceInput
 						initialPrize={formState.initialPrize}

@@ -14,7 +14,20 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, required=False)
     category_id = serializers.IntegerField()
+    owner_id = serializers.IntegerField()
 
     class Meta:
         model = Product
-        fields = ['id', 'category_id', 'title', 'description', 'initial_prize', 'buy_now_prize', 'start_date', 'end_date', 'images']
+        fields = [
+            'id', 
+            'category_id', 
+            'title', 
+            'description', 
+            'owner_id',
+            'buy_now_prize', 
+            'selected_state', 
+            'current_location', 
+            'images'
+        ]
+
+

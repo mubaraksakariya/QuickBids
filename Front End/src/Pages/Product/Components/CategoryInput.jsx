@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import CategoryItem from './CategoryItem'; // Adjust the path as needed
+import CategoryDropdown from './CategoryDropdown';
+import useCategories from '../../../CustomHooks/useCategories';
 
 function CategoryInput({ setCategory, category, error }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -7,27 +8,24 @@ function CategoryInput({ setCategory, category, error }) {
 	const [newCategory, setNewCategory] = useState(null);
 	const dropdownRef = useRef(null);
 
-	const categories = [
-		'category1',
-		'category2',
-		'category3',
-		'category4',
-		'category5',
-		'category6',
-	];
+	// fetching data, custom hook, used Rreact Query
+	const { data: categories, isLoading } = useCategories();
 
 	const handleCategoryClick = (category) => {
 		setSelectedCategory(category);
 		setNewCategory(null);
 		setIsDropdownOpen(false);
 	};
+
 	const manageNewCategory = (e) => {
 		setNewCategory(e.target.value);
 		setSelectedCategory(null);
 	};
+
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
+
 	useEffect(() => {
 		if (selectedCategory) setCategory(selectedCategory);
 		if (newCategory) setCategory(newCategory);
@@ -72,7 +70,9 @@ function CategoryInput({ setCategory, category, error }) {
 						aria-expanded={isDropdownOpen}
 						aria-haspopup='true'
 						onClick={toggleDropdown}>
-						{selectedCategory ? selectedCategory : 'Categories'}
+						{selectedCategory
+							? selectedCategory.name
+							: 'Categories'}
 						{isDropdownOpen ? (
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
@@ -101,20 +101,16 @@ function CategoryInput({ setCategory, category, error }) {
 					</button>
 				</div>
 
-				{isDropdownOpen && (
-					<div
-						className='origin-top-right absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'
-						role='menu'
-						aria-orientation='vertical'
-						aria-labelledby='options-menu'>
+				{isDropdownOpen && categories && (
+					<CategoryDropdown
+						categories={categories}
+						handleCategoryClick={handleCategoryClick}
+					/>
+				)}
+				{isDropdownOpen && isLoading && (
+					<div className='absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'>
 						<div className='py-1' role='none'>
-							{categories.map((category) => (
-								<CategoryItem
-									key={category}
-									category={category}
-									onClick={handleCategoryClick}
-								/>
-							))}
+							<div className='text-center'>Loading...</div>
 						</div>
 					</div>
 				)}
@@ -137,7 +133,7 @@ function CategoryInput({ setCategory, category, error }) {
 					/>
 				</div>
 			</div>
-			<span className=' absolute text-errorColour text-sm'>{error}</span>
+			<span className='absolute text-errorColour text-sm'>{error}</span>
 		</div>
 	);
 }

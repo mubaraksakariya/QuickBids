@@ -1,17 +1,8 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import useApi from '../../Context/AxiosContext';
+import useCategories from '../../CustomHooks/useCategories';
 
 function CategoryNav({ setSelectedCategory }) {
-	const api = useApi();
-	const fetchData = async () => {
-		const response = await api.get('api/categories/');
-		return response.data;
-	};
-	const { data, error, isLoading } = useQuery({
-		queryKey: ['categories'],
-		queryFn: fetchData,
-	});
+	const { data, error, isLoading } = useCategories();
 	const manageCategory = (e) => {
 		const id = e.target.dataset.value;
 		// console.log(id);
