@@ -1,5 +1,4 @@
 import React from 'react';
-import Nav from './Components/Nav';
 import CategoryInput from './Components/CategoryInput';
 import ProductDetails from './Components/ProductDetails';
 import PriceInput from './Components/PriceInput';
@@ -10,6 +9,7 @@ import Modal from '../../Components/Utilities/Model';
 import { useNavigate } from 'react-router-dom';
 import useProductForm from './Hooks/useProductForm';
 import useCreateProduct from './Hooks/useCreateProduct';
+import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
 
 function CreateProduct() {
 	const navigate = useNavigate();
@@ -21,8 +21,8 @@ function CreateProduct() {
 	};
 
 	return (
-		<div className='min-h-screen w-full lg:w-4/5 mx-auto'>
-			<Nav />
+		<div className='min-h-[100dvh] w-full lg:w-[90%] bg-themeBgColour'>
+			<NoneHomeNavbar />
 			<h1 className='text-center text-2xl font-bold my-4'>
 				Create Your Ad
 			</h1>

@@ -10,7 +10,8 @@ function Products({ searchString, selectedCategory }) {
 	} = useProducts(searchString, selectedCategory);
 
 	return (
-		<div className='p-2 grid gap-1 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+		// <div className='p-2 grid gap-1 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+		<div className='mt-4 flex flex-wrap gap-4 justify-around md:justify-center'>
 			{isLoading && (
 				<div className='text-center text-errorColour'>Loading...</div>
 			)}

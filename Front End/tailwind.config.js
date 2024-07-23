@@ -19,12 +19,42 @@ export default {
 				gray: '#8492a6',
 				graylight: '#d3dce6',
 				themeBgColour: '#fdf1ec',
-				buttonColour1: '#7F265B',
-				buttonColour2: '#993D7C',
-				buttonColour3: '#661B4A',
-				button2Colour1: '#076e05',
-				button2Colour2: '#048e0b',
-				button2Colour3: '#146107',
+				themeBgColour2: '#f1d8c7',
+				themeBgColour3: '#724177',
+				themeBgColour4: '#a4c392',
+				themeBgColour5: '#f9a825',
+				themeBgColour5: '#473a33',
+				themeBgColour5: '#e0e6ed',
+				themeBgColour5: '#f5f3f4 ',
+
+				buttonColour1: '#7F265B', // Deep Pinkish Red (original)
+				buttonColour2: '#A54C82', // Lighter Pinkish Red (analogous)
+				buttonColour3: '#590B3C', // Darker Maroon (analogous)
+
+				button2Colour1: '#076e05', // Dark Green (original)
+				button2Colour2: '#29A32C', // Lime Green (analogous)
+				button2Colour3: '#004400',
+
+				button3Colour1: '#002F34',
+				button3Colour2: '#00445E',
+				button3Colour3: '#00738A',
+
+				button4Colour1: '#f5f3f4', // Theme Color (Default State)
+				button4Colour2: '#e0d6d9',
+				button4Colour3: '#d6c9ce',
+
+				button5Colour1: '#f5f3f4', // Theme Color (Light Grey, Default State)
+				button5Colour2: '#e0e0e0',
+				button5Colour3: '#cccccc',
+
+				button6Colour1: '#d9d9d9', // Theme Color (Darker Grey, Default State)
+				button6Colour2: '#b3b3b3', // Hover State (Even Darker Grey)
+				button6Colour3: '#808080', // Active/Pressed State (Very Dark Grey)
+
+				button7Colour1: '#9c9688', // Theme Color (Base Color)
+				button7Colour2: '#d2cfc2', // Hover State (Lighter Beige)
+				button7Colour3: '#77706b', // Active/Pressed State (Darker Brown)
+
 				errorColour: '#dc2626',
 			},
 		},

@@ -36,7 +36,7 @@ router.register(r'product-images', ProductImageViewSet)
 router.register(r'auctions', AuctionViewSet)
 router.register(r'bids', BidViewSet)
 router.register(r'proxy-bids', ProxyBidViewSet)
-router.register(r'wallets', WalletViewSet, basename='wallet')
+router.register(r'wallet', WalletViewSet, basename='wallet')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
 
 urlpatterns = [

@@ -15,6 +15,8 @@ import { useSelector } from 'react-redux';
 import { useAuth } from './Context/AuthContext';
 import VerifyOtp from './Pages/Signup/VerifyOtp';
 import CreateProduct from './Pages/Product/CreateProduct';
+import Profile from './Pages/Profile/Profile';
+import Wallet from './Pages/Wallet/Wallet';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -44,6 +46,36 @@ function App() {
 					path: 'verify',
 					element: <VerifyOtp />,
 					// loader: Loader,
+				},
+				{
+					path: 'profile',
+					children: [
+						{
+							path: '',
+							element: isAuthenticated ? (
+								<Profile />
+							) : (
+								<Navigate
+									to='/login'
+									replace={true}
+									state={{ from: '/profile/' }}
+								/>
+							),
+						},
+						{
+							path: 'wallet',
+							element: isAuthenticated ? (
+								<Wallet />
+							) : (
+								<Navigate
+									to='/login'
+									replace={true}
+									state={{ from: '/wallet/' }}
+								/>
+							),
+							// loader: Loader,
+						},
+					],
 				},
 				{
 					path: 'product',

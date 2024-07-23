@@ -11,8 +11,8 @@ function CategoryInput({ setCategory, category, error }) {
 	// fetching data, custom hook, used Rreact Query
 	const { data: categories, isLoading } = useCategories();
 
-	const handleCategoryClick = (category) => {
-		setSelectedCategory(category);
+	const handleCategoryClick = (categoryName) => {
+		setSelectedCategory(categoryName);
 		setNewCategory(null);
 		setIsDropdownOpen(false);
 	};
@@ -29,6 +29,7 @@ function CategoryInput({ setCategory, category, error }) {
 	useEffect(() => {
 		if (selectedCategory) setCategory(selectedCategory);
 		if (newCategory) setCategory(newCategory);
+		console.log(selectedCategory);
 	}, [selectedCategory, newCategory]);
 
 	const handleClickOutside = (event) => {
@@ -70,9 +71,7 @@ function CategoryInput({ setCategory, category, error }) {
 						aria-expanded={isDropdownOpen}
 						aria-haspopup='true'
 						onClick={toggleDropdown}>
-						{selectedCategory
-							? selectedCategory.name
-							: 'Categories'}
+						{selectedCategory ? selectedCategory : 'Categories'}
 						{isDropdownOpen ? (
 							<svg
 								xmlns='http://www.w3.org/2000/svg'

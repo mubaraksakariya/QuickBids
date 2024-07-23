@@ -29,5 +29,3 @@ class ProductSerializer(serializers.ModelSerializer):
             'current_location', 
             'images'
         ]
-
-

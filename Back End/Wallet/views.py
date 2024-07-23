@@ -1,9 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from .models import Wallet, Transaction
 from .serializers import WalletSerializer, TransactionSerializer
+
+
+
 
 class WalletViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -11,6 +15,14 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Wallet.objects.filter(user=self.request.user)
+    
+    def list(self, request, *args, **kwargs):
+        wallet, created = Wallet.objects.get_or_create(user=self.request.user)
+        serializer = self.get_serializer(wallet)
+        return Response(serializer.data)
+        
+
+
 
 class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -18,6 +30,12 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Transaction.objects.filter(wallet__user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        wallet_transactions = self.get_queryset()
+        serializer = self.get_serializer(wallet_transactions, many=True)
+        return Response(serializer.data)
+    
 
     def create(self, request, *args, **kwargs):
         wallet = get_object_or_404(Wallet, user=request.user)

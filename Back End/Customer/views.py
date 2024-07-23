@@ -109,15 +109,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.is_verified = True
                 user.save()
             refresh = RefreshToken.for_user(user)
+            serialized_user = UserSerializer(user)
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
-                'user': {
-                    'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'profile_picture': user.profile_picture.url if user.profile_picture else None,
-                }
+                'user': serialized_user.data 
             }, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

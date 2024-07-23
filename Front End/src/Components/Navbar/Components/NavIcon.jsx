@@ -6,7 +6,7 @@ function NavIcon() {
 			<a
 				href='/'
 				className='flex items-center space-x-3 rtl:space-x-reverse'>
-				<img src='./Logo.png' className='h-8' alt='Quick Bids Logo' />
+				<img src='/Logo.png' className='h-8' alt='Quick Bids Logo' />
 				<span className='self-center text-2xl font-semibold whitespace-nowrap dark:text-white'>
 					Quick Bids
 				</span>

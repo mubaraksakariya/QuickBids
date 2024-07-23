@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import SearchBar from './Components/SearchBar';
 import UserDropdown from './Components/UserDropdown';
-import NavIcon from './Components/NavIcon';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SellIcon from './Components/SellIcon';
+import NavIcon from './Components/NavIcon';
 
-const Navbar = ({ setSearchSTring }) => {
+const NoneHomeNavbar = ({}) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const user = useSelector((state) => state.auth.user);
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 	const navigate = useNavigate();
 	return (
-		<nav className='p-4 mb-2 bg-themeBgColour border-b-2 '>
+		<nav className='p-4 mb-2 bg-themeBgColour border-b-2 w-full '>
 			<div className='flex items-center justify-between flex-wrap gap-4'>
 				<NavIcon />
 				<div className='block lg:hidden'>
@@ -39,7 +40,7 @@ const Navbar = ({ setSearchSTring }) => {
 						isOpen ? '' : 'hidden'
 					}`}>
 					<div className='ml-auto lg:flex items-center'>
-						<SearchBar setSearchSTring={setSearchSTring} />
+						{/* <SearchBar setSearchSTring={setSearchSTring} /> */}
 						{user && isAuthenticated ? (
 							<UserDropdown user={user} />
 						) : (
@@ -57,4 +58,4 @@ const Navbar = ({ setSearchSTring }) => {
 	);
 };
 
-export default Navbar;
+export default NoneHomeNavbar;

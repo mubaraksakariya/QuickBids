@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../Store/authSlice';
+import { useNavigate } from 'react-router-dom';
+import useWallet from '../../../CustomHooks/useWallet';
 
 const UserDropdown = ({ user }) => {
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef(null);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { data: wallet, error, isLoading } = useWallet();
 
 	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 	useEffect(() => {
@@ -57,7 +61,7 @@ const UserDropdown = ({ user }) => {
 				)}
 			</button>
 			{dropdownOpen && (
-				<div className='absolute lg:right-0 lg:top-12 mt-2 py-2 w-75 bg-white rounded-md shadow-xl divide-y divide-gray-100'>
+				<div className='absolute z-50 lg:right-0 lg:top-12 mt-2 py-2 w-75 bg-white rounded-md shadow-xl divide-y divide-gray-100'>
 					<div className='px-4 py-3 text-sm text-gray-900 dark:text-white'>
 						<div>{user.first_name}</div>
 						<div className='font-medium truncate'>{user.email}</div>
@@ -67,8 +71,8 @@ const UserDropdown = ({ user }) => {
 						aria-labelledby='dropdownUserAvatarButton'>
 						<li>
 							<a
-								href='#'
-								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+								onClick={() => navigate('/profile/')}
+								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
 								Profile
 							</a>
 						</li>
@@ -81,9 +85,14 @@ const UserDropdown = ({ user }) => {
 						</li>
 						<li>
 							<a
-								href='#'
-								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-								Wallet
+								onClick={() => navigate('/profile/wallet/')}
+								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
+								<section className=' flex justify-between'>
+									<span>Wallet</span>
+									{error && <span>{error.message}</span>}
+									{isLoading && <span>Loading.. </span>}
+									{wallet && <span>{wallet.balance}</span>}
+								</section>
 							</a>
 						</li>
 					</ul>

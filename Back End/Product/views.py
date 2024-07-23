@@ -84,7 +84,14 @@ class ProductViewSet(viewsets.ModelViewSet):
             print(e)
             transaction.set_rollback(True)
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+    @action(detail=False, methods=['get'], url_path='profile-products')
+    def my_products(self, request):
+        user = request.user
+        user_products = Product.objects.filter(owner=user, is_deleted=False).order_by('-created_at')
+        serializer = ProductSerializer(user_products, many=True)
+        return Response(serializer.data)
+    
 class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer

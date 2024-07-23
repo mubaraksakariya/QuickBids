@@ -13,7 +13,9 @@ const CategoryDropdown = ({ categories, handleCategoryClick }) => {
 					<CategoryItem
 						key={category.id}
 						category={category.name}
-						onClick={() => handleCategoryClick(category)}
+						onClick={(categoryName) =>
+							handleCategoryClick(categoryName)
+						}
 					/>
 				))}
 			</div>
