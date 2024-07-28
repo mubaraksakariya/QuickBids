@@ -6,6 +6,7 @@ import timeAgo from '../../Components/Utilities/timeAgo';
 import { useNavigate } from 'react-router-dom';
 import BigButton from './Components/BigButton';
 import ProfilePosts from './Components/ProfilePosts';
+import Footer from '../../Components/Footer/Footer';
 
 function Profile() {
 	const user = useSelector((state) => state.auth.user);
@@ -13,7 +14,7 @@ function Profile() {
 	const navigate = useNavigate();
 
 	return (
-		<div className='min-h-[100dvh] max-h-[100dvh] w-full md:w-[90%] bg-themeBgColour'>
+		<div className='full-page'>
 			<NoneHomeNavbar />
 			<div className='md:flex'>
 				<div className='flex-[4] flex flex-col justify-center items-center gap-2 h-auto max-h-[55dvh]'>
@@ -112,6 +113,7 @@ function Profile() {
 					<ProfilePosts />
 				</div>
 			</div>
+			<Footer />
 		</div>
 	);
 }

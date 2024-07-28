@@ -11,6 +11,7 @@ function Card({ product }) {
 	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
 	const [highestBid, setHighestBid] = useState(null);
 	const [highestBidError, setHighestBidError] = useState(null);
+	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 
 	// get Auction detail for this product
 	const {
@@ -18,12 +19,14 @@ function Card({ product }) {
 		error: auctionError,
 		isLoading: isAuctionLoading,
 	} = useAuction(product.id);
+
 	// get current highest bid details
 	const {
 		data: highestBidData,
 		error: highestBidErrorData,
 		isLoading: isHighestBidLoading,
 	} = useHighestBid(auction?.id);
+
 	// to update auction
 	const { mutate: updateBid, isLoading: isUpdating } = useUpdateBid();
 
@@ -56,9 +59,7 @@ function Card({ product }) {
 
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		console.log('product open');
-		console.log(auction);
-		console.log(highestBid);
+		console.log(product);
 	};
 
 	return (

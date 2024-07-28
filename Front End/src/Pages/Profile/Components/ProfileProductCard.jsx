@@ -56,7 +56,7 @@ function ProfileProductCard({ product }) {
 					</div>
 					<div className='flex justify-between pb-2'>
 						<p>Current Bid:</p>
-						{highestBidData.amount ? (
+						{highestBidData?.amount ? (
 							<p>{highestBidData?.amount}</p>
 						) : (
 							<p>{highestBidData?.message}</p>

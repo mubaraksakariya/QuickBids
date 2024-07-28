@@ -8,24 +8,8 @@ export default {
 		extend: {
 			colors: {
 				...colors, // Include all default Tailwind colors
-				white: '#ffffff',
-				blue: '#1fb6ff',
-				purple: '#7e5bef',
-				pink: '#ff49db',
-				orange: '#ff7849',
-				green: '#13ce66',
-				yellow: '#ffc82c',
-				graydark: '#273444',
-				gray: '#8492a6',
-				graylight: '#d3dce6',
+				themeBgNav: '#000000',
 				themeBgColour: '#fdf1ec',
-				themeBgColour2: '#f1d8c7',
-				themeBgColour3: '#724177',
-				themeBgColour4: '#a4c392',
-				themeBgColour5: '#f9a825',
-				themeBgColour5: '#473a33',
-				themeBgColour5: '#e0e6ed',
-				themeBgColour5: '#f5f3f4 ',
 
 				buttonColour1: '#7F265B', // Deep Pinkish Red (original)
 				buttonColour2: '#A54C82', // Lighter Pinkish Red (analogous)

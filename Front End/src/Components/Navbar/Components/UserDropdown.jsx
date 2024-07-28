@@ -9,9 +9,10 @@ const UserDropdown = ({ user }) => {
 	const dropdownRef = useRef(null);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
+
 	const { data: wallet, error, isLoading } = useWallet();
 
-	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 	useEffect(() => {
 		// Function to close dropdown when clicked outside
 		function handleClickOutside(event) {
@@ -36,7 +37,7 @@ const UserDropdown = ({ user }) => {
 		<div ref={dropdownRef} className='relative mt-4 lg:mt-0 lg:ml-4 mx-3'>
 			<button
 				onClick={() => setDropdownOpen(!dropdownOpen)}
-				className='flex items-center text-black focus:outline-none'>
+				className='flex items-center text-black focus:outline-none rounded-full border border-black hover:border-white'>
 				<span className='sr-only'>Open user menu</span>
 				{user.profile_picture ? (
 					<img

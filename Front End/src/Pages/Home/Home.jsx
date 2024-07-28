@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../../Components/Navbar/NavBar';
 import Products from '../../Components/Products/Products';
 import CategoryNav from '../../Components/Category/CategoryNav';
+import HomeCarousel from '../../Components/Carousel/HomeCarousel';
+import Footer from '../../Components/Footer/Footer';
 
 function Home() {
 	const [searchString, setSearchSTring] = useState('');
@@ -12,13 +14,15 @@ function Home() {
 	}, [searchString]);
 
 	return (
-		<div className='min-h-[100dvh] w-full lg:w-[90%] bg-themeBgColour'>
+		<div className='full-page'>
 			<NavBar setSearchSTring={setSearchSTring} />
+			<HomeCarousel />
 			<CategoryNav setSelectedCategory={setSelectedCategory} />
 			<Products
 				searchString={searchString}
 				selectedCategory={selectedCategory}
 			/>
+			<Footer />
 		</div>
 	);
 }

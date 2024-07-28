@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SellIcon from './Components/SellIcon';
 import NavIcon from './Components/NavIcon';
+import CollapseButton from './Components/CollapseButton';
 
 const NoneHomeNavbar = ({}) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -13,27 +14,11 @@ const NoneHomeNavbar = ({}) => {
 
 	const navigate = useNavigate();
 	return (
-		<nav className='p-4 mb-2 bg-themeBgColour border-b-2 w-full '>
+		<nav className='nav-bar'>
 			<div className='flex items-center justify-between flex-wrap gap-4'>
 				<NavIcon />
 				<div className='block lg:hidden'>
-					<button
-						onClick={() => setIsOpen(!isOpen)}
-						className='flex items-center px-3 py-2 border rounded text-gray-200 border-gray-400 hover:text-white hover:border-white'>
-						<svg
-							xmlns='http://www.w3.org/2000/svg'
-							fill='none'
-							viewBox='0 0 24 24'
-							strokeWidth='1.5'
-							stroke='currentColor'
-							className='size-10 text-black'>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
-							/>
-						</svg>
-					</button>
+					<CollapseButton setIsOpen={setIsOpen} isOpen={isOpen} />
 				</div>
 				<div
 					className={`w-full block flex-grow lg:flex lg:items-center lg:w-auto ${

@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.gradient-button {
+	@apply bg-gradient-to-r from-blue-400 via-teal-500 to-cyan-600 text-white flex p-2 m-2 hover:from-blue-500 hover:via-teal-600 hover:to-cyan-700 transition-colors duration-300;
+}
+.nav-bar {
+	@apply p-4 mb-2 bg-themeBgNav border-b-2;
+}
+.full-page {
+	@apply min-h-[100dvh] w-full flex flex-col;
+}
+
+/* Custom gradient backgrounds for CarouselItem component */
+.gradient-bg-left {
+	@apply bg-gradient-to-r from-black via-gray-500 to-transparent;
+}
+.gradient-bg-right {
+	@apply bg-gradient-to-l from-black via-gray-500 to-transparent;
+}
+
+.text-visible {
+	@apply text-white font-bold;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}

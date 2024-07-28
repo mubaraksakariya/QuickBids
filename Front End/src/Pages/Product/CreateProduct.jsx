@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import useProductForm from './Hooks/useProductForm';
 import useCreateProduct from './Hooks/useCreateProduct';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
+import Footer from '../../Components/Footer/Footer';
 
 function CreateProduct() {
 	const navigate = useNavigate();
@@ -21,7 +22,7 @@ function CreateProduct() {
 	};
 
 	return (
-		<div className='min-h-[100dvh] w-full lg:w-[90%] bg-themeBgColour'>
+		<div className='full-page'>
 			<NoneHomeNavbar />
 			<h1 className='text-center text-2xl font-bold my-4'>
 				Create Your Ad
@@ -119,6 +120,7 @@ function CreateProduct() {
 				</h2>
 				<p>Bidding on your Product will start on time</p>
 			</Modal>
+			<Footer />
 		</div>
 	);
 }

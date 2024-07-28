@@ -1,10 +1,5 @@
-import { useEffect, useState } from 'react';
 import './App.css';
-import {
-	createBrowserRouter,
-	RouterProvider,
-	useLocation,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
@@ -112,7 +107,7 @@ function App() {
 	]);
 
 	return (
-		<div className='flex flex-col justify-center items-center min-h-[100dvh] bg-themeBgColour'>
+		<div className='flex flex-col justify-center items-center min-h-[100dvh]'>
 			<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
 				{isLoading ? (
 					<div className='text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>

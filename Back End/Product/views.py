@@ -6,6 +6,7 @@ from django.db import transaction
 
 from Auction.serializers import AuctionSerializer
 from .models import Category, Product, ProductImage
+from django.db.models import Q
 from .serializers import CategorySerializer, ProductSerializer, ProductImageSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -84,14 +85,49 @@ class ProductViewSet(viewsets.ModelViewSet):
             print(e)
             transaction.set_rollback(True)
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+    # current user products 
     @action(detail=False, methods=['get'], url_path='profile-products')
     def my_products(self, request):
         user = request.user
         user_products = Product.objects.filter(owner=user, is_deleted=False).order_by('-created_at')
         serializer = ProductSerializer(user_products, many=True)
         return Response(serializer.data)
-    
+
+    # overriden list to exclude logged in user products
+    def list(self, request, *args, **kwargs):
+        # Override default list method
+        queryset = Product.objects.filter(is_deleted=False).order_by('-created_at')
+
+        # Filter by category if provided
+        category = request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category__id=category)
+
+        # Search by title and description if provided
+        search_query = request.query_params.get('search')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+
+        # Exclude the user's own products if logged in
+        if not request.user.is_anonymous:
+            queryset = queryset.exclude(owner=request.user)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # products for home page Courosel
+    @action(detail=False, methods=['get'], url_path='carousel-products')
+    def carousel_products(self, request):
+        queryset = Product.objects.filter(is_deleted=False).order_by('-created_at')
+        if not request.user.is_anonymous:
+            queryset = queryset.exclude(owner=request.user)
+        serializer = self.get_serializer(queryset[:4], many=True)
+        return Response(serializer.data)
+
 class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
