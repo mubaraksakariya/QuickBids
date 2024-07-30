@@ -64,7 +64,7 @@ function Card({ product }) {
 	return (
 		// card, card-header, card-description are custom classes
 
-		<div className='card max-w-sm dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
+		<div className='card max-w-sm  flex flex-col'>
 			<div
 				className='w-full aspect-video overflow-hidden cursor-pointer rounded-t-lg'
 				onClick={manageProductOpen}>

@@ -47,7 +47,7 @@ const BiddingOverlay = ({
 		<div className='absolute inset-0 bg-opacity-50 flex items-center justify-center border border-warmGray-400'>
 			<div
 				ref={overlayRef}
-				className='relative bg-white p-4 rounded-lg w-full h-full'>
+				className='card-overlay relative bg-white p-4 rounded-lg w-full h-full'>
 				<button
 					className='absolute top-2 right-2 text-white bg-black rounded-full px-2'
 					onClick={toggleBiddingWindow}>

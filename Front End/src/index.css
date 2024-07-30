@@ -2,30 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-.gradient-button {
-	@apply bg-gradient-to-r from-blue-400 via-teal-500 to-cyan-600 text-white flex p-2 m-2 hover:from-blue-500 hover:via-teal-600 hover:to-cyan-700 transition-colors duration-300;
-}
+/* for main Navbar */
 .nav-bar {
-	@apply p-4 mb-2 bg-themeBgNav border-b-2;
+	@apply p-4 mb-2 bg-navBg border-b-2;
 }
+.gradient-button {
+	@apply bg-gradient-to-r from-[#d8e3dc] via-[#FFD700] to-[#d8e3dc] text-[#2F4F4F] flex p-2 m-2 hover:from-[#c7d8d0] hover:via-[#FFC700] hover:to-[#c7d8d0] transition-colors duration-300;
+}
+/* .gradient-button {
+	@apply bg-gradient-to-r from-[#FF6F61] via-[#F5F5DC] to-[#FF6F61] text-[#2F4F4F] flex p-2 m-2 hover:from-[#FF5C4F] hover:via-[#E0E0B8] hover:to-[#FF5C4F] transition-colors duration-300;
+} */
+
+/* for content section */
 .full-page {
-	@apply min-h-[100dvh] w-full flex flex-col;
+	@apply min-h-[100dvh] w-full flex flex-col bg-sectionBgColour1;
+}
+.section1 {
+	@apply bg-sectionBgColour1;
+}
+.section2 {
+	@apply bg-sectionBgColour2;
 }
 
 /* Custom gradient backgrounds for CarouselItem component */
+
 .gradient-bg-left {
-	@apply bg-gradient-to-r from-black via-gray-500 to-transparent;
+	@apply bg-gradient-to-r from-[#2F4F4F] via-[#D5B895] to-transparent;
 }
+
 .gradient-bg-right {
-	@apply bg-gradient-to-l from-black via-gray-500 to-transparent;
+	@apply bg-gradient-to-l from-[#2F4F4F] via-[#D5B895] to-transparent;
 }
+
 .text-visible {
-	@apply text-white font-bold;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	@apply text-[#2F4F4F] font-bold;
+	text-shadow: 2px 2px 4px rgba(213, 184, 149, 0.5);
 }
+
 /* For cards */
 .card {
-	@apply bg-white border border-gray-300 shadow-lg;
+	@apply bg-cardBgColour border-cardBorderColour text-cardTextColour shadow-lg p-3;
 }
 .card-header {
 	@apply text-gray-900;
@@ -34,7 +50,9 @@
 .card-description {
 	@apply text-gray-600;
 }
-
+.card-overlay {
+	@apply bg-sectionBgColour2;
+}
 /* for category nav */
 .category-nav {
 	@apply bg-gray-100 py-4;
@@ -50,4 +68,8 @@
 
 .category-item a.active {
 	@apply text-white bg-blue-600 hover:bg-blue-700;
+}
+/* \for footer */
+.footer {
+	@apply bg-navBg text-white;
 }
