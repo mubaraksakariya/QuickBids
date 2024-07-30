@@ -19,8 +19,35 @@
 .gradient-bg-right {
 	@apply bg-gradient-to-l from-black via-gray-500 to-transparent;
 }
-
 .text-visible {
 	@apply text-white font-bold;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+/* For cards */
+.card {
+	@apply bg-white border border-gray-300 shadow-lg;
+}
+.card-header {
+	@apply text-gray-900;
+}
+
+.card-description {
+	@apply text-gray-600;
+}
+
+/* for category nav */
+.category-nav {
+	@apply bg-gray-100 py-4;
+}
+
+.category-item {
+	@apply mx-2;
+}
+
+.category-item a {
+	@apply text-gray-700 hover:text-blue-600 px-4 py-2 rounded transition duration-200;
+}
+
+.category-item a.active {
+	@apply text-white bg-blue-600 hover:bg-blue-700;
 }

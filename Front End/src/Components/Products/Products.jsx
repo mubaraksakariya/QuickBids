@@ -21,7 +21,7 @@ function Products({ searchString, selectedCategory }) {
 				</div>
 			)}
 			{products?.map((item) => (
-				<div className='flex justify-center' key={item.id}>
+				<div className='flex justify-center pb-10' key={item.id}>
 					<Card product={item} />
 				</div>
 			))}

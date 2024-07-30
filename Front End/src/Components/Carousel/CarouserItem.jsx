@@ -13,7 +13,7 @@ function CarouselItem({ product, onClick }) {
 				onClick={() => onClick(product)}>
 				<div className='flex flex-col md:flex-row justify-center items-center w-full h-full'>
 					{/* gradient-bg-left, text-visible are custom classes */}
-					<div className='w-full h-full flex justify-center items-center md:w-2/5 gradient-bg-left text-white text-visible p-4'>
+					<div className='w-full h-full flex justify-center items-center md:w-[35%] gradient-bg-left text-white text-visible p-4'>
 						<div className='flex flex-col justify-center items-center'>
 							<div>
 								<h1 className='font-extrabold text-lg md:text-xl lg:text-2xl'>
@@ -22,7 +22,7 @@ function CarouselItem({ product, onClick }) {
 							</div>
 						</div>
 					</div>
-					<div className='w-full md:w-1/5 h-full bg-white flex justify-center items-center'>
+					<div className='w-full md:w-[30%] h-full bg-white flex justify-center items-center'>
 						<img
 							src={imageUrl}
 							alt={product.title}
@@ -30,7 +30,7 @@ function CarouselItem({ product, onClick }) {
 						/>
 					</div>
 					{/* gradient-bg-right, text-visible are custom classes */}
-					<div className='w-full h-full flex justify-center items-center md:w-2/5 gradient-bg-right text-white text-visible p-4'>
+					<div className='w-full h-full flex justify-center items-center md:w-[35%] gradient-bg-right text-white text-visible p-4'>
 						<div className='flex flex-col justify-center items-center'>
 							<div>
 								<p className='mt-2 md:mt-0 md:ml-4 md:block hidden'>

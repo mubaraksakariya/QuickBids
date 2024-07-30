@@ -12,6 +12,7 @@ const BidNowOption = ({
 	toggleBiddingWindow,
 	handleUpdateBid,
 	isUpdating,
+	isTimeOver,
 }) => {
 	return (
 		<div className='pb-2'>
@@ -22,9 +23,14 @@ const BidNowOption = ({
 					highestBid={highestBid}
 				/>
 				<button
+					disabled={isTimeOver}
 					onClick={toggleBiddingWindow}
 					type='button'
-					className='text-white bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-yellow-900'>
+					className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 ${
+						isTimeOver
+							? 'bg-button2Colour3'
+							: ' bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3'
+					}`}>
 					Bid Now
 				</button>
 			</section>

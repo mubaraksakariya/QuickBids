@@ -1,5 +1,5 @@
 import React from 'react';
-import TimeRemaining from '../../../Components/Products/HelperComponents/TimeRemaining';
+import TimeRemaining from '../../../Components/Products/Components/TimeRemaining';
 import useAuction from '../../../CustomHooks/useAuction';
 import useHighestBid from '../../../CustomHooks/useHighestBid';
 

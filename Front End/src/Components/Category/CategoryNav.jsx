@@ -3,31 +3,30 @@ import useCategories from '../../CustomHooks/useCategories';
 
 function CategoryNav({ setSelectedCategory }) {
 	const { data, error, isLoading } = useCategories();
+
 	const manageCategory = (e) => {
 		const id = e.target.dataset.value;
-		// console.log(id);
 		setSelectedCategory(id);
 	};
+
 	return (
 		<div className=''>
-			<nav className=' bg-themeBgColour dark:bg-gray-700'>
+			<nav className='bg-gray-100 dark:bg-gray-700'>
 				<div className='max-w-screen-xl px-4 py-3 mx-auto'>
 					<div className='flex justify-center'>
-						<ul className='flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm'>
+						<ul className='flex flex-wrap justify-center space-x-2 sm:space-x-4 md:space-x-8 text-xs sm:text-sm md:text-base'>
 							{data &&
-								data.map((category) => {
-									return (
-										<li key={category.id}>
-											<span
-												data-value={category.id}
-												onClick={manageCategory}
-												className='text-gray-900 dark:text-white hover:underline cursor-pointer font-bold'
-												aria-current='page'>
-												{category.name}
-											</span>
-										</li>
-									);
-								})}
+								data.map((category) => (
+									<li key={category.id}>
+										<span
+											data-value={category.id}
+											onClick={manageCategory}
+											className='text-gray-900 dark:text-white hover:underline cursor-pointer font-bold transition-colors duration-200 ease-in-out hover:text-blue-600 dark:hover:text-blue-400'
+											aria-current='page'>
+											{category.name}
+										</span>
+									</li>
+								))}
 						</ul>
 					</div>
 				</div>
