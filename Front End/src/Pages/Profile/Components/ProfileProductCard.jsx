@@ -23,7 +23,7 @@ function ProfileProductCard({ product }) {
 		console.log(highestBidData);
 	};
 	return (
-		<div className=' max-w-[20rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
+		<div className='card  max-w-[20rem] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
 			<div
 				className='w-full aspect-video overflow-hidden cursor-pointer'
 				onClick={manageProductOpen}>
@@ -62,7 +62,10 @@ function ProfileProductCard({ product }) {
 							<p>{highestBidData?.message}</p>
 						)}
 					</div>
-					<TimeRemaining bidEndTime={auction?.end_time} />
+					<TimeRemaining
+						bidEndTime={auction?.end_time}
+						timerEnded={() => {}}
+					/>
 				</div>
 			</div>
 		</div>

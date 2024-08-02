@@ -16,12 +16,14 @@ function Home() {
 	return (
 		<div className='full-page'>
 			<NavBar setSearchSTring={setSearchSTring} />
-			<HomeCarousel />
-			<CategoryNav setSelectedCategory={setSelectedCategory} />
-			<Products
-				searchString={searchString}
-				selectedCategory={selectedCategory}
-			/>
+			<div className=' min-h-[80dvh]'>
+				{!searchString && <HomeCarousel />}
+				<CategoryNav setSelectedCategory={setSelectedCategory} />
+				<Products
+					searchString={searchString}
+					selectedCategory={selectedCategory}
+				/>
+			</div>
 			<Footer />
 		</div>
 	);

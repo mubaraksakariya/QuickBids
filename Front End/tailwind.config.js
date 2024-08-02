@@ -11,8 +11,16 @@ export default {
 				navBg: '#2F4F4F',
 				navIcon: '#d8e3dc',
 				mainBgColour: '#F5F5F5',
-				sectionBgColour1: '#F5F5DC',
-				sectionBgColour2: '#d8e3dc',
+				sectionBgColour1: '#F5F5DC', // Beige
+				sectionBgColour2: '#D8E3DC', // Sage Green
+				sectionBgColour3: '#E8F0F2', // Light Blue
+				sectionBgColour4: '#FFFAF0', // Floral White
+				sectionBgColour5: '#FFF5EE', // Seashell
+				sectionBgColour6: '#F0FFF0', // Honeydew
+				sectionBgColour7: '#F5F5F5', // White Smoke
+				sectionBgColour8: '#FAFAD2', // Light Goldenrod Yellow
+				sectionBgColour9: '#E6E6FA', // Lavender
+				sectionBgColour10: '#FFF0F5', // Lavender Blush
 
 				headerColour: '#333333',
 				bodyTextColour: '#333333',

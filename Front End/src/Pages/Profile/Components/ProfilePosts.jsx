@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import EmptyProfilePost from './EmptyProfilePost';
 import useProfileProducts from '../../../CustomHooks/userProfileProducts';
 import ProfileProductCard from './ProfileProductCard';
@@ -11,7 +11,7 @@ function ProfilePosts() {
 	return (
 		<>
 			{profileProducts.length > 0 ? (
-				<div className=' flex flex-wrap gap-4 justify-center'>
+				<div className=' flex flex-wrap gap-4 justify-center py-5'>
 					{/*  <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-auto  gap-4 justify-center'> */}
 					{profileProducts.map((product) => (
 						<ProfileProductCard

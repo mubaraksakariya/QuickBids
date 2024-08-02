@@ -17,12 +17,15 @@
 .full-page {
 	@apply min-h-[100dvh] w-full flex flex-col bg-sectionBgColour1;
 }
-.section1 {
+.content-section {
+	@apply min-h-[80dvh] max-h-[80dvh];
+}
+/* .section1 {
 	@apply bg-sectionBgColour1;
 }
 .section2 {
 	@apply bg-sectionBgColour2;
-}
+} */
 
 /* Custom gradient backgrounds for CarouselItem component */
 
@@ -69,6 +72,11 @@
 .category-item a.active {
 	@apply text-white bg-blue-600 hover:bg-blue-700;
 }
+/* for profile page */
+.big-button {
+	@apply bg-[#F5F5DC] text-[#2F4F4F] border border-black rounded-lg p-2 md:w-[15rem] md:hover:bg-[#E0E0B8] md:active:bg-[#CACAA4] hover:text-[#2F4F4F] active:text-[#2F4F4F];
+}
+
 /* \for footer */
 .footer {
 	@apply bg-navBg text-white;

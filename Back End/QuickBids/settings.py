@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'Auction',
     'Bids',
     'Wallet',
+    'Payments',
 ]
 
 MIDDLEWARE = [
@@ -164,32 +165,7 @@ REST_FRAMEWORK = {
 # Allow all origins for development purposes
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Optional: Specify allowed origins explicitly for production
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:5173',
-#     'https://example.com',
-# ]
 
-# Optional: Allow specific headers and methods
-# CORS_ALLOW_HEADERS = [
-#     'accept',
-#     'accept-encoding',
-#     'authorization',
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with',
-# ]
-# CORS_ALLOW_METHODS = [
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-# ]
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=100),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -217,3 +193,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_APP_PASSWORD')
+
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')

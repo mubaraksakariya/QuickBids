@@ -24,6 +24,7 @@ from rest_framework.routers import DefaultRouter
 
 from Auction.views import AuctionViewSet
 from Customer.views import UserViewSet
+from Payments.views import PaymentViewSet
 from Product.views import ProductViewSet, CategoryViewSet, ProductImageViewSet
 from Bids.views import BidViewSet, ProxyBidViewSet
 from Wallet.views import TransactionViewSet, WalletViewSet
@@ -38,6 +39,7 @@ router.register(r'bids', BidViewSet)
 router.register(r'proxy-bids', ProxyBidViewSet)
 router.register(r'wallet', WalletViewSet, basename='wallet')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
+router.register(r'payments', PaymentViewSet, basename='payments')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

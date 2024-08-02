@@ -65,7 +65,7 @@ function App() {
 								<Navigate
 									to='/login'
 									replace={true}
-									state={{ from: '/wallet/' }}
+									state={{ from: '/profile/wallet/' }}
 								/>
 							),
 							// loader: Loader,

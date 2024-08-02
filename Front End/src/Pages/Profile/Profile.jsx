@@ -16,10 +16,9 @@ function Profile() {
 	return (
 		<div className='full-page'>
 			<NoneHomeNavbar />
-			<div className='md:flex'>
+			<div className='md:flex py-4'>
 				<div className='flex-[4] flex flex-col justify-center items-center gap-2 h-auto max-h-[55dvh]'>
 					<div className='overflow-hidden rounded-full flex justify-center items-center w-auto max-w-60 '>
-						{/* <img className=' w-full' src='/quick bids photos1.png' alt='' /> */}
 						<img
 							className=' w-full'
 							src={baseUrl + user.profile_picture}
@@ -109,7 +108,7 @@ function Profile() {
 						/>
 					</div>
 				</div>
-				<div className='flex-[8] flex flex-col md:max-h-[87dvh] md:overflow-y-scroll py-3'>
+				<div className='flex-[8] flex flex-col md:max-h-[80dvh] md:overflow-y-scroll py-3'>
 					<ProfilePosts />
 				</div>
 			</div>

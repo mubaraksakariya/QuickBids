@@ -19,6 +19,7 @@ function CreateProduct() {
 
 	const handleSubmit = () => {
 		createProduct(formState, validate, navigate);
+		// console.log(formState);
 	};
 
 	return (

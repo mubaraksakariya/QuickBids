@@ -17,7 +17,9 @@ function PriceInput({
 
 	const validatePrices = () => {
 		if (Number(internalBuyNowPrize) <= Number(internalInitialPrize)) {
-			setError('Initial prize should  be greater than buy now prize !!');
+			setError(
+				'Initial prize should not  be greater than buy now prize !!'
+			);
 			// setInternalBuyNowPrize(Number(internalInitialPrize) + 1);
 		} else {
 			setError('');

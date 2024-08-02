@@ -1,12 +1,22 @@
+from decimal import Decimal
+import razorpay
+import hmac
+import hashlib
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+
+from Payments.models import Payment
 from .models import Wallet, Transaction
 from .serializers import WalletSerializer, TransactionSerializer
 
+from django.conf import settings
 
+# Initialize Razorpay client
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
 class WalletViewSet(viewsets.ModelViewSet):
@@ -21,6 +31,49 @@ class WalletViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(wallet)
         return Response(serializer.data)
         
+    # success funtion for topup of wallet
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='payment-success')
+    def payment_success(self, request):
+        try:
+            razorpay_payment_id = request.data.get('razorpay_payment_id')
+            razorpay_order_id = request.data.get('razorpay_order_id')
+            razorpay_signature = request.data.get('razorpay_signature')
+
+            generated_signature = hmac.new(
+                key=bytes(settings.RAZORPAY_KEY_SECRET, 'utf-8'),
+                msg=bytes(f"{razorpay_order_id}|{razorpay_payment_id}", 'utf-8'),
+                digestmod=hashlib.sha256
+            ).hexdigest()
+
+            payment_details = client.payment.fetch(razorpay_payment_id)
+            amount=payment_details['amount']
+            if generated_signature == razorpay_signature:
+                # Payment is successful and verified
+                Payment.objects.create(
+                    user=request.user,
+                    amount=payment_details['amount'],  # Corrected syntax for fetching amount
+                    transaction_type='RAZORPAY',
+                    transaction_id=razorpay_payment_id,
+                )
+
+                wallet = Wallet.objects.get(user=request.user)
+                wallet.balance += Decimal(amount) / 100 
+                wallet.save()
+                transaction = Transaction.objects.create(
+                    wallet = wallet,
+                    amount=amount,
+                    transaction_type = 'DEPOSIT',
+                    transaction_id=razorpay_payment_id,
+                    description = f'{wallet.user} deposited {amount} into their wallet'
+                )
+                return Response({'status': 'success','balance':wallet.balance}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'failed', 'message': 'Invalid signature'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(str(e))
+            return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

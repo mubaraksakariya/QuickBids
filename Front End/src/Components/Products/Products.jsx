@@ -20,11 +20,22 @@ function Products({ searchString, selectedCategory }) {
 					Error loading products
 				</div>
 			)}
-			{products?.map((item) => (
-				<div className='flex justify-center pb-10' key={item.id}>
-					<Card product={item} />
+			{products?.length > 0 ? (
+				products?.map((item) => <Card product={item} key={item.id} />)
+			) : (
+				<div className=' w-full min-h-[20rem] flex justify-center items-center'>
+					<div className=' flex-grow'>
+						<div className=''>
+							<h1 className='text-3xl text-center'>
+								No products available at the moment
+							</h1>
+						</div>
+						<div className=''>
+							<p className=' text-center'>Come back later</p>
+						</div>
+					</div>
 				</div>
-			))}
+			)}
 		</div>
 	);
 }
