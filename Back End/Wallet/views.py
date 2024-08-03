@@ -47,18 +47,19 @@ class WalletViewSet(viewsets.ModelViewSet):
             ).hexdigest()
 
             payment_details = client.payment.fetch(razorpay_payment_id)
-            amount=payment_details['amount']
+            amount = Decimal(payment_details['amount'])/100
+            
             if generated_signature == razorpay_signature:
                 # Payment is successful and verified
                 Payment.objects.create(
                     user=request.user,
-                    amount=payment_details['amount'],  # Corrected syntax for fetching amount
+                    amount=amount,
                     transaction_type='RAZORPAY',
                     transaction_id=razorpay_payment_id,
                 )
 
                 wallet = Wallet.objects.get(user=request.user)
-                wallet.balance += Decimal(amount) / 100 
+                wallet.balance += amount
                 wallet.save()
                 transaction = Transaction.objects.create(
                     wallet = wallet,

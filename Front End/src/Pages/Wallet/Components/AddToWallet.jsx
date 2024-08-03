@@ -7,7 +7,7 @@ function AddToWallet({ setIsAddToWallet }) {
 	const [amount, setAmount] = useState(0);
 
 	return (
-		<div className='absolute inset-0 z-50 bg-black bg-opacity-50 flex flex-col justify-center items-center'>
+		<div className='fixed inset-0 z-50 bg-black bg-opacity-50 flex flex-col justify-center items-center'>
 			<div className=' bg-sectionBgColour2 shadow-lg rounded-lg'>
 				<div className='flex flex-col gap-5 justify-center items-center relative p-10'>
 					<h2 className='text-xl font-semibold mb-2'>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
 import useWalletTransactions from '../../CustomHooks/useWalletTransactions';
 import TransactionItem from './Components/TransactionItem';
@@ -13,12 +13,12 @@ function Wallet() {
 	const {
 		data: transactions,
 		error: transactionsError,
-		isLading: isTransactionsLoading,
+		isLoading: isTransactionsLoading,
 	} = useWalletTransactions();
 	const {
 		data: wallet,
 		error: walletError,
-		isLading: isWalletLoading,
+		isLoading: isWalletLoading,
 	} = useWallet();
 
 	return (
@@ -27,24 +27,28 @@ function Wallet() {
 			<div className='sm:flex sm:justify-center content-section'>
 				<div className='flex flex-col sm:flex-row p-5 sm:w-[90%]'>
 					<div className='flex-[8] sm:order-1 order-2'>
-						<div className=' pb-4'>
-							<h1 className=' text-xl'>Wallet history</h1>
-							<p className=' text-xs'>
-								last payment date :{' '}
-								{transactions &&
-									formatDate(
-										transactions[transactions.length - 1]
-											.timestamp
-									)}
+						<div className='pb-4'>
+							<h1 className='text-xl'>Wallet history</h1>
+							<p className='text-xs'>
+								Last payment date:{' '}
+								{isTransactionsLoading ? (
+									<span>Loading...</span>
+								) : transactions && transactions[0] ? (
+									formatDate(transactions[0].timestamp)
+								) : (
+									'No transactions available'
+								)}
 							</p>
 						</div>
 						{transactionsError && (
 							<span>{transactionsError.message}</span>
 						)}
-						{isTransactionsLoading && <span>Loading..</span>}
-						<div className='flex flex-col h-64 overflow-y-auto'>
+						{isTransactionsLoading && (
+							<span>Loading transactions...</span>
+						)}
+						<div className='flex gap-4 flex-col md:h-[90%] h-[50dvh] overflow-y-auto'>
 							{transactions?.length > 0 ? (
-								transactions?.map((transaction) => {
+								transactions.map((transaction) => {
 									return (
 										<TransactionItem
 											transaction={transaction}
@@ -60,15 +64,19 @@ function Wallet() {
 							)}
 						</div>
 					</div>
-					<div className='flex-[4]  sm:order-2 order-1 flex sm:justify-end justify-center'>
+					<div className='flex-[4] sm:order-2 order-1 flex sm:justify-end justify-center'>
 						<div>
 							<div className='w-52 aspect-video flex flex-col gap-2 justify-center items-center bg-sectionBgColour2'>
-								<span>{wallet?.balance}</span>
-								<span className=' text-xs'>
+								{isWalletLoading ? (
+									<span>Loading balance...</span>
+								) : (
+									<span>{wallet?.balance}</span>
+								)}
+								<span className='text-xs'>
 									Available Balance
 								</span>
 							</div>
-							<div className='mt-4 flex justify-center '>
+							<div className='mt-4 flex justify-center'>
 								<ThemeButtons
 									text='Balance'
 									onclick={() =>
@@ -85,12 +93,12 @@ function Wallet() {
 											<path
 												strokeLinecap='round'
 												strokeLinejoin='round'
-												d='m4.5 18.75 7.5-7.5 7.5 7.5'
+												d='M4.5 18.75l7.5-7.5 7.5 7.5'
 											/>
 											<path
 												strokeLinecap='round'
 												strokeLinejoin='round'
-												d='m4.5 12.75 7.5-7.5 7.5 7.5'
+												d='M4.5 12.75l7.5-7.5 7.5 7.5'
 											/>
 										</svg>
 									}

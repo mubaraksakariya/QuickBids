@@ -14,15 +14,17 @@ function TransactionItem({ transaction }) {
 					})}
 				</p>
 				<p className='text-lg font-bold text-gray-800'>
-					₹{transaction.amount / 100}
+					₹{transaction.amount}
 				</p>
 				<p className='text-sm text-gray-600 capitalize'>
 					{transaction.transaction_type.toLowerCase()}
 				</p>
 			</div>
 			<div className='text-right'>
-				<p className='text-sm text-gray-700 font-medium'>
-					{user?.first_name} {user?.last_name}
+				<p
+					className='text-sm text-gray-700 font-medium'
+					title={user?.email}>
+					{user?.first_name}
 				</p>
 			</div>
 		</div>

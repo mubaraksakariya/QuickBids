@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -6,9 +7,14 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from Auction.models import Auction
 from Customer.models import CustomUser
+from Wallet.models import Transaction, Wallet
 from .models import Bid, ProxyBid
 from .serializers import BidSerializer, ProxyBidSerializer
+import logging
 
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 class BidViewSet(viewsets.ModelViewSet):
     queryset = Bid.objects.filter(is_deleted=False)
@@ -21,22 +27,53 @@ class BidViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
-
+    
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
             user = request.user
             auction_id = request.data.get('auction_id')
-            amount = request.data.get('amount')
+            amount = Decimal(request.data.get('amount'))
 
             # Fetch the auction details
             auction = Auction.objects.get(id=auction_id)
 
             # Check the existing highest bid
             highest_bid = Bid.objects.filter(auction=auction).order_by('-amount').first()
-            if highest_bid and float(amount) <= highest_bid.amount:
+            if highest_bid and amount <= highest_bid.amount:
+                transaction.set_rollback(True)
                 return Response(
                     {'detail': 'Your bid must be higher than the current highest bid.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if amount < auction.initial_prize:
+                transaction.set_rollback(True)
+                return Response(
+                    {'detail': 'Your bid must be higher or equal to the initial prize.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            # Refund the highest bidder and update the wallet log
+            if highest_bid:
+                highest_bidder = highest_bid.user
+                highest_bidder_wallet = Wallet.objects.get(user=highest_bidder)
+                
+                Transaction.objects.create(
+                    wallet = highest_bidder_wallet,
+                    amount = highest_bid.amount,
+                    transaction_type = 'REFUND',
+                    transaction_id = highest_bid.id,
+                )
+                
+                highest_bidder_wallet.balance += highest_bid.amount
+                highest_bidder_wallet.save()
+
+
+            # Check for balance for new bidder
+            new_bidder_wallet = Wallet.objects.get(user=user)
+            if new_bidder_wallet.balance < amount:
+                transaction.set_rollback(True)
+                return Response(
+                    {'detail': 'Insufficient balance in wallet, please top up your wallet and retry.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -46,14 +83,27 @@ class BidViewSet(viewsets.ModelViewSet):
                 user=user,
                 amount=amount
             )
+            # Charge the new bidder
+            new_bidder_wallet.balance -= amount
+            new_bidder_wallet.save()
+            
+            # update the wallet log
+            Transaction.objects.create(
+                wallet = new_bidder_wallet,
+                amount = -1 * amount,
+                transaction_type = 'PAYMENT',
+                transaction_id = bid.id,
+            )
 
             return Response(BidSerializer(bid).data, status=status.HTTP_201_CREATED)
 
+        except Auction.DoesNotExist:
+            return Response({'detail': 'Auction not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Wallet.DoesNotExist:
+            return Response({'detail': 'Wallet not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             transaction.set_rollback(True)
-            print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
 
 
     @action(detail=True, methods=['get'], url_path='highest-bid')

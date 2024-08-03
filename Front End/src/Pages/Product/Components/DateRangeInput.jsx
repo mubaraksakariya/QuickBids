@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { formatLocalDateTime } from '../Utils/helpers';
 
 function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 	const [startDateError, setStartDateError] = useState('');
 	const [endDateError, setEndDateError] = useState('');
-
 	useEffect(() => {
 		const today = new Date();
-		const formattedToday = today.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
+		const formattedToday = formatLocalDateTime(today);
 		setStartDate(formattedToday);
 
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
-		const formattedTomorrow = tomorrow.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
+		const formattedTomorrow = formatLocalDateTime(tomorrow);
 		setEndDate(formattedTomorrow);
-	}, []); // Empty dependency array ensures this runs only once
+	}, []);
 
 	// Validation functions
 	const validateStartDate = (date) => {

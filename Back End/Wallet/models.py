@@ -19,9 +19,10 @@ class Transaction(models.Model):
         ('PAYMENT', 'Payment'),
         ('TOPUP', 'Top-Up'),
         ('TRANSFER', 'Transfer'),
+        ('REFUND','Refund')
     ]
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPE_CHOICES)
-    transaction_id = models.CharField(max_length=255, null=True, blank=True) # Optional external transaction ID
+    transaction_id = models.CharField(max_length=255, null=True, blank=True) # Optional external transaction ID, can be bid_id for refund and paymen or 
     receiver_wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL, null=True, blank=True,related_name='received_transfers')  # For transfers or payments
     timestamp = models.DateTimeField(auto_now_add=True)
     description = models.TextField(null=True, blank=True)

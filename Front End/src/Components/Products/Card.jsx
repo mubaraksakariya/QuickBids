@@ -46,9 +46,6 @@ function Card({ product }) {
 				setHighestBid(response);
 				toggleBiddingWindow();
 			},
-			onError: (error) => {
-				console.error('Failed to update bid:', error);
-			},
 		});
 	};
 

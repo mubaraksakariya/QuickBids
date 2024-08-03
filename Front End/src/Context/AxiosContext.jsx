@@ -61,7 +61,10 @@ const createApi = () => {
 					return Promise.reject(err);
 				}
 			}
-			return Promise.reject(error);
+			// Extract error message from response
+			const errorMessage =
+				error.response?.data?.detail || 'An error occurred';
+			return Promise.reject(new Error(errorMessage));
 		}
 	);
 

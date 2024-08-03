@@ -14,6 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv # type: ignore
+
 load_dotenv()  # Load environment variables from .env file
 
 # print(f"EMAIL_HOST_USER: {os.getenv('TEST')}")
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'rest_framework',
+    'channels',
     'Customer',
     'Product',
     'Auction',
@@ -196,3 +198,20 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_APP_PASSWORD')
 
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')
+
+# celery setting
+# from celery.schedules import crontab
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+# CELERY_BEAT_SCHEDULE = {
+#     'check-ended-auctions-every-minute': {
+#         'task': 'Auction.tasks.check_ended_auctions',
+#         'schedule': crontab(minute='*/1'),  # Adjust the schedule as needed
+#     },
+# }
