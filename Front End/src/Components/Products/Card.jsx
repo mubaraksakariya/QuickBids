@@ -5,6 +5,7 @@ import TimeRemaining from './Components/TimeRemaining';
 import useAuction from '../../CustomHooks/useAuction';
 import useHighestBid from '../../CustomHooks/useHighestBid';
 import useUpdateBid from '../../CustomHooks/useUpdateBid';
+import useWebSocket from '../../CustomHooks/useWebSocket';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
@@ -57,6 +58,45 @@ function Card({ product }) {
 		e.preventDefault();
 		console.log(product);
 	};
+
+	//For web socket
+	const webSocketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL;
+	const socketUrl = `${webSocketBaseUrl}/auction/${auction?.id}/`;
+	const socketKey = `auction-${auction?.id}`;
+
+	// const handleOpen = () => {
+	// 	console.log(`Connected to auction ${auction?.id}`);
+	// };
+
+	// const handleClose = () => {
+	// 	console.log(`Disconnected from auction ${auction?.id}`);
+	// };
+
+	// const handleError = (error) => {
+	// 	console.log('WebSocket error:', error);
+	// };
+	// WebSocket message handler
+	const handleMessage = (event) => {
+		const message = JSON.parse(event.data);
+		const data = message.data;
+		console.log(data);
+		const new_bid = data.bid;
+		console.log(highestBid);
+
+		if (data.message_type == 'bid_update' && new_bid) {
+			setHighestBid(new_bid);
+		}
+	};
+
+	// Use the WebSocket hook
+	useWebSocket(
+		socketKey,
+		socketUrl,
+		handleMessage
+		// handleOpen,
+		// handleClose,
+		// handleError
+	);
 
 	return (
 		// card, card-header, card-description are custom classes

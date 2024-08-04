@@ -3,6 +3,7 @@ import useApi from '../Context/AxiosContext';
 
 const fetchAuctions = async (api, productId) => {
 	const response = await api.get(`/api/auctions/by-product/${productId}`);
+
 	// console.log(response.data);
 	return response.data;
 };

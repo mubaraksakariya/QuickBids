@@ -10,7 +10,7 @@ class Bid(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username} - {self.amount}"
+        return f"{self.user.email} - {self.amount}"
 
 class ProxyBid(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)

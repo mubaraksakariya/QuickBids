@@ -24,3 +24,16 @@ class AuctionViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Auction.DoesNotExist:
             return Response({'detail': 'Auction not found for this product'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=['get'], url_path='all-auctions')
+    def get_all_auctions(self, request):
+        active_auctions = Auction.objects.filter(is_active=False, is_deleted=False)
+        serializer = AuctionSerializer(active_auctions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='active-auctions')
+    def get_active_auctions(self, request):
+        active_auctions = Auction.objects.filter(is_active=True, is_deleted=False)
+        serializer = AuctionSerializer(active_auctions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
