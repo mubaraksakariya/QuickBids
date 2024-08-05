@@ -16,4 +16,3 @@ class Auction(models.Model):
     
     def __str__(self):
         return f"Auction for {self.product.name}"
-

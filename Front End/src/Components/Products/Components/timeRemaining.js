@@ -1,5 +1,8 @@
 function calculateTimeLeft(bidEndTime) {
-	const difference = new Date(bidEndTime) - new Date();
+	const endTime = new Date(bidEndTime);
+	const now = new Date(); // Current time is in UTC by default
+
+	const difference = endTime - now;
 	let timeLeft = {};
 
 	if (difference > 0) {
@@ -33,7 +36,7 @@ function getTimeRemaining(bidEndTime, callback) {
 		}
 	}, 1000);
 
-	return () => clearInterval(timer); // Return a function to clear the interval
+	return () => clearInterval(timer);
 }
 
 export { getTimeRemaining };

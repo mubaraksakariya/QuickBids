@@ -6,12 +6,14 @@ import useAuction from '../../CustomHooks/useAuction';
 import useHighestBid from '../../CustomHooks/useHighestBid';
 import useUpdateBid from '../../CustomHooks/useUpdateBid';
 import useWebSocket from '../../CustomHooks/useWebSocket';
+import { useSelector } from 'react-redux';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
 	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
 	const [highestBid, setHighestBid] = useState(null);
 	const [highestBidError, setHighestBidError] = useState(null);
+	const user = useSelector((state) => state.auth.user);
 
 	// get Auction detail for this product
 	const {
@@ -56,7 +58,7 @@ function Card({ product }) {
 
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		console.log(product);
+		console.log(auction);
 	};
 
 	//For web socket

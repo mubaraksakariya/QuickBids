@@ -6,4 +6,14 @@ const formatLocalDateTime = (date) => {
 	const minutes = String(date.getMinutes()).padStart(2, '0');
 	return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
-export { formatLocalDateTime };
+
+function formatUTCDateTime(date) {
+	// Ensure the date is a Date object
+	if (!(date instanceof Date)) {
+		throw new Error('Input must be a Date object');
+	}
+	// Convert to ISO 8601 string and slice to 'YYYY-MM-DDTHH:MM' format
+	return date.toISOString().slice(0, 16);
+}
+
+export { formatLocalDateTime, formatUTCDateTime };

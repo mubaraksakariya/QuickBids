@@ -53,13 +53,11 @@ function CreateProduct() {
 						error={errors.title}
 					/>
 					<DateRangeInput
-						startDate={formState.startDate}
 						setStartDate={(value) =>
 							handleChange({
 								target: { name: 'startDate', value },
 							})
 						}
-						endDate={formState.endDate}
 						setEndDate={(value) =>
 							handleChange({ target: { name: 'endDate', value } })
 						}

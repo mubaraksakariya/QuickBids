@@ -76,7 +76,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             }
             auction_serializer = AuctionSerializer(data=auction_data)
             auction_serializer.is_valid(raise_exception=True)
-            print(auction_serializer)
+            # print(auction_serializer)
             auction_serializer.save()
 
             return Response(self.get_serializer(product).data, status=status.HTTP_201_CREATED)
@@ -111,11 +111,16 @@ class ProductViewSet(viewsets.ModelViewSet):
                 Q(title__icontains=search_query) |
                 Q(description__icontains=search_query)
             )
-
+ 
         # Exclude the user's own products if logged in
         if not request.user.is_anonymous:
             queryset = queryset.exclude(owner=request.user)
-
+        # filter out products for not winner products
+        queryset = queryset.filter(
+            # auction__is_active=True, 
+            auction__is_deleted=False,
+            auction__winning_bid__isnull=True
+        )
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -125,6 +130,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset = Product.objects.filter(is_deleted=False).order_by('-created_at')
         if not request.user.is_anonymous:
             queryset = queryset.exclude(owner=request.user)
+        queryset = queryset.filter(
+            # auction__is_active=True, 
+            auction__is_deleted=False,
+            auction__winning_bid__isnull=True
+        )
         serializer = self.get_serializer(queryset[:4], many=True)
         return Response(serializer.data)
 

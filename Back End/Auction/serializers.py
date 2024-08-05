@@ -17,4 +17,6 @@ class AuctionSerializer(serializers.ModelSerializer):
             'is_deleted',
             'created_at',
             'updated_at',
+            'winner',
+            'winning_bid',
         ]

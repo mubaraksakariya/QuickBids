@@ -83,7 +83,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        return Transaction.objects.filter(wallet__user=self.request.user)
+        return Transaction.objects.filter(wallet__user=self.request.user).order_by('-timestamp')
 
     def list(self, request, *args, **kwargs):
         wallet_transactions = self.get_queryset()

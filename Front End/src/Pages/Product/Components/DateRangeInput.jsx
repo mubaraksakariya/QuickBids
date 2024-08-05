@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { formatLocalDateTime } from '../Utils/helpers';
+import { formatLocalDateTime, formatUTCDateTime } from '../Utils/helpers';
 
-function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
+function DateRangeInput({ setStartDate, setEndDate }) {
+	const [localStartDate, setLocalStartDate] = useState('');
+	const [localEndDate, setLocalEndDate] = useState('');
 	const [startDateError, setStartDateError] = useState('');
 	const [endDateError, setEndDateError] = useState('');
+
 	useEffect(() => {
 		const today = new Date();
 		const formattedToday = formatLocalDateTime(today);
-		setStartDate(formattedToday);
+		setLocalStartDate(formattedToday);
+		setStartDate(formatUTCDateTime(today));
 
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		const formattedTomorrow = formatLocalDateTime(tomorrow);
-		setEndDate(formattedTomorrow);
+		setLocalEndDate(formattedTomorrow);
+		setEndDate(formatUTCDateTime(tomorrow));
 	}, []);
 
 	// Validation functions
@@ -31,7 +36,7 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 		if (!date) {
 			return 'End date and time are required';
 		}
-		if (date <= startDate) {
+		if (date <= localStartDate) {
 			return 'End date and time must be after start date and time';
 		}
 		return '';
@@ -43,13 +48,17 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 		const error = validateStartDate(newStartDate);
 		setStartDateError(error);
 		if (!error) {
-			setStartDate(newStartDate);
+			setLocalStartDate(newStartDate);
+
+			const utcStartDate = new Date(newStartDate).toISOString();
+			setStartDate(utcStartDate);
 
 			// Ensure end date is at least one day after new start date
 			const nextDay = new Date(newStartDate);
 			nextDay.setDate(nextDay.getDate() + 1);
-			const formattedNextDay = nextDay.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
-			setEndDate(formattedNextDay);
+			const formattedNextDay = formatLocalDateTime(nextDay);
+			setLocalEndDate(formattedNextDay);
+			setEndDate(formatUTCDateTime(nextDay));
 			setEndDateError(validateEndDate(formattedNextDay));
 		}
 	};
@@ -59,7 +68,9 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 		const error = validateEndDate(newEndDate);
 		setEndDateError(error);
 		if (!error) {
-			setEndDate(newEndDate);
+			setLocalEndDate(newEndDate);
+			const utcEndDate = new Date(newEndDate).toISOString();
+			setEndDate(utcEndDate);
 		}
 	};
 
@@ -72,10 +83,10 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 				<input
 					type='datetime-local'
 					className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-					value={startDate}
+					value={localStartDate}
 					onChange={handleStartDateChange}
 					onBlur={() =>
-						setStartDateError(validateStartDate(startDate))
+						setStartDateError(validateStartDate(localStartDate))
 					}
 					min={new Date().toISOString().slice(0, 16)}
 				/>
@@ -92,10 +103,12 @@ function DateRangeInput({ startDate, setStartDate, endDate, setEndDate }) {
 				<input
 					type='datetime-local'
 					className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-					value={endDate}
+					value={localEndDate}
 					onChange={handleEndDateChange}
-					onBlur={() => setEndDateError(validateEndDate(endDate))}
-					min={startDate} // Set min attribute to the start date and time
+					onBlur={() =>
+						setEndDateError(validateEndDate(localEndDate))
+					}
+					min={localStartDate} // Set min attribute to the start date and time
 				/>
 				{endDateError && (
 					<p className='text-red-500 text-sm mt-1'>{endDateError}</p>
