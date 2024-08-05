@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import CurrentBid from './CurrentBid';
 import TimeRemaining from './TimeRemaining';
 import timeAgo from '../../Utilities/timeAgo';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const BiddingOverlay = ({
 	product,
@@ -15,9 +17,11 @@ const BiddingOverlay = ({
 }) => {
 	const overlayRef = useRef(null);
 	const [inputError, setInputError] = useState();
-
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const navigate = useNavigate();
 	const manageSubmi = (e) => {
 		e.preventDefault();
+		if (!isAuthenticated) navigate('/login/');
 		const newBidAmount = e.target.newBIdInput.value;
 		if (highestBid && Number(newBidAmount) <= Number(highestBid.amount)) {
 			console.log('New bid must be higher than the current highest bid.');

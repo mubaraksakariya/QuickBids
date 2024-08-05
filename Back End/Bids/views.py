@@ -121,7 +121,34 @@ class BidViewSet(viewsets.ModelViewSet):
             print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+    @action(detail=False, methods=['get'], url_path='highest-bid-by-user')
+    def highest_bid_by_user(self, request):
+        auction_id = request.query_params.get('auction_id')
+        user_id = request.query_params.get('user_id')
+        
+        if not auction_id or not user_id:
+            return Response({'detail': 'Both auction_id and user_id are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            auction = Auction.objects.get(id=auction_id)
+            user = CustomUser.objects.get(id=user_id)
+            
+            highest_bid = Bid.objects.filter(auction=auction, user=user).order_by('-amount').first()
+            
+            if highest_bid:
+                return Response(BidSerializer(highest_bid).data)
+            else:
+                return Response({'message': 'No bids'}, status=status.HTTP_200_OK)
+        
+        except Auction.DoesNotExist:
+            return Response({'detail': 'Auction not found'}, status=status.HTTP_404_NOT_FOUND)
+        except CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(str(e))
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
 
 class ProxyBidViewSet(viewsets.ModelViewSet):
     queryset = ProxyBid.objects.filter(is_deleted=False)

@@ -7,6 +7,9 @@ import useHighestBid from '../../CustomHooks/useHighestBid';
 import useUpdateBid from '../../CustomHooks/useUpdateBid';
 import useWebSocket from '../../CustomHooks/useWebSocket';
 import { useSelector } from 'react-redux';
+import AuctionStatusIndicator from './Components/AuctionStatusIndicator';
+import AuctionUserIndicator from './Components/AuctionUserIndicator';
+import useUserById from '../../CustomHooks/useUserById';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
@@ -31,6 +34,13 @@ function Card({ product }) {
 
 	// to update auction
 	const { mutate: updateBid, isLoading: isUpdating } = useUpdateBid();
+
+	// get highest bidder user
+	const {
+		data: highestBidder,
+		error: highestBidderError,
+		isLoading: highestBidderLoading,
+	} = useUserById(highestBid?.user);
 
 	useEffect(() => {
 		if (highestBidData) setHighestBid(highestBidData);
@@ -81,10 +91,8 @@ function Card({ product }) {
 	const handleMessage = (event) => {
 		const message = JSON.parse(event.data);
 		const data = message.data;
-		console.log(data);
+		// console.log(data);
 		const new_bid = data.bid;
-		console.log(highestBid);
-
 		if (data.message_type == 'bid_update' && new_bid) {
 			setHighestBid(new_bid);
 		}
@@ -102,8 +110,22 @@ function Card({ product }) {
 
 	return (
 		// card, card-header, card-description are custom classes
-		<div className='flex justify-center pb-10'>
-			<div className='card max-w-sm  flex flex-col'>
+		<div className='flex justify-center pb-10 relative'>
+			<div className='absolute z-50 right-2'>
+				<AuctionStatusIndicator
+					isActive={auction?.is_active}
+					isTimeOver={isTimeOver}
+				/>
+			</div>
+			<div className='card max-w-sm  flex flex-col relative'>
+				<div className='absolute z-50 left-0 bottom-0'>
+					<AuctionUserIndicator
+						currentUser={user}
+						highestBidder={highestBidder}
+						auction={auction}
+						highestBid={highestBid}
+					/>
+				</div>
 				<div
 					className='w-full aspect-video overflow-hidden cursor-pointer rounded-t-lg'
 					onClick={manageProductOpen}>

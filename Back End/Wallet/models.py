@@ -19,7 +19,9 @@ class Transaction(models.Model):
         ('PAYMENT', 'Payment'),
         ('TOPUP', 'Top-Up'),
         ('TRANSFER', 'Transfer'),
-        ('REFUND','Refund')
+        ('REFUND','Refund'),
+        ('AUCTION_SALE','Action_sale'),
+        ('AUCTION_BUY_NOW','Auction_buy_now')
     ]
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPE_CHOICES)
     transaction_id = models.CharField(max_length=255, null=True, blank=True) # Optional external transaction ID, can be bid_id for refund and paymen or 

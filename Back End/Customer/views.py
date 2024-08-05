@@ -30,6 +30,15 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user)
         return Response(serializer.data)
     
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    def retrieve_user(self, request, pk=None):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def signup(self, request):
         serializer = UserSerializer(data=request.data)
@@ -117,4 +126,3 @@ class UserViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'credentialResponse': credentialResponse})
