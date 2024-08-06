@@ -37,3 +37,52 @@ class AuctionViewSet(viewsets.ModelViewSet):
         serializer = AuctionSerializer(active_auctions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-active-auctions')
+    def user_active_auctions(self, request):
+        user = request.user
+
+        active_auctions = Auction.objects.filter(
+            bid__user=user,
+            is_active=True,
+        ).distinct()
+
+        if not active_auctions.exists():
+            return Response(
+                {'message': 'You are not participating in any active auctions.'},
+                status=status.HTTP_200_OK
+            )
+
+        serialized_auctions = AuctionSerializer(active_auctions, many=True).data
+        return Response(serialized_auctions, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-completed-auctions')
+    def user_completed_auctions(self, request):
+        won_auctions = Auction.objects.filter(winner=request.user)
+
+        if not won_auctions.exists():
+            return Response(
+                {'message': 'You have not won any auctions. Good luck!'},
+                status=status.HTTP_200_OK
+            )
+
+        serialized_auctions = AuctionSerializer(won_auctions, many=True).data
+        return Response(serialized_auctions, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-failed-auctions')
+    def user_failed_auctions(self, request):
+        failed_auctions = Auction.objects.filter(
+            bid__user=request.user,
+            is_active=False,
+            winner__isnull=False 
+        ).exclude(winner=request.user).distinct()
+
+        if not failed_auctions.exists():
+            return Response(
+                {'message': 'Looks like you have won it all, congaradulation!!'},
+                status=status.HTTP_200_OK
+            )
+
+        serialized_auctions = AuctionSerializer(failed_auctions, many=True).data
+        return Response(serialized_auctions, status=status.HTTP_200_OK)

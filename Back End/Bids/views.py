@@ -13,9 +13,6 @@ from .serializers import BidSerializer, ProxyBidSerializer
 import logging
 
 
-# Set up logging
-logger = logging.getLogger(__name__)
-
 class BidViewSet(viewsets.ModelViewSet):
     queryset = Bid.objects.filter(is_deleted=False)
     serializer_class = BidSerializer
@@ -147,7 +144,9 @@ class BidViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+    
+
         
 
 class ProxyBidViewSet(viewsets.ModelViewSet):

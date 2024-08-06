@@ -12,6 +12,7 @@ import VerifyOtp from './Pages/Signup/VerifyOtp';
 import CreateProduct from './Pages/Product/CreateProduct';
 import Profile from './Pages/Profile/Profile';
 import Wallet from './Pages/Wallet/Wallet';
+import UserBids from './Pages/Bids/UserBids';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -61,6 +62,19 @@ function App() {
 							path: 'wallet',
 							element: isAuthenticated ? (
 								<Wallet />
+							) : (
+								<Navigate
+									to='/login'
+									replace={true}
+									state={{ from: '/profile/wallet/' }}
+								/>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'bids',
+							element: isAuthenticated ? (
+								<UserBids />
 							) : (
 								<Navigate
 									to='/login'
