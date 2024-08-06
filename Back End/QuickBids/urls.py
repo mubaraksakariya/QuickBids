@@ -28,6 +28,8 @@ from Payments.views import PaymentViewSet
 from Product.views import ProductViewSet, CategoryViewSet, ProductImageViewSet
 from Bids.views import BidViewSet, ProxyBidViewSet
 from Wallet.views import TransactionViewSet, WalletViewSet
+from Notifications.views import NotificationViewSet
+
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='product')
@@ -40,6 +42,8 @@ router.register(r'proxy-bids', ProxyBidViewSet)
 router.register(r'wallet', WalletViewSet, basename='wallet')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
 router.register(r'payments', PaymentViewSet, basename='payments')
+router.register(r'notifications', NotificationViewSet, basename='notification')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
