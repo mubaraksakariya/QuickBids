@@ -1,52 +1,39 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-	clearNotifications,
-	markNotificationRead,
-	removeNotification,
-} from '../../../Store/notificationSlice';
+import NotificationItems from './NotificationItems';
+import { useDispatch } from 'react-redux';
+import { clearNotifications } from '../../../Store/notificationSlice';
 
-function NotificationDropdown() {
+function NotificationDropdown({ notifications }) {
 	const dispatch = useDispatch();
-	const notifications = useSelector(
-		(state) => state.notifications.notifications
-	);
-	const handleMarkAsRead = (id) => {
-		dispatch(markNotificationRead(id));
-	};
-
-	const handleRemoveNotification = (id) => {
-		dispatch(removeNotification(id));
-	};
-
 	const handleClearAll = () => {
 		dispatch(clearNotifications());
 	};
 	return (
-		<div className='absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-10'>
-			<div className='p-2'>
-				{notifications.length === 0 ? (
-					<div className='p-2 text-center text-gray-500'>
-						No notifications
+		<>
+			<div className='absolute right-0 mt-2 w-72 bg-sectionBgColour2 border border-cardBorderColour rounded-md shadow-lg z-[51]'>
+				<div className='max-h-[20rem] overflow-y-auto'>
+					<div className='p-2'>
+						{notifications?.length === 0 ? (
+							<div className='p-2 text-center text-bodyTextColour'>
+								No notifications
+							</div>
+						) : (
+							notifications?.map((notification) => (
+								<NotificationItems
+									notification={notification}
+									key={notification.id}
+								/>
+							))
+						)}
 					</div>
-				) : (
-					notifications.map((notification) => (
-						<div
-							key={notification.id}
-							className='p-2 border-b border-gray-200'>
-							<div className='text-sm font-medium text-gray-900'>
-								{notification.message}
-							</div>
-							<div className='text-xs text-gray-500'>
-								{new Date(
-									notification.timestamp
-								).toLocaleString()}
-							</div>
-						</div>
-					))
-				)}
+				</div>
+				<div className='p-0 bg-sectionBgColour2 flex justify-center'>
+					<span className='text-center text-linkColour cursor-pointer hover:text-linkHoverColour'>
+						View all
+					</span>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 

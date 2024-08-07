@@ -1,25 +1,20 @@
-"""
-ASGI config for QuickBids project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
-"""
-
 import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from Auction.routing import websocket_urlpatterns
+from Auction.routing import websocket_urlpatterns as auction_urlpatterns
+from Notifications.routing import websocket_urlpatterns as notifications_urlpatterns
+from QuickBids.custom_middleware import TokenAuthMiddleware
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'QuickBids.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
+        TokenAuthMiddleware(
+            URLRouter(
+                auction_urlpatterns + notifications_urlpatterns
+            )
         )
     ),
 })

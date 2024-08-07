@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Auction
-from .serializers import AuctionSerializer
+from .serializers import AuctionSerializer, AuctionWithProductSerializer
 
 class AuctionViewSet(viewsets.ModelViewSet):
     queryset = Auction.objects.all()
@@ -25,6 +25,15 @@ class AuctionViewSet(viewsets.ModelViewSet):
         except Auction.DoesNotExist:
             return Response({'detail': 'Auction not found for this product'}, status=status.HTTP_404_NOT_FOUND)
     
+    @action(detail=True, methods=['get'], url_path='with-product-details')
+    def get_auction_with_product(self, request, pk=None):
+        try:
+            auction = self.get_object()
+            serializer = AuctionWithProductSerializer(auction)
+            return Response(serializer.data)
+        except Auction.DoesNotExist:
+            return Response({'status': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+
     @action(detail=False, methods=['get'], url_path='all-auctions')
     def get_all_auctions(self, request):
         active_auctions = Auction.objects.filter(is_active=False, is_deleted=False)

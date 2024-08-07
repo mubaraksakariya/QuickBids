@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import NotificationButton from './NotificationButton';
 import NotificationDropdown from './NotificationDropdown';
+import { useSelector } from 'react-redux';
 
 function Notifications() {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef(null);
+	const notifications = useSelector(
+		(state) => state.notifications.notifications
+	);
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -24,7 +28,7 @@ function Notifications() {
 	return (
 		<div ref={dropdownRef} className='relative inline-block text-left'>
 			<NotificationButton setIsOpen={setIsOpen} />
-			{isOpen && <NotificationDropdown />}
+			{isOpen && <NotificationDropdown notifications={notifications} />}
 		</div>
 	);
 }

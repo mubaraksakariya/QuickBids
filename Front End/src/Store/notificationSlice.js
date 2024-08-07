@@ -2,28 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const notificationSlice = createSlice({
 	name: 'notifications',
-	initialState: {
-		notifications: [
-			{
-				id: 1,
-				message: 'You have a new message from John Doe.',
-				timestamp: '2024-08-10T12:00:00Z',
-			},
-			{
-				id: 2,
-				message: 'Your bid on the auction has been outbid.',
-				timestamp: '2024-08-10T13:00:00Z',
-			},
-			{
-				id: 3,
-				message: 'New comment on your product listing.',
-				timestamp: '2024-08-10T14:00:00Z',
-			},
-		],
-	},
+	initialState: { notifications: [] },
 	reducers: {
 		addNotification: (state, action) => {
-			state.notifications.push(action.payload);
+			state.notifications.unshift(action.payload);
 		},
 		addNotifications: (state, action) => {
 			state.notifications = [...action.payload];
@@ -31,9 +13,10 @@ export const notificationSlice = createSlice({
 		markNotificationRead: (state, action) => {
 			state.notifications = state.notifications.map((notification) =>
 				notification.id === action.payload
-					? { ...notification, read: true }
+					? { ...notification, is_read: true }
 					: notification
 			);
+			console.log('marked as read');
 		},
 		removeNotification: (state, action) => {
 			state.notifications = state.notifications.filter(

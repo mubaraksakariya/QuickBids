@@ -4,34 +4,43 @@ class WebSocketService {
 	}
 
 	connect(url, onMessage, onOpen, onClose, onError, key) {
-		// return if any existing socket
+		// Return if any existing socket
 		if (this.sockets[key]) {
-			// console.log('WebSocket already connected for URL:', url);
 			return this.sockets[key];
 		}
+
 		let socket;
+
 		if (url && !url.includes('undefined')) {
-			socket = new WebSocket(url);
+			// Retrieve the token from localStorage
+			const accessToken = localStorage.getItem('accessToken');
+
+			// Append token to the WebSocket URL as a query parameter
+			const wsUrl = new URL(url);
+			if (accessToken) {
+				wsUrl.searchParams.append('token', accessToken);
+			}
+
+			socket = new WebSocket(wsUrl.toString());
 
 			socket.onopen = (event) => {
-				// console.log('WebSocket is open now.');
 				if (onOpen) onOpen(event);
 			};
 
 			socket.onmessage = (event) => {
-				// console.log('WebSocket message received:', event);
 				if (onMessage) onMessage(event);
 			};
 
 			socket.onclose = (event) => {
-				// console.log('WebSocket is closed now.');
 				if (onClose) onClose(event);
 			};
 
 			socket.onerror = (error) => {
-				// console.error('WebSocket error observed:', error);
 				if (onError) onError(error);
 			};
+
+			// Register the new socket
+			this.registerSocket(key, socket);
 		}
 		return socket;
 	}

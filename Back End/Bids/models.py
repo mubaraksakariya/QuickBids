@@ -23,4 +23,4 @@ class ProxyBid(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Proxy Bid by {self.user.username} - {self.max_bid}"
+        return f"Proxy Bid by {self.user.email} - {self.max_bid}"

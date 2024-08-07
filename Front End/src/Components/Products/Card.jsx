@@ -87,6 +87,7 @@ function Card({ product }) {
 	// const handleError = (error) => {
 	// 	console.log('WebSocket error:', error);
 	// };
+
 	// WebSocket message handler
 	const handleMessage = (event) => {
 		const message = JSON.parse(event.data);
