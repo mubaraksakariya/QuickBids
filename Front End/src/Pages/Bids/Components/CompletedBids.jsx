@@ -18,7 +18,7 @@ function CompletedBids() {
 					</div>
 				</div>
 			) : (
-				<div className=' flex justify-center items-center'>
+				<div className=' flex justify-center items-center gap-4 flex-wrap'>
 					{userAuctions.map((auction) => (
 						<ActiveUserAuctionCard
 							auction={auction}

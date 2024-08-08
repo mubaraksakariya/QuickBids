@@ -1,8 +1,8 @@
 from celery import shared_task
 from django.utils import timezone
-import pytz
 from Auction.models import Auction
 from Bids.models import Bid
+from Notifications.models import Notification
 from Wallet.models import Transaction, Wallet
 
 @shared_task
@@ -38,7 +38,13 @@ def check_ended_auctions():
                 transaction_id=auction.id,
                 description=f'Winning bid amount for auction {auction.id}'
             )
-            
+            notification = Notification.objects.create(
+                user = auction.winner,
+                message = f'Congradulations, you have Wone the auction on {auction.product.title}',
+                type = 'WIN',
+                auction = auction,
+            )
+            print(notification)
         else:
             auction.save()
              

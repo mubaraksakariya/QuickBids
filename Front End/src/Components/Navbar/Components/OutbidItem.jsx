@@ -29,7 +29,7 @@ function OutbidItem({ notification }) {
 
 	return (
 		<div
-			className={`p-2 border-b border-gray-200 cursor-pointer  ${getStyle()}`}
+			className={`p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100  ${getStyle()}`}
 			onClick={() => console.log(data)}>
 			<div className='text-sm font-medium text-gray-900'>
 				{notification.message}

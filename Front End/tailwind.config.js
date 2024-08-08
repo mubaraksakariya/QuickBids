@@ -36,6 +36,8 @@ export default {
 				button2Colour2: '#29A32C', // Lime Green
 				button2Colour3: '#004400',
 
+				notificationRing: '#32CD32',
+
 				errorColour: '#dc2626',
 			},
 		},

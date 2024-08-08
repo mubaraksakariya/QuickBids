@@ -1,1 +1,1 @@
-default_app_config = 'Notifications.apps.BidsConfig'
+default_app_config = 'Notifications.apps.NotificationsConfig'

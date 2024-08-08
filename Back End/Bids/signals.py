@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from Notifications.models import Notification
 from .models import Bid
-from Bids.utils import send_bid_update, send_notification_to_previous_bidder
+from Bids.utils import send_bid_update
 
 @receiver(post_save, sender=Bid)
 def bid_updated(sender, instance, created, **kwargs):
@@ -12,7 +12,6 @@ def bid_updated(sender, instance, created, **kwargs):
         
         # Retrieve the auction details
         auction = instance.auction
-        product = auction.product
         
         # Fetch the top two bids
         top_bids = Bid.objects.filter(auction=auction).order_by('-amount')[:2]
@@ -25,15 +24,15 @@ def bid_updated(sender, instance, created, **kwargs):
             notification_type = "OUTBID"
 
             # Create a notification for the previous highest bidder
-            notification = Notification.objects.create(
+            Notification.objects.create(
                 user=previous_bidder,
                 message=message,
                 type=notification_type,
                 auction=auction
             )
             
-            # Send notification to the previous highest bidder
-            send_notification_to_previous_bidder(
-                user=previous_bidder,
-                notification = notification
-            )
+            # # Send notification to the previous highest bidder
+            # send_notification_to_previous_bidder(
+            #     user=previous_bidder,
+            #     notification = notification
+            # )

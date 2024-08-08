@@ -1,14 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 function NotificationButton({ setIsOpen }) {
+	const unreadCount = useSelector((state) => state.notifications.unreadCount);
 	const handleOpen = () => {
 		setIsOpen((old) => !old);
 	};
-
+	const getUnreadClass = () => {
+		if (unreadCount > 0) return 'ring-inset ring-8 ring-notificationRing';
+	};
 	return (
 		<button
 			onClick={handleOpen}
-			className='p-2 rounded-full bg-sectionBgColour1 hover:bg-sectionBgColour2 text-navBg hover:text-linkColour focus:outline-none focus:ring-2 focus:ring-sectionBgColour10 shadow-lg'>
+			className={`p-2 rounded-full bg-sectionBgColour1 hover:bg-sectionBgColour2 text-navBg hover:text-linkColour focus:outline-none focus:ring-2 focus:ring-sectionBgColour10 shadow-lg ${getUnreadClass()}`}>
 			<span className='inline-block align-middle'>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
@@ -22,6 +26,7 @@ function NotificationButton({ setIsOpen }) {
 						clipRule='evenodd'
 					/>
 				</svg>
+				{/* {unreadCount} */}
 			</span>
 		</button>
 	);

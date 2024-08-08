@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import SellIcon from './Components/SellIcon';
 import NavIcon from './Components/NavIcon';
 import CollapseButton from './Components/CollapseButton';
+import Notifications from './Components/Notifications';
 
 const NoneHomeNavbar = ({}) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +27,7 @@ const NoneHomeNavbar = ({}) => {
 					}`}>
 					<div className='ml-auto lg:flex items-center'>
 						{/* <SearchBar setSearchSTring={setSearchSTring} /> */}
+						{isAuthenticated && <Notifications />}
 						{user && isAuthenticated ? (
 							<UserDropdown user={user} />
 						) : (

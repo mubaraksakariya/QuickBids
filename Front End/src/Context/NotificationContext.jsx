@@ -10,7 +10,7 @@ export const NotificationProvider = ({ children }) => {
 	const dispatch = useDispatch();
 	const api = useApi();
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-	// Function to fetch notifications from the API
+
 	const getNotification = async () => {
 		try {
 			const response = await api.get('/api/notifications/recent');
@@ -20,12 +20,12 @@ export const NotificationProvider = ({ children }) => {
 		}
 	};
 
-	// Set up WebSocket connection
 	const webSocketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL;
 	const socketUrl = `${webSocketBaseUrl}/notifications/`;
 	const socketKey = 'notifications';
+
 	const handleOpen = () => {
-		console.log(`Connected to notifications `);
+		console.log(`Connected to notifications`);
 	};
 
 	const handleClose = () => {
@@ -39,12 +39,11 @@ export const NotificationProvider = ({ children }) => {
 	const handleMessage = (event) => {
 		const message = JSON.parse(event.data);
 		const notificationData = message.notification;
-		// console.log(notificationData);
 		if (notificationData) {
 			dispatch(addNotification(notificationData));
 		}
 	};
-	// Connect to WebSocket, Use the WebSocket hook
+
 	useWebSocket(
 		socketKey,
 		socketUrl,
@@ -56,7 +55,6 @@ export const NotificationProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			// Fetch initial notifications
 			getNotification();
 		}
 	}, [dispatch, isAuthenticated]);

@@ -37,7 +37,7 @@ const UserDropdown = ({ user }) => {
 		<div ref={dropdownRef} className='relative mt-4 lg:mt-0 lg:ml-4 mx-3'>
 			<button
 				onClick={() => setDropdownOpen(!dropdownOpen)}
-				className='flex items-center text-black focus:outline-none rounded-full border border-black hover:border-white'>
+				className='flex items-center justify-center text-black focus:outline-none aspect-square rounded-full border border-black hover:border-white min-w-10 max-w-10'>
 				<span className='sr-only'>Open user menu</span>
 				{user.profile_picture ? (
 					<img
@@ -52,7 +52,7 @@ const UserDropdown = ({ user }) => {
 						viewBox='0 0 24 24'
 						strokeWidth={1.5}
 						stroke='currentColor'
-						className='size-6'>
+						className='w-[80%] hover:text-white'>
 						<path
 							strokeLinecap='round'
 							strokeLinejoin='round'

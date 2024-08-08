@@ -14,6 +14,7 @@ function NotificationItems({ notification }) {
 	// };
 	if (notification.type == 'OUTBID')
 		return <OutbidItem notification={notification} />;
+	else return <OutbidItem notification={notification} />;
 }
 
 export default NotificationItems;
