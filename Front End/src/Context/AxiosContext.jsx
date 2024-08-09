@@ -53,7 +53,7 @@ const createApi = () => {
 					return api(originalRequest);
 				} catch (err) {
 					// Handle refresh token expiration (e.g., logout the user)
-					console.error('Refresh token expired:', err);
+					console.log('Refresh token expired:', err);
 					// Clear localStorage and redirect to login
 					localStorage.removeItem('accessToken');
 					localStorage.removeItem('refreshToken');

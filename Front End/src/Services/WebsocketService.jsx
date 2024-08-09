@@ -3,6 +3,19 @@ class WebSocketService {
 		this.sockets = {};
 	}
 
+	// Helper method to construct the WebSocket URL
+	constructWebSocketUrl(url) {
+		const accessToken = localStorage.getItem('accessToken');
+		const webSocketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL;
+		const wsUrl = new URL(`${webSocketBaseUrl}/${url}`);
+
+		if (accessToken) {
+			wsUrl.searchParams.append('token', accessToken);
+		}
+
+		return wsUrl.toString();
+	}
+
 	connect(url, onMessage, onOpen, onClose, onError, key) {
 		// Return if any existing socket
 		if (this.sockets[key]) {
@@ -12,16 +25,8 @@ class WebSocketService {
 		let socket;
 
 		if (url && !url.includes('undefined')) {
-			// Retrieve the token from localStorage
-			const accessToken = localStorage.getItem('accessToken');
-
-			// Append token to the WebSocket URL as a query parameter
-			const wsUrl = new URL(url);
-			if (accessToken) {
-				wsUrl.searchParams.append('token', accessToken);
-			}
-
-			socket = new WebSocket(wsUrl.toString());
+			const wsUrl = this.constructWebSocketUrl(url);
+			socket = new WebSocket(wsUrl);
 
 			socket.onopen = (event) => {
 				if (onOpen) onOpen(event);

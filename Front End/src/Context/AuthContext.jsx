@@ -1,7 +1,7 @@
 // AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout, update_user } from '../Store/authSlice';
+import { login, logout, updateUser } from '../Store/authSlice';
 import useApi from './AxiosContext';
 
 const AuthContext = createContext();
@@ -17,11 +17,11 @@ const AuthProvider = ({ children }) => {
 	const dispatch = useDispatch();
 	const api = useApi();
 
-	const updateUser = async () => {
+	const setUser = async () => {
 		const response = await api.get('api/users/logged_in_user/');
 		const user = response.data;
 		// console.log(user);
-		dispatch(update_user({ user }));
+		dispatch(updateUser({ user }));
 	};
 	useEffect(() => {
 		if (isAuthenticated == null) setIsloading(true);
@@ -44,7 +44,7 @@ const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		// update user, when not updated incase, eg: when loged in
 		if (storedRefreshToken && !storedUser) {
-			updateUser();
+			setUser();
 		}
 	}, [storedAccessToken, storedRefreshToken, storedUser]);
 

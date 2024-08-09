@@ -23,7 +23,7 @@ export const authSlice = createSlice({
 				);
 			}
 		},
-		update_user: (state, action) => {
+		updateUser: (state, action) => {
 			if (action.payload.user) {
 				state.user = action.payload.user;
 				localStorage.setItem(
@@ -45,6 +45,6 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { login, logout, update_user } = authSlice.actions;
+export const { login, logout, updateUser } = authSlice.actions;
 
 export default authSlice.reducer;

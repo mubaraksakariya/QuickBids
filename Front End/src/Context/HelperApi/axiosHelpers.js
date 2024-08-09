@@ -8,8 +8,8 @@ const requestNewToken = async (refreshToken) => {
 				refresh: refreshToken,
 			}
 		);
-		localStorage.setItem('accessToken', response.data.access);
-		localStorage.setItem('refreshToken', response.data.refresh);
+		// localStorage.setItem('accessToken', response.data.access);
+		// localStorage.setItem('refreshToken', response.data.refresh);
 		return response.data.access;
 	} catch (error) {
 		console.error('Error refreshing token:', error);

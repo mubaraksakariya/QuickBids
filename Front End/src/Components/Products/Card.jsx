@@ -72,8 +72,7 @@ function Card({ product }) {
 	};
 
 	//For web socket
-	const webSocketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL;
-	const socketUrl = `${webSocketBaseUrl}/auction/${auction?.id}/`;
+	const socketUrl = `auction/${auction?.id}/`;
 	const socketKey = `auction-${auction?.id}`;
 
 	// const handleOpen = () => {

@@ -1,10 +1,11 @@
 import random
 from django.conf import settings
 import requests
-from django.core.mail import send_mail
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from Customer.tasks import send_otp_email_task
 from .models import OTP, CustomUser
 from .serializers import UserSerializer
 from rest_framework.decorators import action
@@ -57,7 +58,12 @@ class UserViewSet(viewsets.ModelViewSet):
             user = CustomUser.objects.get(email=email)
             otp = self.generate_otp()
             OTP.objects.create(user=user, otp=otp)
-            self.send_otp_email(user.email, otp)
+            # Use Celery to send the OTP email asynchronously
+            send_otp_email_task.delay(
+                subject='Your OTP for QuickBids Registration',
+                message=f'Your OTP is {otp}. Please use this to complete your registration.',
+                recipient_list=[email]
+            )
             return Response({'message': 'OTP sent successfully.'}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -70,9 +76,9 @@ class UserViewSet(viewsets.ModelViewSet):
     def send_otp_email(self, email, otp):
         subject = 'Your OTP for QuickBids Registration'
         message = f'Your OTP is {otp}. Please use this to complete your registration.'
-        email_from = settings.EMAIL_HOST_USER
         recipient_list = [email]
-        send_mail(subject, message, email_from, recipient_list)
+        # Use Celery to send the OTP email asynchronously
+        send_otp_email_task.delay(subject, message, recipient_list)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def verify_otp(self, request):
