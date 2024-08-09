@@ -6,7 +6,7 @@ import Terms from './Terms';
 
 function Footer() {
 	return (
-		<footer className='footer p-16 mt-auto'>
+		<footer className='footer lg:p-16 p-8 mt-auto'>
 			<div className='flex flex-wrap gap-6'>
 				<div className='flex-1 min-w-[200px]'>
 					<h1 className='text-2xl font-bold pb-4'>About Us</h1>

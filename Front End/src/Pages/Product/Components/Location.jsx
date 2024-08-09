@@ -49,7 +49,7 @@ function Location({
 					setCurrentLocation={setCurrentLocation}
 				/>
 			)}
-			{activeTab === 'location' && (
+			{activeTab === 'location' && !error && (
 				<CurrentLocationSelector
 					setCurrentLocation={setCurrentLocation}
 					setSelectedState={setSelectedState}

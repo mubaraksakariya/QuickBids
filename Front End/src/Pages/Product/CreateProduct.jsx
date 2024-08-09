@@ -29,7 +29,7 @@ function CreateProduct() {
 				Create Your Ad
 			</h1>
 			<div className='flex justify-center py-4'>
-				<div className='flex flex-col justify-center items-center gap-8 flex-1 max-w-lg'>
+				<div className='flex flex-col justify-center items-center gap-8 flex-1 lg:max-w-lg max-w-[90%]'>
 					<CategoryInput
 						setCategory={(value) =>
 							handleChange({
@@ -100,7 +100,7 @@ function CreateProduct() {
 						}
 						error={errors.location}
 					/>
-					<div className='w-full flex justify-start mt-4'>
+					<div className='w-full flex justify-center mt-4'>
 						<button
 							onClick={handleSubmit}
 							disabled={isLoading}

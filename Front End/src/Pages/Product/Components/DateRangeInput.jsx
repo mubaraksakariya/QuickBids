@@ -75,8 +75,8 @@ function DateRangeInput({ setStartDate, setEndDate }) {
 	};
 
 	return (
-		<div className='flex gap-4'>
-			<div className='w-full'>
+		<div className='flex flex-col gap-4 lg:flex-row lg:w-full'>
+			<div className='w-full flex-grow'>
 				<label className='block text-sm font-medium text-gray-700'>
 					Start Date and Time
 				</label>
@@ -91,7 +91,7 @@ function DateRangeInput({ setStartDate, setEndDate }) {
 					min={new Date().toISOString().slice(0, 16)}
 				/>
 				{startDateError && (
-					<p className='text-red-500 text-sm mt-1'>
+					<p className='text-errorColour text-sm mt-1'>
 						{startDateError}
 					</p>
 				)}
@@ -111,7 +111,9 @@ function DateRangeInput({ setStartDate, setEndDate }) {
 					min={localStartDate} // Set min attribute to the start date and time
 				/>
 				{endDateError && (
-					<p className='text-red-500 text-sm mt-1'>{endDateError}</p>
+					<p className='text-errorColour text-sm mt-1'>
+						{endDateError}
+					</p>
 				)}
 			</div>
 		</div>

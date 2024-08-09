@@ -48,7 +48,6 @@ const useCreateProduct = () => {
 				}
 
 				setIsCreationSuccess(true);
-				navigate('/');
 			} catch (error) {
 				console.error(
 					'Error creating product:',
