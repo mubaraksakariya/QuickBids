@@ -26,7 +26,7 @@ function Notifications() {
 	}, []);
 
 	return (
-		<div ref={dropdownRef} className='relative inline-block text-left'>
+		<div ref={dropdownRef} className='relative'>
 			<NotificationButton setIsOpen={setIsOpen} />
 			{isOpen && <NotificationDropdown notifications={notifications} />}
 		</div>

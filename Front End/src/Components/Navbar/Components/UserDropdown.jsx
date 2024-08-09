@@ -14,7 +14,6 @@ const UserDropdown = ({ user }) => {
 	const { data: wallet, error, isLoading } = useWallet();
 
 	useEffect(() => {
-		// Function to close dropdown when clicked outside
 		function handleClickOutside(event) {
 			if (
 				dropdownRef.current &&
@@ -23,18 +22,14 @@ const UserDropdown = ({ user }) => {
 				setDropdownOpen(false);
 			}
 		}
-
-		// Bind the event listener
 		document.addEventListener('click', handleClickOutside);
-
-		// Cleanup the event listener
 		return () => {
 			document.removeEventListener('click', handleClickOutside);
 		};
 	}, []);
 
 	return (
-		<div ref={dropdownRef} className='relative mt-4 lg:mt-0 lg:ml-4 mx-3'>
+		<div ref={dropdownRef} className='relative'>
 			<button
 				onClick={() => setDropdownOpen(!dropdownOpen)}
 				className='flex items-center justify-center text-black focus:outline-none aspect-square rounded-full border border-black hover:border-white min-w-10 max-w-10'>
@@ -62,41 +57,47 @@ const UserDropdown = ({ user }) => {
 				)}
 			</button>
 			{dropdownOpen && (
-				<div className='absolute z-50 lg:right-0 lg:top-12 mt-2 py-2 w-75 bg-white rounded-md shadow-xl divide-y divide-gray-100'>
-					<div className='px-4 py-3 text-sm text-gray-900 dark:text-white'>
-						<div>{user.first_name}</div>
-						<div className='font-medium truncate'>{user.email}</div>
+				<div className='absolute lg:right-0 mt-2 w-72 bg-sectionBgColour2 border border-cardBorderColour rounded-md shadow-lg z-[51]'>
+					<div className='block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg'>
+						{user.first_name}
 					</div>
-					<ul
-						className='py-2 text-sm text-gray-700 dark:text-gray-200'
-						aria-labelledby='dropdownUserAvatarButton'>
-						<li>
-							<a
-								onClick={() => navigate('/profile/')}
-								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
-								Profile
-							</a>
-						</li>
-						<li>
-							<a
-								href='#'
-								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
-								Settings
-							</a>
-						</li>
-						<li>
-							<a
-								onClick={() => navigate('/profile/wallet/')}
-								className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
-								<section className=' flex justify-between'>
-									<span>Wallet</span>
-									{error && <span>{error.message}</span>}
-									{isLoading && <span>Loading.. </span>}
-									{wallet && <span>{wallet.balance}</span>}
-								</section>
-							</a>
-						</li>
-					</ul>
+					<div className='max-h-[20rem] overflow-y-auto divide-y divide-gray-800'>
+						<div className='p-2 text-center text-bodyTextColour'>
+							{user.email}
+						</div>
+						<ul
+							className='py-2 text-sm text-gray-700 dark:text-gray-200'
+							aria-labelledby='dropdownUserAvatarButton'>
+							<li>
+								<a
+									onClick={() => navigate('/profile/')}
+									className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
+									Profile
+								</a>
+							</li>
+							<li>
+								<a
+									href='#'
+									className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>
+									Settings
+								</a>
+							</li>
+							<li>
+								<a
+									onClick={() => navigate('/profile/wallet/')}
+									className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'>
+									<section className='flex justify-between'>
+										<span>Wallet</span>
+										{error && <span>{error.message}</span>}
+										{isLoading && <span>Loading...</span>}
+										{wallet && (
+											<span>{wallet.balance}</span>
+										)}
+									</section>
+								</a>
+							</li>
+						</ul>
+					</div>
 					<div className='py-2'>
 						<a
 							onClick={(e) => {

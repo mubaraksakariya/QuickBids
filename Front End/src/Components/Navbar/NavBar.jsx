@@ -26,17 +26,25 @@ const Navbar = ({ setSearchSTring }) => {
 					}`}>
 					<div className='ml-auto lg:flex items-center'>
 						<SearchBar setSearchSTring={setSearchSTring} />
-						{isAuthenticated && <Notifications />}
-						{user && isAuthenticated ? (
-							<UserDropdown user={user} />
-						) : (
-							<span
-								className='cursor-pointer hover:underline text-white'
-								onClick={() => navigate('/login/')}>
-								login
-							</span>
-						)}
-						<SellIcon />
+						<div className='flex gap-3 lg:justify-normal justify-center items-center lg:px-0 px-2'>
+							<div className='lg:m-2 mt-2'>
+								{isAuthenticated && <Notifications />}
+							</div>
+							{user && isAuthenticated ? (
+								<div className='lg:m-2 mt-2'>
+									<UserDropdown user={user} />
+								</div>
+							) : (
+								<span
+									className='cursor-pointer hover:underline text-white'
+									onClick={() => navigate('/login/')}>
+									login
+								</span>
+							)}
+							<div className='flex-grow lg:flex-grow-0 flex justify-end'>
+								<SellIcon />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

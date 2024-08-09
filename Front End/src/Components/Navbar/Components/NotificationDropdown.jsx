@@ -10,7 +10,7 @@ function NotificationDropdown({ notifications }) {
 	};
 	return (
 		<>
-			<div className='absolute right-0 mt-2 w-72 bg-sectionBgColour2 border border-cardBorderColour rounded-md shadow-lg z-[51]'>
+			<div className='absolute lg:right-0 mt-2 w-72 bg-sectionBgColour2 border border-cardBorderColour rounded-md shadow-lg z-[51]'>
 				<div className='block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg'>
 					Notifications
 				</div>

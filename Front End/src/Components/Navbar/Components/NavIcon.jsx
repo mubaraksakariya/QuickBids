@@ -2,7 +2,7 @@ import React from 'react';
 
 function NavIcon() {
 	return (
-		<div className='flex items-center flex-shrink-0 text-white ms-16 dark:text-black'>
+		<div className='flex items-center flex-shrink-0 text-white dark:text-black'>
 			<a
 				href='/'
 				className='flex items-center space-x-3 rtl:space-x-reverse'>
