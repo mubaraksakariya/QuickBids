@@ -18,7 +18,7 @@
 	@apply min-h-[100dvh] w-full flex flex-col bg-sectionBgColour1;
 }
 .content-section {
-	@apply min-h-[80dvh] max-h-[80dvh];
+	@apply min-h-[80dvh] sm:max-h-[80dvh];
 }
 /* .section1 {
 	@apply bg-sectionBgColour1;

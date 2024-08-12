@@ -32,6 +32,7 @@ export const authSlice = createSlice({
 				);
 			}
 		},
+
 		logout: (state) => {
 			state.isAuthenticated = false;
 			state.accessToken = null;

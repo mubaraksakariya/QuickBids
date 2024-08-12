@@ -24,7 +24,12 @@ class CustomUser(AbstractBaseUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
-    
+    AUTH_PROVIDER_CHOICES = [
+        ('local', 'Local'),
+        ('google', 'Google'),
+    ]
+    auth_provider = models.CharField(max_length=10, choices=AUTH_PROVIDER_CHOICES, default='local')
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -34,7 +39,6 @@ class CustomUser(AbstractBaseUser):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
         return self.email
@@ -44,8 +48,6 @@ class CustomUser(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
-
-
 
 
 

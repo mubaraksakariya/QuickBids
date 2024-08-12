@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'channels',
     'Customer',
     'Product',
@@ -175,7 +176,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=100),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'TOKEN_BLACKLIST_ENABLED': True,
+    'UPDATE_LAST_LOGIN': True,
 }
 SOCIALACCOUNT_PROVIDERS = {
     'google': {

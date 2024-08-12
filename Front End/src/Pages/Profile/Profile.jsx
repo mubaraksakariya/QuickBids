@@ -1,8 +1,6 @@
 import React from 'react';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
-// import { timeAgo } from '../../Components/Utilities/timeAgo';
 import { useSelector } from 'react-redux';
-import timeAgo from '../../Components/Utilities/timeAgo';
 import { useNavigate } from 'react-router-dom';
 import BigButton from './Components/BigButton';
 import ProfilePosts from './Components/ProfilePosts';
@@ -18,13 +16,13 @@ function Profile() {
 		<div className='full-page'>
 			<NoneHomeNavbar />
 			<div className='md:flex py-4'>
-				<div className='flex-[4] flex flex-col justify-center items-center gap-2 h-auto max-h-[55dvh]'>
+				<div className='flex-[4] flex flex-col items-center gap-2 h-[65dvh]'>
 					<UserIcon user={user} />
 					<div className='mt-4 flex gap-4 md:flex-col md:gap-6'>
 						<BigButton
 							className={'order-2'}
 							text='Edit profile'
-							onclick={() => navigate('edit')}
+							onclick={() => navigate('edit-profile')}
 							icon={
 								<svg
 									xmlns='http://www.w3.org/2000/svg'

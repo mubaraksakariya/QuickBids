@@ -37,6 +37,7 @@ const AuthProvider = ({ children }) => {
 					user: storedUser,
 				})
 			);
+			if (!storedUser) setUser();
 		}
 	}, []);
 

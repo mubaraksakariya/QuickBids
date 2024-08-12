@@ -13,6 +13,8 @@ import CreateProduct from './Pages/Product/CreateProduct';
 import Profile from './Pages/Profile/Profile';
 import Wallet from './Pages/Wallet/Wallet';
 import UserBids from './Pages/Bids/UserBids';
+import EditProfile from './Pages/Profile/EditProfile';
+import ResetPassword from './Pages/Profile/ResetPassword';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -84,6 +86,19 @@ function App() {
 							),
 							// loader: Loader,
 						},
+						{
+							path: 'edit-profile',
+							element: isAuthenticated ? (
+								<EditProfile />
+							) : (
+								<Navigate
+									to='/login'
+									replace={true}
+									state={{ from: '/profile/edit-profile/' }}
+								/>
+							),
+							// loader: Loader,
+						},
 					],
 				},
 				{
@@ -115,6 +130,10 @@ function App() {
 							// loader: Loader,
 						},
 					],
+				},
+				{
+					path: 'reset_password',
+					element: <ResetPassword />,
 				},
 			],
 		},

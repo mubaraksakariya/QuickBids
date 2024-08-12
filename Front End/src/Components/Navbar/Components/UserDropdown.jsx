@@ -37,7 +37,7 @@ const UserDropdown = ({ user }) => {
 				{user.profile_picture ? (
 					<img
 						className='w-10 h-10 rounded-full'
-						src={`${baseUrl}${user.profile_picture}`}
+						src={user.profile_picture}
 						alt='user photo'
 					/>
 				) : (

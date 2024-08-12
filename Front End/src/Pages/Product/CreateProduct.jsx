@@ -5,12 +5,12 @@ import PriceInput from './Components/PriceInput';
 import ImageGridInput from './Components/ImageGridInput';
 import Location from './Components/Location';
 import DateRangeInput from './Components/DateRangeInput';
-import Modal from '../../Components/Utilities/Model';
 import { useNavigate } from 'react-router-dom';
 import useProductForm from './Hooks/useProductForm';
 import useCreateProduct from './Hooks/useCreateProduct';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
 import Footer from '../../Components/Footer/Footer';
+import GeneralModal from '../../Components/Models/GeneralModal';
 
 function CreateProduct() {
 	const navigate = useNavigate();
@@ -110,7 +110,7 @@ function CreateProduct() {
 					</div>
 				</div>
 			</div>
-			<Modal
+			<GeneralModal
 				show={isCreationSuccess}
 				onClose={() => navigate('/')}
 				autoCloseAfter={5000}>
@@ -118,7 +118,7 @@ function CreateProduct() {
 					Congratulations !!
 				</h2>
 				<p>Bidding on your Product will start on time</p>
-			</Modal>
+			</GeneralModal>
 			<Footer />
 		</div>
 	);
