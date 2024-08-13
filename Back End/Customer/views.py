@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password']:
+        if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password','forgot_password']:
             self.permission_classes = [AllowAny]
         else:
             self.permission_classes = [IsAuthenticated]
@@ -138,12 +138,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def forgot_password(self, request):
         email = request.data.get('email')
         if not email:
-            return Response({"error": "Email not provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Email not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            return Response({"error": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         # Generate password reset token
         token = default_token_generator.make_token(user)
@@ -174,16 +174,16 @@ class UserViewSet(viewsets.ModelViewSet):
         new_password = request.data.get('new_password')
 
         if not all([uid, token, new_password]):
-            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             uid = force_str(urlsafe_base64_decode(uid))
             user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-            return Response({"error": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Invalid reset link"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not default_token_generator.check_token(user, token):
-            return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(new_password)
         user.auth_provider = 'local'
@@ -196,11 +196,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 try:
                     # Directly blacklist using the token string
                     refresh_token = RefreshToken(outstanding_token.token)
-                    if not BlacklistedToken.objects.filter(token = outstanding_token).exists():
-                        refresh_token.blacklist()
-                        outstanding_token.delete()
-
+                    blocked_token, created = refresh_token.blacklist()
+                    outstanding_token.delete()
+                    
                 except Exception as e:
+                    outstanding_token.delete()
                     print(f"Error while blacklisting token {outstanding_token.token}: {e}")
 
         except Exception as e:
@@ -209,7 +209,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'], url_path='is-token-blacklisted')
+    def is_token_blacklisted(self, request):
+        token = request.data.get('token')
 
+        if not token:
+            return Response({"detail": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            refresh_token = RefreshToken(token)
+            is_blacklisted = refresh_token.verify()
+            return Response({"is_blacklisted": False}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error checking if token is blacklisted: {e}")
+            # return Response({"error": "Error checking token blacklist status"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"is_blacklisted": str(e)}, status=status.HTTP_200_OK)
+            
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def google_login(self, request):
         credentialResponse = request.data.get('credentialResponse')

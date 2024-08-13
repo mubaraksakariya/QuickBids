@@ -6,10 +6,12 @@ import Footer from '../../Components/Footer/Footer';
 import BasicDetailsEdit from './Components/BasicDetailsEdit';
 import BigButton from './Components/BigButton';
 import PasswordChange from './Components/PasswordChange';
+import useApi from '../../Context/AxiosContext';
 
 const EditProfile = () => {
 	const [selectedTab, setSelectedTab] = useState('basic');
 	const user = useSelector((state) => state.auth.user);
+	const api = useApi();
 
 	return (
 		<div className='full-page'>

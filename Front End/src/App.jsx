@@ -15,6 +15,7 @@ import Wallet from './Pages/Wallet/Wallet';
 import UserBids from './Pages/Bids/UserBids';
 import EditProfile from './Pages/Profile/EditProfile';
 import ResetPassword from './Pages/Profile/ResetPassword';
+import ForgotPassword from './Pages/FrogotPassword/ForgotPassword';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -44,6 +45,15 @@ function App() {
 					path: 'verify',
 					element: <VerifyOtp />,
 					// loader: Loader,
+				},
+				{
+					path: 'forgot-password',
+					element: <ForgotPassword />,
+					// loader: Loader,
+				},
+				{
+					path: 'reset_password',
+					element: <ResetPassword />,
 				},
 				{
 					path: 'profile',
@@ -130,10 +140,6 @@ function App() {
 							// loader: Loader,
 						},
 					],
-				},
-				{
-					path: 'reset_password',
-					element: <ResetPassword />,
 				},
 			],
 		},

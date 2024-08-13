@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Toast from '../../Components/Models/Toast';
 
 const ResetPassword = () => {
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const [error, setError] = useState('');
-	const [success, setSuccess] = useState('');
+	const [error, setError] = useState(false);
+	const [success, setSuccess] = useState(false);
+
 	const location = useLocation();
 	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 	const navigate = useNavigate();
@@ -17,7 +19,7 @@ const ResetPassword = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setError('');
+		setError(false);
 		if (!newPassword | !confirmPassword | (newPassword.length < 8)) {
 			setError('The passwoed must be atleast 8 char long');
 			return;
@@ -36,7 +38,7 @@ const ResetPassword = () => {
 			setSuccess(
 				'Password has been reset successfully. You can now log in with your new password.'
 			);
-			setTimeout(() => navigate('/login/'), 5000); // Redirect after 5 seconds
+			setTimeout(() => navigate('/login/'), 3000); // Redirect after 3 seconds
 		} catch (err) {
 			if (err?.response?.data?.error)
 				setError(
@@ -49,6 +51,8 @@ const ResetPassword = () => {
 		}
 	};
 
+	if (!uid | !token) return <div> 404 ERROR</div>;
+
 	return (
 		<div className='full-page'>
 			<div className='flex flex-col items-center justify-center min-h-screen bg-mainBgColour'>
@@ -56,7 +60,7 @@ const ResetPassword = () => {
 					Reset Password
 				</h2>
 				{error && <p className='text-errorColour'>{error}</p>}
-				{success && <p className='text-button2Colour1'>{success}</p>}
+
 				<form onSubmit={handleSubmit} className='w-full max-w-sm'>
 					<div className='mb-4'>
 						<label className='block text-bodyTextColour'>
@@ -89,6 +93,16 @@ const ResetPassword = () => {
 					</button>
 				</form>
 			</div>
+			{error && (
+				<Toast
+					message={error}
+					type='error'
+					onClose={() => setError(false)}
+				/>
+			)}
+			{success && (
+				<Toast message={success} onClose={() => setSuccess(false)} />
+			)}
 		</div>
 	);
 };

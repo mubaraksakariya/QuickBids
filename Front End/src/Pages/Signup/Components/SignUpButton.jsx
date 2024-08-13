@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-function SignUpButton({ onClick, isBtnLoading, text = 'Sign Up' }) {
+function SignUpButton({
+	onClick = () => {},
+	isBtnLoading,
+	text = 'Sign Up',
+	type = 'button',
+}) {
 	const [showLoading, setShowLoading] = useState(false);
 	useEffect(() => {
 		isBtnLoading ? setShowLoading(true) : setShowLoading(false);
@@ -9,7 +14,7 @@ function SignUpButton({ onClick, isBtnLoading, text = 'Sign Up' }) {
 	return (
 		<button
 			onClick={() => onClick()}
-			type='button'
+			type={type}
 			disabled={showLoading}
 			className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ${
 				showLoading

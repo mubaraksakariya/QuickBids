@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'channels',
     'Customer',
@@ -71,6 +72,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
 ]
 
 ROOT_URLCONF = 'QuickBids.urls'
@@ -180,6 +186,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'TOKEN_BLACKLIST_ENABLED': True,
     'UPDATE_LAST_LOGIN': True,
+    "JTI_CLAIM": "jti",
 }
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
