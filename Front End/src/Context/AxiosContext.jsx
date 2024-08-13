@@ -1,11 +1,14 @@
 import React, { createContext, useContext } from 'react';
 import axios from 'axios';
 import { requestNewToken } from './HelperApi/axiosHelpers';
+import { useDispatch } from 'react-redux';
+import { logout } from '../Store/authSlice';
 
 // Create the ApiContext
 const ApiContext = createContext();
 // Create the Axios instance
 const createApi = () => {
+	const dispatch = useDispatch();
 	const api = axios.create({
 		baseURL: import.meta.env.VITE_SERVER_BASE_URL,
 		// Other Axios configurations here
@@ -31,34 +34,46 @@ const createApi = () => {
 			return response;
 		},
 		async (error) => {
-			// console.log(error);
 			const originalRequest = error.config;
-			if (error.response.status === 401 && !originalRequest._retry) {
-				originalRequest._retry = true;
-				try {
-					const refreshToken = localStorage.getItem('refreshToken');
-					localStorage.removeItem('accessToken');
-					if (refreshToken) {
-						const newAccessToken = await requestNewToken(
-							refreshToken
+			if (error.response.status === 401) {
+				if (!originalRequest._retry) {
+					originalRequest._retry = true;
+					try {
+						const refreshToken =
+							localStorage.getItem('refreshToken');
+						localStorage.removeItem('accessToken');
+						if (refreshToken) {
+							const newAccessToken = await requestNewToken(
+								refreshToken
+							);
+							localStorage.setItem('accessToken', newAccessToken);
+							axios.defaults.headers.common[
+								'Authorization'
+							] = `Bearer ${newAccessToken}`;
+							originalRequest.headers[
+								'Authorization'
+							] = `Bearer ${newAccessToken}`;
+							return api(originalRequest);
+						}
+					} catch (err) {
+						console.log(
+							'Refresh token expired or blacklisted:',
+							err
 						);
-						localStorage.setItem('accessToken', newAccessToken);
-						axios.defaults.headers.common[
-							'Authorization'
-						] = `Bearer ${newAccessToken}`;
-						originalRequest.headers[
-							'Authorization'
-						] = `Bearer ${newAccessToken}`;
+						dispatch(logout());
+						localStorage.removeItem('accessToken');
+						localStorage.removeItem('refreshToken');
+						localStorage.removeItem('user');
+						return Promise.reject(err);
 					}
-					return api(originalRequest);
-				} catch (err) {
-					// Handle refresh token expiration (e.g., logout the user)
-					console.log('Refresh token expired:', err);
-					// Clear localStorage and redirect to login
+				} else {
+					// Token has been blacklisted or refresh failed
+					console.log('Token has been blacklisted');
+					dispatch(logout());
 					localStorage.removeItem('accessToken');
 					localStorage.removeItem('refreshToken');
-					// window.location.href = '/login'; // or any logout function
-					return Promise.reject(err);
+					localStorage.removeItem('user');
+					return Promise.reject(error);
 				}
 			}
 			// Extract error message from response

@@ -185,8 +185,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     'BLACKLIST_AFTER_ROTATION': True,
     'TOKEN_BLACKLIST_ENABLED': True,
-    'UPDATE_LAST_LOGIN': True,
     "JTI_CLAIM": "jti",
+    'ROTATE_REFRESH_TOKENS': True,
 }
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
