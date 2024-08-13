@@ -209,21 +209,21 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['post'], url_path='is-token-blacklisted')
-    def is_token_blacklisted(self, request):
-        token = request.data.get('token')
+    # @action(detail=False, methods=['post'], url_path='is-token-blacklisted')
+    # def is_token_blacklisted(self, request):
+    #     token = request.data.get('token')
 
-        if not token:
-            return Response({"detail": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+    #     if not token:
+    #         return Response({"detail": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            refresh_token = RefreshToken(token)
-            is_blacklisted = refresh_token.verify()
-            return Response({"is_blacklisted": False}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(f"Error checking if token is blacklisted: {e}")
-            # return Response({"error": "Error checking token blacklist status"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return Response({"is_blacklisted": str(e)}, status=status.HTTP_200_OK)
+    #     try:
+    #         refresh_token = RefreshToken(token)
+    #         is_blacklisted = refresh_token.verify()
+    #         return Response({"is_blacklisted": False}, status=status.HTTP_200_OK)
+    #     except Exception as e:
+    #         print(f"Error checking if token is blacklisted: {e}")
+    #         # return Response({"error": "Error checking token blacklist status"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #         return Response({"is_blacklisted": str(e)}, status=status.HTTP_200_OK)
             
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def google_login(self, request):

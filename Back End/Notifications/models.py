@@ -18,7 +18,8 @@ class Notification(models.Model):
         ('BID_PLACED', 'Bid Placed'),
         ('AUCTION_START','Auction started'),
         ('AUCTION_END','Auction ended'),
-        ('SYSTEM_ALERT','System alert')
+        ('SYSTEM_ALERT','System alert'),
+        ('NEW_USER','New user'),
         # Add more types as needed
     ])
 
