@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getTimeRemaining } from './timeRemaining';
 
-function TimeRemaining({ bidEndTime, timerEnded }) {
+function TimeRemaining({ endTime, timerEnded }) {
 	const [timeLeft, setTimeLeft] = useState({
 		days: 0,
 		hours: 0,
@@ -12,12 +12,12 @@ function TimeRemaining({ bidEndTime, timerEnded }) {
 
 	useEffect(() => {
 		const clearTimer = getTimeRemaining(
-			bidEndTime,
+			endTime,
 			(time) => {
 				setTimeLeft(time);
 				if (time.isTimeOver) {
 					setEnded(true);
-					timerEnded();
+					timerEnded && timerEnded();
 				}
 			},
 			() => {
@@ -26,13 +26,13 @@ function TimeRemaining({ bidEndTime, timerEnded }) {
 		);
 
 		return () => clearTimer(); // Clean up timer on unmount
-	}, [bidEndTime]);
+	}, [endTime]);
 
 	return (
 		<>
 			{!ended ? (
 				<div className='flex justify-between'>
-					<p>Bid ends in :</p>
+					{/* <p>Bid ends in :</p> */}
 					<p>
 						{timeLeft.days} days {timeLeft.hours}:{timeLeft.minutes}
 						:{timeLeft.seconds}

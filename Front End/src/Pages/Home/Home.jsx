@@ -9,10 +9,6 @@ function Home() {
 	const [searchString, setSearchSTring] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState('');
 
-	useEffect(() => {
-		console.log(searchString);
-	}, [searchString]);
-
 	return (
 		<div className='full-page'>
 			<NavBar setSearchSTring={setSearchSTring} />

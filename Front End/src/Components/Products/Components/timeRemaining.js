@@ -1,5 +1,5 @@
-function calculateTimeLeft(bidEndTime) {
-	const endTime = new Date(bidEndTime);
+function calculateTimeLeft(time) {
+	const endTime = new Date(time);
 	const now = new Date(); // Current time is in UTC by default
 
 	const difference = endTime - now;
@@ -26,9 +26,9 @@ function calculateTimeLeft(bidEndTime) {
 	return timeLeft;
 }
 
-function getTimeRemaining(bidEndTime, callback) {
+function getTimeRemaining(endTime, callback) {
 	const timer = setInterval(() => {
-		const timeLeft = calculateTimeLeft(bidEndTime);
+		const timeLeft = calculateTimeLeft(endTime);
 		callback(timeLeft);
 
 		if (timeLeft.isTimeOver) {

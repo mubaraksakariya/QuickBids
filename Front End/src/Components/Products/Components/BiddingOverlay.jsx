@@ -71,10 +71,13 @@ const BiddingOverlay = ({
 						highestBidError={highestBidError}
 						highestBid={highestBid}
 					/>
-					<TimeRemaining
-						bidEndTime={auction.end_time}
-						timerEnded={() => toggleBiddingWindow(false)}
-					/>
+					<div className='flex justify-between pb-4'>
+						<p>Bid ends :</p>
+						<TimeRemaining
+							endTime={auction.end_time}
+							timerEnded={() => toggleBiddingWindow(false)}
+						/>
+					</div>
 					<form className='max-w-sm flex mb-2' onSubmit={manageSubmi}>
 						<div className='flex-1 relative'>
 							<label

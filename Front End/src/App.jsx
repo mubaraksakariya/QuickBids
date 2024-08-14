@@ -16,6 +16,7 @@ import UserBids from './Pages/Bids/UserBids';
 import EditProfile from './Pages/Profile/EditProfile';
 import ResetPassword from './Pages/Profile/ResetPassword';
 import ForgotPassword from './Pages/FrogotPassword/ForgotPassword';
+import ProductPage from './Pages/Product/ProductPage';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -125,7 +126,12 @@ function App() {
 									state={{ from: '/product/create' }}
 								/>
 							),
+
 							// loader: Loader,
+						},
+						{
+							path: ':id', // Dynamic route for product details
+							element: <ProductPage />,
 						},
 					],
 				},

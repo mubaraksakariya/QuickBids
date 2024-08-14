@@ -10,12 +10,14 @@ import { useSelector } from 'react-redux';
 import AuctionStatusIndicator from './Components/AuctionStatusIndicator';
 import AuctionUserIndicator from './Components/AuctionUserIndicator';
 import useUserById from '../../CustomHooks/useUserById';
+import { useNavigate } from 'react-router-dom';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
 	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
 	const [highestBid, setHighestBid] = useState(null);
 	const [highestBidError, setHighestBidError] = useState(null);
+	const navigate = useNavigate();
 	const user = useSelector((state) => state.auth.user);
 
 	// get Auction detail for this product
@@ -68,7 +70,7 @@ function Card({ product }) {
 
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		console.log(auction);
+		navigate(`/product/${product.id}`);
 	};
 
 	//For web socket
@@ -163,10 +165,13 @@ function Card({ product }) {
 								{auction?.initial_prize}
 							</p>
 						</div>
-						<TimeRemaining
-							bidEndTime={auction?.end_time}
-							timerEnded={manageTimeover}
-						/>
+						<div className='flex justify-between pb-4'>
+							<p>Bid ends :</p>
+							<TimeRemaining
+								endTime={auction?.end_time}
+								timerEnded={manageTimeover}
+							/>
+						</div>
 					</div>
 
 					<div className='flex-[3]'>
