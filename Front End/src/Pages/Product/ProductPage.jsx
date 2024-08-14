@@ -1,14 +1,22 @@
-import React from 'react';
+// ProductPage.js
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
 import useProductById from '../../CustomHooks/useProductById';
-import ImageSlider from './Components/ImageSlider';
 import useAuction from '../../CustomHooks/useAuction';
 import useHighestBid from '../../CustomHooks/useHighestBid';
-import ThemeButtons from '../../Components/Buttons/ThemeButton';
+
+import Footer from '../../Components/Footer/Footer';
+import ProductImageSection from './Components/ProoductPage/ProductImageSection';
+import ProductDetails from './Components/ProoductPage/ProductDetails';
+import BidSection from './Components/ProoductPage/BidSection';
+import ProxyBidSection from './Components/ProoductPage/ProxyBidSection';
+import BuyNowSection from './Components/ProoductPage/BuyNowSection';
 import TimeRemaining from '../../Components/Products/Components/TimeRemaining';
+import AuctionStatusIndicator from '../../Components/Products/Components/AuctionStatusIndicator';
 
 function ProductPage() {
+	const [isAuctionOver, setIsAuctionOver] = useState(true);
 	const { id } = useParams();
 	const {
 		data: product,
@@ -27,119 +35,67 @@ function ProductPage() {
 	} = useHighestBid(id);
 	const auctionEnd = () => {
 		console.log('auction ended');
+		setIsAuctionOver(true);
 	};
-	const imageUrls = product?.images.map((item) => item.image);
 
 	return (
 		<div className='full-page'>
 			<NoneHomeNavbar />
-			<div className='lg:flex gap-6 lg:m-5 m-2 relative'>
-				<div className='flex-1 bg-white flex justify-center items-center shadow-lg'>
-					{productLoading || !imageUrls ? (
-						<p className='text-center text-lg text-gray-500'>
-							Loading...
-						</p>
-					) : (
-						<ImageSlider images={imageUrls} />
-					)}
-				</div>
-				<div className='lg:absolute right-4 top-2 flex justify-center py-4'>
-					<TimeRemaining
-						endTime={auction?.end_time}
-						timerEnded={auctionEnd}
-					/>
-				</div>
-				<div className='flex-1 p-6 rounded-lg relative'>
-					<h1 className='text-3xl font-bold text-headerColour mb-4'>
-						{product?.title}
-					</h1>
-					<p className='text-base text-bodyTextColour mb-6'>
-						{product?.description}
-					</p>
-
-					<p className='text-xl text-bodyTextColour mb-2'>
-						Current bid:{' '}
-						<span className='font-semibold text-linkColour'>
-							{highestBid?.amount
-								? `$${highestBid.amount}`
-								: 'Be the first one to bid !!'}
-						</span>
-					</p>
-					{/* bid now */}
-					<div className='mb-6 flex gap-5'>
-						<div className='flex-1'>
-							<label htmlFor='bid-now' className='text-sm'>
-								Your bid
-							</label>
-							<input
-								defaultValue={
-									highestBid?.amount
-										? highestBid.amount
-										: auction?.initial_prize
-								}
-								type='number'
-								id='bid-now'
-								placeholder='Enter your bid'
-								className='border border-cardBorderColour rounded-lg py-2 px-3 w-full '
+			<div className='container mx-auto lg:flex gap-8  mt-4 p-4'>
+				<ProductImageSection
+					images={product?.images}
+					isLoading={productLoading}
+				/>
+				<div className='flex-1 p-6 flex flex-col rounded-lg shadow-lg relative'>
+					<div className='flex flex-col flex-grow'>
+						<div className=''>
+							<ProductDetails
+								product={product}
+								auction={auction}
+								auctionEnd={auctionEnd}
 							/>
 						</div>
-						<div className='flex-1 flex flex-col justify-end'>
-							<ThemeButtons
-								text='Bid Now'
-								className={'w-full h-10'}
-							/>
-						</div>
-					</div>
-					<div className='md:flex gap-5 mb-6'>
-						<div className='flex-1 flex gap-5  lg:mb-0 mb-3'>
-							<div className='flex-1 flex flex-col justify-end'>
-								<label htmlFor='proxy-bid' className='text-sm'>
-									Maximum amount
-								</label>
-								<input
-									id='proxy-bid'
-									type='number'
-									placeholder='Max proxy'
-									className='border border-cardBorderColour rounded-lg py-2 px-3 w-full'
+						{/* badge or timer if auction exists */}
+						<div className='lg:absolute right-3 top-3 flex justify-center py-2'>
+							{!isAuctionOver ? (
+								<TimeRemaining
+									endTime={auction?.end_time}
+									timerEnded={auctionEnd}
 								/>
-							</div>
-							<div className='flex-1 flex flex-col justify-end'>
-								<label htmlFor='incriment' className='text-sm'>
-									incriment
-								</label>
-								<input
-									id='incriment'
-									type='number'
-									placeholder='Proxy incriment'
-									className='border border-cardBorderColour rounded-lg py-2 px-3 w-full'
+							) : (
+								<AuctionStatusIndicator
+									isActive={auction?.is_active}
+									isTimeOver={isAuctionOver}
 								/>
+							)}
+						</div>
+						{!isAuctionOver ? (
+							<>
+								<div className=''>
+									<BidSection
+										highestBid={highestBid}
+										auction={auction}
+									/>
+								</div>
+								<div className=''>
+									<ProxyBidSection />
+								</div>
+							</>
+						) : (
+							<div className=' flex-1'>
+								<p className=' text-justify'>
+									This acuction is not active right now,
+									however you can buy this product
+								</p>
 							</div>
-						</div>
-						<div className='flex-1 flex flex-col justify-end'>
-							<ThemeButtons
-								text='Proxy Bid'
-								className={'w-full h-10'}
-							/>
-						</div>
-					</div>
-					<div className='md:flex gap-5'>
-						<div className='flex-1  lg:mb-0 mb-3'>
-							<p className='text-xl text-bodyTextColour '>
-								Buy now price
-							</p>
-							<span className='font-semibold text-linkColour'>
-								{product?.buy_now_prize}
-							</span>
-						</div>
-						<div className='flex-1 flex flex-col justify-end'>
-							<ThemeButtons
-								text='Buy now'
-								className={'w-full h-10'}
-							/>
+						)}
+						<div className=''>
+							<BuyNowSection product={product} />
 						</div>
 					</div>
 				</div>
 			</div>
+			<Footer />
 		</div>
 	);
 }
