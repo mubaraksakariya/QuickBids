@@ -2,7 +2,7 @@ import React from 'react';
 
 function ThemeButtons({
 	text = 'Button',
-	onclick,
+	onclick = () => {},
 	icon,
 	className,
 	type = 'button',
@@ -58,7 +58,7 @@ function ThemeButtons({
 		<button
 			type={type}
 			className={`rounded-lg p-1 text-white ${className} ${colourTheme}`}
-			onClick={() => onclick && onclick()}>
+			onClick={() => onclick()}>
 			<span className='flex justify-center gap-1'>
 				{icon && icon}
 				{text}

@@ -1,5 +1,5 @@
 // ProductPage.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
 import useProductById from '../../CustomHooks/useProductById';
@@ -14,10 +14,13 @@ import ProxyBidSection from './Components/ProoductPage/ProxyBidSection';
 import BuyNowSection from './Components/ProoductPage/BuyNowSection';
 import TimeRemaining from '../../Components/Products/Components/TimeRemaining';
 import AuctionStatusIndicator from '../../Components/Products/Components/AuctionStatusIndicator';
+import useWebSocket from '../../CustomHooks/useWebSocket';
 
 function ProductPage() {
-	const [isAuctionOver, setIsAuctionOver] = useState(true);
+	const [isAuctionOver, setIsAuctionOver] = useState(false);
+	const [highestBid, setHighestBid] = useState(null);
 	const { id } = useParams();
+
 	const {
 		data: product,
 		error: productError,
@@ -29,14 +32,39 @@ function ProductPage() {
 		isLoading: auctionLoading,
 	} = useAuction(id);
 	const {
-		data: highestBid,
-		error: highestBidError,
-		isLoading: isHighestBidLoading,
-	} = useHighestBid(id);
+		data: recentBid,
+		error: recentBidError,
+		isLoading: recentBidLoading,
+	} = useHighestBid(auction?.id);
+
 	const auctionEnd = () => {
-		console.log('auction ended');
 		setIsAuctionOver(true);
 	};
+
+	useEffect(() => {
+		if (recentBid) setHighestBid(recentBid);
+	}, [recentBid]);
+
+	// WebSocket connection
+	const socketUrl = `auction/${auction?.id}/`;
+	const socketKey = `auction-${auction?.id}`;
+	const handleMessage = (event) => {
+		const message = JSON.parse(event.data);
+		const data = message.data;
+		const new_bid = data.bid;
+		if (data.message_type === 'bid_update' && new_bid) {
+			setHighestBid(new_bid);
+		}
+	};
+	// Use the WebSocket hook
+	useWebSocket(
+		socketKey,
+		socketUrl,
+		handleMessage
+		// handleOpen,
+		// handleClose,
+		// handleError
+	);
 
 	return (
 		<div className='full-page'>
@@ -78,7 +106,11 @@ function ProductPage() {
 									/>
 								</div>
 								<div className=''>
-									<ProxyBidSection />
+									<ProxyBidSection
+										highestBid={highestBid}
+										auction={auction}
+										product={product}
+									/>
 								</div>
 							</>
 						) : (

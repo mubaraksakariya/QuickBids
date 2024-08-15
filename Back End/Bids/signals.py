@@ -7,7 +7,7 @@ from Bids.utils import send_bid_update
 @receiver(post_save, sender=Bid)
 def bid_updated(sender, instance, created, **kwargs):
     if created:
-        # Send the update to the WebSocket group
+        # Send the update (amount update) to the WebSocket group
         send_bid_update(instance)
         
         # Retrieve the auction details
@@ -19,11 +19,19 @@ def bid_updated(sender, instance, created, **kwargs):
         if top_bids.count() > 1:
             # The previous highest bid
             previous_bid = top_bids[1]
+            # current highest bid
+            current_bid = top_bids[0]
+
             previous_bidder = previous_bid.user
-            message = f"You have been outbid on auction {auction.product.title}"
+            cuurent_bidder = current_bid.user
+            message = ''
+            if previous_bidder == cuurent_bidder:
+                message = f"you have upgraded a winning bid on auction{auction.product.title}"
+            else:    
+                message = f"You have been outbid on auction {auction.product.title}"
             notification_type = "OUTBID"
 
-            # Create a notification for the previous highest bidder
+            # Create a notification for the previous/current highest bidder
             Notification.objects.create(
                 user=previous_bidder,
                 message=message,

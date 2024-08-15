@@ -43,3 +43,37 @@ export const validateLocation = (selectedState, currentLocation) => {
 	}
 	return '';
 };
+
+export const validateProxyAmount = (
+	maxProxy,
+	incriment,
+	highestBid,
+	auction,
+	product
+) => {
+	if (!maxProxy | !incriment)
+		return {
+			message: 'Enter a proxy value and inciriment',
+		};
+	const recentBid =
+		(highestBid && highestBid?.amount) || auction.initial_prize;
+
+	if (maxProxy <= recentBid || maxProxy >= product.buy_now_prize)
+		return {
+			message:
+				'Enter a maxProxy bid amount greater than the current bid or the initial value',
+		};
+
+	if (incriment < (maxProxy - recentBid) / 5)
+		return {
+			message: `Enter a valid incriment value, minimum value is ${
+				(maxProxy - recentBid) / 5
+			}`,
+		};
+	if (Number(recentBid) + Number(incriment) > Number(maxProxy))
+		return {
+			message: `Enter a valid incriment value, maximum value is ${
+				maxProxy - recentBid
+			}`,
+		};
+};
