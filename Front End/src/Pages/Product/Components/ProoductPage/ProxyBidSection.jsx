@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import ThemeButtons from '../../../../Components/Buttons/ThemeButton';
 import { validateProxyAmount } from '../../Utils/ProductCreationFormValidators';
+import usePlaceProxyBid from '../../../../CustomHooks/usePlaceProxyBid';
+import GeneralModal from '../../../../Components/Models/GeneralModal';
 
 const ProxyBidSection = ({ highestBid, auction, product }) => {
 	const [maxBid, setMaxBid] = useState();
-	const [incriment, setIncriment] = useState();
+	const [bidStep, setBidStep] = useState();
 	const [error, setError] = useState(false);
+	const [isSuccess, setIscuccess] = useState(false);
+	const {
+		mutate: placeBid,
+		isLoading,
+		isError,
+		error: placeBidError,
+	} = usePlaceProxyBid();
 
 	const getIncrimentSuggestion = () => {
 		const currentBid =
@@ -16,11 +25,12 @@ const ProxyBidSection = ({ highestBid, auction, product }) => {
 			return (maxBid - currentBid) / 10;
 		} else return 0;
 	};
+
 	const onSubmit = () => {
 		setError(null);
 		const proxyValError = validateProxyAmount(
 			maxBid,
-			incriment,
+			bidStep,
 			highestBid,
 			auction,
 			product
@@ -30,7 +40,17 @@ const ProxyBidSection = ({ highestBid, auction, product }) => {
 			// showError(proxyValError.message);
 			return;
 		}
-		console.log('okey to procede');
+		placeBid(
+			{
+				auctionId: auction.id,
+				maxBid,
+				bidStep,
+			},
+			{
+				onSuccess: () => setIscuccess(true),
+				onError: () => setIscuccess(false),
+			}
+		);
 	};
 	return (
 		<div className='mb-6'>
@@ -58,13 +78,13 @@ const ProxyBidSection = ({ highestBid, auction, product }) => {
 				</div>
 				<div className='flex-1'>
 					<label
-						htmlFor='incriment'
+						htmlFor='bidStep'
 						className='block text-sm text-gray-600 mb-2'>
 						Increment
 					</label>
 					<input
-						onChange={(e) => setIncriment(e.target.value)}
-						id='incriment'
+						onChange={(e) => setBidStep(e.target.value)}
+						id='bidStep'
 						type='number'
 						placeholder={getIncrimentSuggestion()}
 						className='border border-cardBorderColour rounded-lg py-2 px-3 w-full'
@@ -79,6 +99,9 @@ const ProxyBidSection = ({ highestBid, auction, product }) => {
 					onclick={onSubmit}
 				/>
 			</div>
+			<GeneralModal show={isSuccess} onClose={() => setIscuccess(false)}>
+				<p>Your proxy bid is running now</p>
+			</GeneralModal>
 		</div>
 	);
 };

@@ -25,7 +25,7 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Wallet.objects.filter(user=self.request.user)
-    
+        
     def list(self, request, *args, **kwargs):
         wallet, created = Wallet.objects.get_or_create(user=self.request.user)
         serializer = self.get_serializer(wallet)
@@ -90,6 +90,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(wallet_transactions, many=True)
         return Response(serializer.data)
     
+
 
     def create(self, request, *args, **kwargs):
         wallet = get_object_or_404(Wallet, user=request.user)

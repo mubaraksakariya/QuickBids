@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Auction
 from .serializers import AuctionSerializer, AuctionWithProductSerializer
+from rest_framework import serializers
 
 class AuctionViewSet(viewsets.ModelViewSet):
     queryset = Auction.objects.all()

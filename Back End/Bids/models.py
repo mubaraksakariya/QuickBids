@@ -17,7 +17,6 @@ class ProxyBid(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     bid_step = models.DecimalField(max_digits=10, decimal_places=2)
     max_bid = models.DecimalField(max_digits=10, decimal_places=2)
-    current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)

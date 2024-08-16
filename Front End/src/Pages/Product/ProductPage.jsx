@@ -56,13 +56,19 @@ function ProductPage() {
 			setHighestBid(new_bid);
 		}
 	};
+	// const handleOpen = () => {
+	// 	console.log(`socket opened for ${product.id}`);
+	// };
+	// const handleClose = () => {
+	// 	console.log(`socket closed for ${product.id}`);
+	// };
 	// Use the WebSocket hook
 	useWebSocket(
 		socketKey,
 		socketUrl,
 		handleMessage
 		// handleOpen,
-		// handleClose,
+		// handleClose
 		// handleError
 	);
 
