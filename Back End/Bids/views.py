@@ -83,8 +83,7 @@ class BidViewSet(viewsets.ModelViewSet):
     def highest_bid(self, request, pk=None):
         try:
             auction = Auction.objects.get(id=pk)
-            highest_bid = Bid.objects.filter(
-                auction=auction).order_by('-amount').first()
+            highest_bid = BidService.get_highest_bid(auction=auction)
             if highest_bid:
                 return Response(BidSerializer(highest_bid).data)
             else:
@@ -104,11 +103,11 @@ class BidViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Both auction_id and user_id are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            auction = Auction.objects.get(id=auction_id)
+            auction = AuctionService.get_auction(auction_id=auction_id)
             user = CustomUser.objects.get(id=user_id)
 
-            highest_bid = Bid.objects.filter(
-                auction=auction, user=user).order_by('-amount').first()
+            highest_bid = BidService.get_highest_bid(
+                auction=auction, user=user)
 
             if highest_bid:
                 return Response(BidSerializer(highest_bid).data)

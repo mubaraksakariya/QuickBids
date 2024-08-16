@@ -107,10 +107,13 @@ class BidService:
         return highest_bid and highest_bid.amount >= max_bid
 
     @staticmethod
-    def get_highest_bid(auction):
+    def get_highest_bid(auction, user=None):
         """
         Fetch the highest bid for a given auction.
         """
+        if user:
+            return Bid.objects.filter(
+                auction=auction, user=user).order_by('-amount').first()
         return Bid.objects.filter(auction=auction).order_by('-amount').first()
 
     # checks if the new bid amount is greater than the existing highest bid amount
