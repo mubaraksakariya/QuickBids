@@ -5,12 +5,14 @@ import { useError } from '../../../../Context/ErrorContext';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import GeneralModal from '../../../../Components/Models/GeneralModal';
+import { UserInfo } from './UserInfo';
 
 const BidSection = ({ highestBid, auction }) => {
 	const [bidAmount, setBidAmount] = useState(null);
 	const [error, setError] = useState();
 	const [showSuccess, setShowSuccess] = useState(false);
 	const { showError, hideError } = useError('');
+	const user = highestBid?.user;
 	const {
 		mutate: updateBid,
 		isLoading,
@@ -63,23 +65,31 @@ const BidSection = ({ highestBid, auction }) => {
 	};
 
 	return (
-		<div className='mb-6'>
-			<p className='text-xl text-bodyTextColour mb-3'>
-				Initial Prize :{' '}
-				<span className='font-semibold text-linkColour'>
-					{auction?.initial_prize}
+		<div className='mb-6 p-6 bg-sectionBgColour3 rounded-lg shadow-md'>
+			<div className='flex justify-between mb-4'>
+				<p className='text-xl font-semibold text-headerColour'>
+					Initial Prize
+				</p>
+				<span className='text-lg font-semibold text-linkColour'>
+					{auction?.initial_prize?.toLocaleString()}
 				</span>
-			</p>
-			<p className='text-xl text-bodyTextColour mb-3'>
-				Current bid:{' '}
-				<span className='font-semibold text-linkColour'>
-					{highestBid?.amount
-						? `${highestBid?.amount}`
-						: 'Be the first one to bid !!'}
-				</span>
-			</p>
-			<label htmlFor='bid-now' className='text-sm'>
-				Your bid
+			</div>
+			<div className=' text-headerColour mb-4'>
+				<h1 className='pb-3 text-xl font-semibold'>Current Bid</h1>
+				<div className='font-semibold text-linkColour'>
+					{highestBid?.amount ? (
+						<UserInfo user={user} highestBid={highestBid} />
+					) : (
+						<span className=' font-normal text-black'>
+							Be the first one to bid !!
+						</span>
+					)}
+				</div>
+			</div>
+			<label
+				htmlFor='bid-now'
+				className='block text-sm text-headerColour mb-2'>
+				Your Bid
 			</label>
 			<div className='flex gap-4'>
 				<input
@@ -91,7 +101,7 @@ const BidSection = ({ highestBid, auction }) => {
 							? highestBid.amount
 							: auction?.initial_prize
 					}
-					className='border border-cardBorderColour rounded-lg py-2 px-4 w-full flex-[8]'
+					className='border border-cardBorderColour rounded-lg py-2 px-4 w-full flex-[8] text-headerColour placeholder:text-sectionBgColour8 focus:ring-2 focus:ring-linkHoverColour'
 					disabled={isLoading}
 					min={
 						highestBid?.amount
@@ -101,16 +111,18 @@ const BidSection = ({ highestBid, auction }) => {
 				/>
 				<ThemeButtons
 					text={isLoading ? 'Submitting...' : 'Bid Now'}
-					className='flex-[4]'
+					className='flex-[4] bg-buttonColour1 hover:bg-buttonColour2 text-white rounded-lg py-2 px-4'
 					onclick={handleBidSubmit}
 					disabled={isLoading}
 				/>
 			</div>
-			{error && <p className='text-red-500 mt-2'>{error}</p>}{' '}
+			{error && <p className='text-errorColour mt-2'>{error}</p>}
 			<GeneralModal
 				show={showSuccess}
 				onClose={() => setShowSuccess(false)}>
-				Your bid is updated succesfully !!
+				<p className='text-headerColour'>
+					Your bid is updated successfully!
+				</p>
 			</GeneralModal>
 		</div>
 	);

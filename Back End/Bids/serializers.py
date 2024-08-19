@@ -5,6 +5,8 @@ from .models import Bid, ProxyBid
 
 
 class BidSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Bid
         fields = ['id', 'auction', 'user', 'amount', 'created_at']

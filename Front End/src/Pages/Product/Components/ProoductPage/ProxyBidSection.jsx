@@ -4,12 +4,11 @@ import { validateProxyAmount } from '../../Utils/ProductCreationFormValidators';
 import usePlaceProxyBid from '../../../../CustomHooks/usePlaceProxyBid';
 import GeneralModal from '../../../../Components/Models/GeneralModal';
 import useProxyBid from '../../../../CustomHooks/useProxyBid';
-import { useSelector } from 'react-redux';
 
-const ProxyBidSection = ({ highestBid, auction, product }) => {
+const ProxyBidSection = ({ highestBid, auction, product, currenUser }) => {
 	const [maxBid, setMaxBid] = useState();
 	const [bidStep, setBidStep] = useState();
-	const currenUser = useSelector((state) => state.auth.user);
+
 	const [error, setError] = useState(false);
 	const [isSuccess, setIscuccess] = useState(false);
 	const {

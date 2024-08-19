@@ -3,7 +3,6 @@ import useApi from '../Context/AxiosContext';
 
 const fetchHighestBid = async (api, auctionId) => {
 	const response = await api.get(`/api/bids/${auctionId}/highest-bid`);
-	// console.log(response);
 	return response.data;
 };
 

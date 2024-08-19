@@ -1,7 +1,9 @@
+import os
+from django.conf import settings
+from urllib.parse import urljoin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from Bids.serializers import BidSerializer
-from Bids.services.bid_service import ProxyBidService
 from Notifications.models import Notification
 from .models import Bid
 from Bids.utils import send_bid_update
@@ -10,8 +12,16 @@ from Bids.utils import send_bid_update
 @receiver(post_save, sender=Bid)
 def bid_updated(sender, instance, created, **kwargs):
     if created:
+        baseUrl: str = os.environ.get('SERVER_BASE_URL')  # type: ignore
+        print(kwargs)
         # Send the update (amount update) to the WebSocket group
         bid_data = BidSerializer(instance).data
+        # Manually construct the full URL for the profile picture
+        profile_picture_url = bid_data['user'].get(  # type: ignore
+            'profile_picture')
+        if profile_picture_url:
+            full_url = urljoin(baseUrl, profile_picture_url)
+            bid_data['user']['profile_picture'] = full_url  # type: ignore
         # Send the serialized data to the Celery task
         send_bid_update.delay(bid_data)
 

@@ -9,7 +9,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from Auction.models import Auction
 from Auction.services.auction_service import AuctionService
-from Bids.services.bid_service import BidService, ProxyBidService
+from Bids.services.bid_service import BidService
+from Bids.services.proxy_bid_service import ProxyBidService
 from Customer.models import CustomUser
 from Wallet.services.wallet_service import WalletService
 from .models import Bid, ProxyBid
@@ -67,7 +68,7 @@ class BidViewSet(viewsets.ModelViewSet):
             )
             # check if proxy bid available and works on it
             ProxyBidService.handle_proxy_bidding(auction=auction)
-            return Response(BidSerializer(bid).data, status=status.HTTP_201_CREATED)
+            return Response(self.get_serializer(bid).data, status=status.HTTP_201_CREATED)
 
         except serializers.ValidationError as e:
             transaction.set_rollback(True)
@@ -85,7 +86,7 @@ class BidViewSet(viewsets.ModelViewSet):
             auction = Auction.objects.get(id=pk)
             highest_bid = BidService.get_highest_bid(auction=auction)
             if highest_bid:
-                return Response(BidSerializer(highest_bid).data)
+                return Response(self.get_serializer(highest_bid).data)
             else:
                 return Response({'message': 'No bids'}, status=status.HTTP_200_OK)
         except Auction.DoesNotExist:
@@ -110,7 +111,7 @@ class BidViewSet(viewsets.ModelViewSet):
                 auction=auction, user=user)
 
             if highest_bid:
-                return Response(BidSerializer(highest_bid).data)
+                return Response(self.get_serializer(highest_bid).data)
             else:
                 return Response({'message': 'No bids'}, status=status.HTTP_200_OK)
 

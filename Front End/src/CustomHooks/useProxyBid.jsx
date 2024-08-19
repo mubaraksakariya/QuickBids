@@ -6,7 +6,6 @@ const fetchProxyBid = async (api, auctionId, userId) => {
 	if (userId) {
 		url += `&user_id=${userId}`;
 	}
-	console.log(url);
 	try {
 		const response = await api.get(url);
 		return response.data;
@@ -15,6 +14,7 @@ const fetchProxyBid = async (api, auctionId, userId) => {
 	}
 };
 
+// for both an auctions proxy bid and if user is passed that users proxy bid
 const useProxyBid = (auctionId, userId = null) => {
 	const api = useApi();
 

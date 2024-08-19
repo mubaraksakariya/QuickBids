@@ -15,11 +15,13 @@ import BuyNowSection from './Components/ProoductPage/BuyNowSection';
 import TimeRemaining from '../../Components/Products/Components/TimeRemaining';
 import AuctionStatusIndicator from '../../Components/Products/Components/AuctionStatusIndicator';
 import useWebSocket from '../../CustomHooks/useWebSocket';
+import { useSelector } from 'react-redux';
 
 function ProductPage() {
 	const [isAuctionOver, setIsAuctionOver] = useState(false);
 	const [highestBid, setHighestBid] = useState(null);
 	const { id } = useParams();
+	const currenUser = useSelector((state) => state.auth.user);
 
 	const {
 		data: product,
@@ -90,7 +92,7 @@ function ProductPage() {
 							/>
 						</div>
 						{/* badge or timer if auction exists */}
-						<div className='lg:absolute right-3 top-3 flex justify-center py-2'>
+						<div className='lg:absolute right-3 top-0 flex justify-center py-2'>
 							{!isAuctionOver ? (
 								<TimeRemaining
 									endTime={auction?.end_time}
@@ -113,6 +115,7 @@ function ProductPage() {
 								</div>
 								<div className=''>
 									<ProxyBidSection
+										currenUser={currenUser}
 										highestBid={highestBid}
 										auction={auction}
 										product={product}
