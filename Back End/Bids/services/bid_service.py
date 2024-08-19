@@ -3,13 +3,16 @@ from decimal import Decimal
 from Bids.models import ProxyBid, Bid
 from Wallet.services.wallet_service import WalletService
 from rest_framework.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 
 
 class ProxyBidService:
     @staticmethod
-    def get_highest_proxy_bid(auction):
-        return ProxyBid.objects.filter(auction=auction, is_deleted=False).order_by('-max_bid').first()
+    def get_highest_proxy_bid(auction, user=None):
+        print(user, auction)
+        # if user:
+        #     return ProxyBid.objects.filter(auction=auction, user=user, is_deleted=False, is_active=True).order_by('-max_bid').first()
+        return ProxyBid.objects.filter(auction=auction, is_deleted=False, is_active=True).order_by('-max_bid').first()
 
     @staticmethod
     def validate_proxy_bid(auction, max_bid):
@@ -20,7 +23,7 @@ class ProxyBidService:
         2. The max_bid is greater than the current highest bid.
         """
         # Check if a higher or equal proxy bid exists
-        if ProxyBid.objects.filter(auction=auction, max_bid__gte=max_bid).exists():
+        if ProxyBid.objects.filter(auction=auction, max_bid__gte=max_bid, is_active=True).exists():
             raise serializers.ValidationError(
                 {'detail': 'A higher or equal proxy bid already exists for this auction.'})
 
@@ -28,7 +31,30 @@ class ProxyBidService:
         highest_bid = BidService.get_highest_bid(auction)
         if highest_bid and highest_bid.amount >= max_bid:
             raise serializers.ValidationError(
+
                 {'detail': 'The auction has exceeded your proxy bid offer. Please try a higher value.'})
+
+    @staticmethod
+    def invalidate_proxy_bid(auction):
+        """
+        Deactivate the most recent active proxy bid for the given auction.
+        """
+        try:
+            # Find the most recent active proxy bid for the given auction
+            recent_proxy_bid = ProxyBid.objects.filter(
+                auction=auction, is_active=True).order_by('-created_at').first()
+
+            if recent_proxy_bid:
+                # Deactivate the most recent active proxy bid
+                recent_proxy_bid.is_active = False
+                recent_proxy_bid.save()
+                return recent_proxy_bid
+            else:
+                # No active proxy bid found
+                return None
+
+        except Exception as e:
+            raise Exception(f'An unexpected error occurred: {str(e)}')
 
     @staticmethod
     def exists_higher_or_equal_proxy_bid(auction, max_bid: Decimal) -> bool:
@@ -58,7 +84,8 @@ class ProxyBidService:
             current_bid_amount = highest_bid.amount if highest_bid else auction.initial_prize
             new_bid_amount = min(
                 current_bid_amount + highest_proxy_bid.bid_step, highest_proxy_bid.max_bid)
-
+            print(type(new_bid_amount), new_bid_amount, type(
+                current_bid_amount), current_bid_amount)
             if new_bid_amount > current_bid_amount:
                 # Place the new bid automatically
                 bid = BidService.create_bid(
@@ -89,6 +116,7 @@ class ProxyBidService:
                     )
 
         except ValidationError as e:
+            print(str(e))
             # Catch and handle specific validation errors
             transaction.set_rollback(True)
             raise e  # Re-raise the validation error to be handled by the caller or API view
@@ -134,7 +162,18 @@ class BidService:
     @staticmethod
     def create_bid(auction, user, amount):
         try:
-            return Bid.objects.create(auction=auction, user=user, amount=amount)
+            # Create the bid instance
+            bid = Bid.objects.create(auction=auction, user=user, amount=amount)
+            return bid
+        except IntegrityError as e:
+            # Catch database integrity errors (e.g., foreign key constraints)
+            raise serializers.ValidationError(
+                {'detail': 'Database integrity error: ' + str(e)})
+        except ValueError as e:
+            # Catch issues related to data validation
+            raise serializers.ValidationError(
+                {'detail': 'Invalid data provided: ' + str(e)})
         except Exception as e:
+            # Catch any other unexpected errors
             raise serializers.ValidationError(
                 {'detail': 'Failed to create bid: ' + str(e)})

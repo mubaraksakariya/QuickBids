@@ -3,12 +3,21 @@ import ThemeButtons from '../../../../Components/Buttons/ThemeButton';
 import { validateProxyAmount } from '../../Utils/ProductCreationFormValidators';
 import usePlaceProxyBid from '../../../../CustomHooks/usePlaceProxyBid';
 import GeneralModal from '../../../../Components/Models/GeneralModal';
+import useProxyBid from '../../../../CustomHooks/useProxyBid';
+import { useSelector } from 'react-redux';
 
 const ProxyBidSection = ({ highestBid, auction, product }) => {
 	const [maxBid, setMaxBid] = useState();
 	const [bidStep, setBidStep] = useState();
+	const currenUser = useSelector((state) => state.auth.user);
 	const [error, setError] = useState(false);
 	const [isSuccess, setIscuccess] = useState(false);
+	const {
+		data: proxyBid,
+		isLoading: proxyBidLoading,
+		error: proxyBidError,
+	} = useProxyBid(auction?.id, currenUser?.id);
+
 	const {
 		mutate: placeBid,
 		isLoading,
@@ -56,6 +65,11 @@ const ProxyBidSection = ({ highestBid, auction, product }) => {
 		<div className='mb-6'>
 			<p className='text-xl text-bodyTextColour mb-3'>
 				We can take care of your Bid for you !!
+			</p>
+			<p
+				className=' cursor-pointer'
+				onClick={() => console.log(proxyBid)}>
+				know current proxy bidd
 			</p>
 			<div className='flex flex-col md:flex-row gap-4'>
 				<div className='flex-1'>

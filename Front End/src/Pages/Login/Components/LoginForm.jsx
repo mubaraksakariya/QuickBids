@@ -56,13 +56,13 @@ function LoginForm({ isLoading, setIsLoading }) {
 			}
 			setIsLoading(false);
 		} catch (error) {
-			console.log('Error during signin:', error);
+			// console.log('Error during signin:', error.message);
 			// Handle error during signin
-			if (error.response) {
-				console.error(error);
-				const serverErrors = error.response.data;
-				setOtherError(serverErrors.detail);
-			}
+			if (error.response?.data) {
+				const serverErrors = error?.response?.data;
+				if (serverErrors) setOtherError(serverErrors.detail);
+				return;
+			} else setOtherError(error.message);
 			setIsLoading(false);
 		}
 	};

@@ -2,8 +2,9 @@ from rest_framework import serializers
 from decimal import Decimal
 from Wallet.models import Wallet, Transaction
 
+
 class WalletService:
-    
+
     @staticmethod
     def get_wallet(user):
         """
@@ -13,14 +14,17 @@ class WalletService:
             return Wallet.objects.get(user=user)
         except Wallet.DoesNotExist:
             raise serializers.ValidationError({'detail': 'Wallet not found.'})
-        
+
     @staticmethod
     def has_wallet_balance(wallet, amount):
         """
         Check if the wallet has sufficient balance.
         """
         if wallet.balance < amount:
-            raise serializers.ValidationError({'detail': 'Insufficient balance in wallet, please top up your wallet and retry.'})
+            raise serializers.ValidationError(
+                {'detail': 'Insufficient balance in wallet, please top up your wallet and retry.'}
+            )
+        return True
 
     @staticmethod
     def process_transaction(wallet, amount, transaction_type, transaction_id):
@@ -28,9 +32,6 @@ class WalletService:
         General method to handle wallet transactions.
         This method can be used to charge or refund a wallet depending on the transaction type.
         """
-        if wallet.balance < amount:
-            raise serializers.ValidationError({'detail': 'Insufficient balance in wallet, please top up your wallet and retry.'})
-
         try:
             if transaction_type == 'REFUND':
                 wallet.balance += amount
@@ -51,4 +52,5 @@ class WalletService:
                 transaction_id=transaction_id,
             )
         except Exception as e:
-            raise serializers.ValidationError({'detail': f'Failed to process transaction: {str(e)}'})
+            raise serializers.ValidationError(
+                {'detail': f'Failed to process transaction: {str(e)}'})

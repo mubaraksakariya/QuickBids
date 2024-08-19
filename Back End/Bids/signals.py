@@ -1,18 +1,23 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from Bids.serializers import BidSerializer
+from Bids.services.bid_service import ProxyBidService
 from Notifications.models import Notification
 from .models import Bid
 from Bids.utils import send_bid_update
+
 
 @receiver(post_save, sender=Bid)
 def bid_updated(sender, instance, created, **kwargs):
     if created:
         # Send the update (amount update) to the WebSocket group
-        send_bid_update(instance)
-        
+        bid_data = BidSerializer(instance).data
+        # Send the serialized data to the Celery task
+        send_bid_update.delay(bid_data)
+
         # Retrieve the auction details
         auction = instance.auction
-        
+
         # Fetch the top two bids
         top_bids = Bid.objects.filter(auction=auction).order_by('-amount')[:2]
 
@@ -27,7 +32,7 @@ def bid_updated(sender, instance, created, **kwargs):
             message = ''
             if previous_bidder == cuurent_bidder:
                 message = f"you have upgraded a winning bid on auction{auction.product.title}"
-            else:    
+            else:
                 message = f"You have been outbid on auction {auction.product.title}"
             notification_type = "OUTBID"
 
@@ -38,9 +43,3 @@ def bid_updated(sender, instance, created, **kwargs):
                 type=notification_type,
                 auction=auction
             )
-            
-            # # Send notification to the previous highest bidder
-            # send_notification_to_previous_bidder(
-            #     user=previous_bidder,
-            #     notification = notification
-            # )

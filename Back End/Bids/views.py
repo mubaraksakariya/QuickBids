@@ -143,6 +143,9 @@ class ProxyBidViewSet(viewsets.ModelViewSet):
             try:
                 auction = AuctionService.get_auction(auction_id)
 
+                # deactivate the old proxy bid, thorows errors if any
+                ProxyBidService.invalidate_proxy_bid(auction=auction)
+
                 # Checks:
                 # 1. A higher or equal proxy bid does not already exist.
                 # 2. The max_bid is greater than the current highest bid.
@@ -171,3 +174,33 @@ class ProxyBidViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'An unexpected error occurred: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # current best proxy bid returns
+    @action(detail=False, methods=['get'], url_path='current-proxy-bid')
+    def current_proxy_bid(self, request):
+        """
+        Returns the current proxy bid details for a given auction.
+        Pass the auction ID as a query parameter.
+        """
+        auction_id = request.query_params.get('auction_id')
+        user_id = request.query_params.get('user_id', None)
+        if not auction_id:
+            return Response({"detail": "Auction ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            auction = Auction.objects.get(id=auction_id)
+        except Auction.DoesNotExist:
+            return Response({"detail": "Auction not found."}, status=status.HTTP_404_NOT_FOUND)
+        user = None
+        if user_id:
+            user = CustomUser.objects.get(id=user_id)
+
+        # Get the latest proxy bid for the given auction
+        proxy_bid = ProxyBidService.get_highest_proxy_bid(
+            auction=auction, user=user)
+
+        if not proxy_bid:
+            return Response({"detail": "No proxy bids found for this auction."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(proxy_bid)
+        return Response(serializer.data, status=status.HTTP_200_OK)
