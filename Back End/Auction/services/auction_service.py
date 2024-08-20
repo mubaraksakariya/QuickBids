@@ -4,6 +4,15 @@ from Auction.models import Auction
 
 class AuctionService:
     @staticmethod
+    def check_biddable(auction):
+        if auction.winner and auction.winning_bid:
+            raise serializers.ValidationError(
+                {'detail': 'This aucion is already over, try other items.'})
+        if auction.winner:
+            raise serializers.ValidationError(
+                {'detail': 'This product has been bought, try other items.'})
+
+    @staticmethod
     def get_auction(auction_id):
         try:
             return Auction.objects.get(id=auction_id)

@@ -19,29 +19,29 @@ from .models import OTP, CustomUser
 from .serializers import ChangePasswordSerializer, UserSerializer
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken,OutstandingToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from django.core.files.base import ContentFile
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password','forgot_password']:
+        if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password', 'forgot_password']:
             self.permission_classes = [AllowAny]
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
-    
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def logged_in_user(self, request):
         user = request.user
         serializer = self.get_serializer(user)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def retrieve_user(self, request, pk=None):
         try:
@@ -60,6 +60,7 @@ class UserViewSet(viewsets.ModelViewSet):
             OTP.objects.create(user=user, otp=otp)
             self.send_otp_email(user.email, otp)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # print("Signup errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
@@ -99,7 +100,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"error": "Email and OTP are required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user = CustomUser.objects.get(email=email)
-            otp_instance = OTP.objects.filter(user=user, otp=otp).latest('created_at')
+            otp_instance = OTP.objects.filter(
+                user=user, otp=otp).latest('created_at')
             if otp_instance.is_valid():
                 otp_instance.delete()  # OTP is valid, delete it
                 user.is_verified = True
@@ -109,8 +111,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({"error": "OTP has expired"}, status=status.HTTP_400_BAD_REQUEST)
         except (CustomUser.DoesNotExist, OTP.DoesNotExist):
             return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-        
-    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated],url_path='update-user')  
+
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated], url_path='update-user')
     def update_user(self, request, *args, **kwargs):
         user = self.request.user
         serializer = self.get_serializer(user, data=request.data, partial=True)
@@ -122,19 +124,19 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['patch'], url_path='change-password', permission_classes=[IsAuthenticated])
     def change_password_current_user(self, request):
         user = request.user
-        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        serializer = ChangePasswordSerializer(
+            data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        
         if not user.check_password(validated_data['old_password']):
             return Response({'detail': 'Old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        user.set_password(validated_data['new_password'])
+
+        user.set_password(validated_data['new_password'])  # type: ignore
         user.save()
-        
+
         return Response({'status': 'Password updated successfully'}, status=status.HTTP_200_OK)
-    
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny],url_path='password-reset-request')
+
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny], url_path='password-reset-request')
     def forgot_password(self, request):
         email = request.data.get('email')
         if not email:
@@ -147,7 +149,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         # Generate password reset token
         token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.id))
+        uid = urlsafe_base64_encode(force_bytes(user.id))  # type: ignore
         frontend_url = os.environ.get('FRONT_END_BASE_URL')
         reset_link = f"{frontend_url}/reset_password/?uid={uid}&token={token}"
         # Send email
@@ -166,7 +168,7 @@ class UserViewSet(viewsets.ModelViewSet):
         recipient_list = [user.email]
         send_otp_email_task.delay(subject, message, recipient_list)
         return Response({"message": "Password reset email sent"}, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=['post'], permission_classes=[AllowAny], url_path='reset-password')
     def reset_password(self, request):
         uid = request.data.get('uid')
@@ -186,7 +188,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(new_password)
-        user.auth_provider = 'local'
+        user.auth_provider = 'local'  # type: ignore
         user.save()
 
         # Invalidate all tokens for this user
@@ -195,13 +197,15 @@ class UserViewSet(viewsets.ModelViewSet):
             for outstanding_token in outstanding_tokens:
                 try:
                     # Directly blacklist using the token string
-                    refresh_token = RefreshToken(outstanding_token.token)
-                    blocked_token, created = refresh_token.blacklist()
+                    refresh_token = RefreshToken(
+                        outstanding_token.token)  # type: ignore
+                    blocked_token, created = refresh_token.blacklist()  # type: ignore
                     outstanding_token.delete()
-                    
+
                 except Exception as e:
                     outstanding_token.delete()
-                    print(f"Error while blacklisting token {outstanding_token.token}: {e}")
+                    print(
+                        f"Error while blacklisting token {outstanding_token.token}: {e}")
 
         except Exception as e:
             print(f"Error while blacklisting tokens: {e}")
@@ -209,22 +213,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
 
-    # @action(detail=False, methods=['post'], url_path='is-token-blacklisted')
-    # def is_token_blacklisted(self, request):
-    #     token = request.data.get('token')
-
-    #     if not token:
-    #         return Response({"detail": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-    #     try:
-    #         refresh_token = RefreshToken(token)
-    #         is_blacklisted = refresh_token.verify()
-    #         return Response({"is_blacklisted": False}, status=status.HTTP_200_OK)
-    #     except Exception as e:
-    #         print(f"Error checking if token is blacklisted: {e}")
-    #         # return Response({"error": "Error checking token blacklist status"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #         return Response({"is_blacklisted": str(e)}, status=status.HTTP_200_OK)
-            
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def google_login(self, request):
         credentialResponse = request.data.get('credentialResponse')
@@ -232,7 +220,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
         token = credentialResponse['credential']
         try:
-            idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'])
+            idinfo = id_token.verify_oauth2_token(token, google_requests.Request(
+            ), settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'])
             if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                 raise ValueError('Wrong issuer.')
             email = idinfo['email']
@@ -247,7 +236,8 @@ class UserViewSet(viewsets.ModelViewSet):
             user.auth_provider = 'google'
 
             if picture and created:
-                user.profile_picture.save(f'{user.email}_profile.jpg', ContentFile(requests.get(picture).content), save=True)
+                user.profile_picture.save(f'{user.email}_profile.jpg', ContentFile(
+                    requests.get(picture).content), save=True)
             if created:
                 user.is_verified = True
             user.save()
@@ -256,8 +246,8 @@ class UserViewSet(viewsets.ModelViewSet):
             serialized_user = self.get_serializer(user)
             return Response({
                 'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'user': serialized_user.data 
+                'access': str(refresh.access_token),  # type: ignore
+                'user': serialized_user.data
             }, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

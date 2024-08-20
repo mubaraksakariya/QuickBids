@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
-    profile_picture = serializers.ImageField(use_url=True)
+    profile_picture = serializers.ImageField(use_url=True, required=False)
 
     class Meta:
         model = CustomUser
@@ -13,7 +13,7 @@ class UserSerializer(ModelSerializer):
                   'password', 'id', 'is_verified', 'profile_picture', 'created_at']
 
     def create(self, validated_data):
-        # Since auth_provider is set based on the authentication method, we don't include it in the create method.
+        # Since auth_provider is set based on the authentication method, not included it in the create method.
         return CustomUser.objects.create_user(  # type: ignore
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],

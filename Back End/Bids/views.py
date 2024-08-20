@@ -39,6 +39,9 @@ class BidViewSet(viewsets.ModelViewSet):
             # Fetch the auction details
             auction = AuctionService.get_auction(auction_id)
 
+            # check if auction is available for bidding
+            AuctionService.check_biddable(auction=auction)
+
             # Validate the bid amount and get the current highest bid if any
             highest_bid = BidService.validate_bid_amount(amount, auction)
 
@@ -143,6 +146,9 @@ class ProxyBidViewSet(viewsets.ModelViewSet):
 
             try:
                 auction = AuctionService.get_auction(auction_id)
+
+                # check if auction is available for bidding
+                AuctionService.check_biddable(auction=auction)
 
                 # deactivate the old proxy bid, thorows errors if any
                 ProxyBidService.invalidate_proxy_bid(auction=auction)

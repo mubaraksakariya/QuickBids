@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from django.db import IntegrityError, transaction
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import NotFound
 
 from Auction.serializers import AuctionSerializer
 from Auction.services.auction_service import AuctionService
@@ -56,6 +58,23 @@ class ProductViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
+    def retrieve(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, id=kwargs['pk'])
+
+        # Fetch the auction associated with the product
+        auction = AuctionService.get_auction_by_product(
+            product_id=product.id)  # type: ignore
+
+        # Check if the user is privileged (e.g., is_staff or is_superuser)
+        if not request.user.is_staff and not request.user.is_superuser:
+            # If the user is not privileged, check the auction status
+            if not auction or auction.winner:
+                raise NotFound(detail="Product not found.")
+
+        # Proceed with normal retrieval if the user is privileged or the product is valid
+        serializer = self.get_serializer(product)
+        return Response(serializer.data)
+
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
@@ -94,6 +113,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     # current user products
+
     @action(detail=False, methods=['get'], url_path='profile-products')
     def my_products(self, request):
         user = request.user

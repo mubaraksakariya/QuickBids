@@ -4,9 +4,9 @@ from asgiref.sync import async_to_sync
 
 
 @shared_task
-def send_bid_update(bid_data):
+def send_bid_update(bid_data, message_type='bid_update'):
     data = {
-        'message_type': 'bid_update',
+        'message_type': message_type,
         'bid': bid_data
     }
     channel_layer = get_channel_layer()
