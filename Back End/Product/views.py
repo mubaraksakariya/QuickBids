@@ -143,7 +143,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset = queryset.filter(
             # auction__is_active=True,
             auction__is_deleted=False,
-            auction__winning_bid__isnull=True
+            auction__winner__isnull=True
         )
         serializer = self.get_serializer(queryset[:4], many=True)
         return Response(serializer.data)

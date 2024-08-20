@@ -98,3 +98,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 db.sqlite3
+
+# dnago logs
+.django.log
+*.log
