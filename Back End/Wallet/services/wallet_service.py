@@ -35,15 +35,13 @@ class WalletService:
         try:
             if transaction_type == 'REFUND':
                 wallet.balance += amount
-            elif transaction_type == 'PAYMENT':
+            elif transaction_type == 'PAYMENT' or transaction_type == 'AUCTION_BUY_NOW' or transaction_type == 'AUCTION_SALE':
                 wallet.balance -= amount
+                amount = -amount
             else:
                 raise ValueError('Invalid transaction type.')
 
             wallet.save()
-
-            if transaction_type == 'PAYMENT':
-                amount = -amount
 
             Transaction.objects.create(
                 wallet=wallet,

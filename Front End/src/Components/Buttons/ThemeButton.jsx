@@ -9,50 +9,80 @@ function ThemeButtons({
 	style = 1,
 }) {
 	let colourTheme;
-	if (style == 1)
-		colourTheme = 'bg-[#FF6F61] hover:bg-[#FF5C4F] active:bg-[#FF483F]';
-	if (style == 2)
-		colourTheme = 'bg-[#FFD700] hover:bg-[#FFC700] active:bg-[#FFB700]';
-	if (style == 3)
-		colourTheme = 'bg-[#2F4F4F] hover:bg-[#1E3B3B] active:bg-[#0D2727]';
-	if (style == 4)
+
+	// Define gradient themes using Tailwind's built-in gradient utilities
+	if (style === 1)
 		colourTheme =
-			'bg-[#d8e3dc] text-[#2F4F4F] hover:bg-[#c7d8d0] active:bg-[#b7cdc4]';
-	if (style == 5)
-		colourTheme = 'bg-[#333333] hover:bg-[#1F1F1F] active:bg-[#0D0D0D]';
-	if (style == 6)
+			'bg-gradient-to-r from-yellow-400 to-yellow-800 hover:from-yellow-300 hover:to-yellow-200';
+	if (style === 2)
 		colourTheme =
-			'bg-[#AEC6CF] text-[#2F4F4F] hover:bg-[#96B0B8] active:bg-[#7F99A1]';
-	if (style == 7)
+			'bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500';
+	if (style === 3)
 		colourTheme =
-			'bg-[#F5F5DC] text-[#2F4F4F] hover:bg-[#E0E0B8] active:bg-[#CACAA4]';
-	if (style == 8)
-		colourTheme = 'bg-[#003366] hover:bg-[#00264D] active:bg-[#001933]';
-	if (style == 9)
+			'bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300';
+	if (style === 4)
 		colourTheme =
-			'bg-[#98FF98] text-[#2F4F4F] hover:bg-[#80E680] active:bg-[#66CC66]';
-	if (style == 10)
+			'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-300';
+	if (style === 5)
 		colourTheme =
-			'bg-[#FFB6C1] text-[#2F4F4F] hover:bg-[#FFA1B0] active:bg-[#FF8CA0]';
-	if (style == 11)
+			'bg-gradient-to-r from-pink-400 to-pink-300 hover:from-pink-300 hover:to-pink-200';
+	if (style === 6)
 		colourTheme =
-			'bg-[#E6E6FA] text-[#2F4F4F] hover:bg-[#D4D4F0] active:bg-[#C2C2E6]';
-	if (style == 12)
+			'bg-gradient-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500';
+	if (style === 7)
 		colourTheme =
-			'bg-[#FFDAB9] text-[#2F4F4F] hover:bg-[#FFC9A6] active:bg-[#FFB793]';
-	if (style == 13)
-		colourTheme = 'bg-[#808000] hover:bg-[#6B6B00] active:bg-[#555500]';
-	if (style == 14)
-		colourTheme = 'bg-[#20B2AA] hover:bg-[#1A9E94] active:bg-[#14897F]';
-	if (style == 15)
+			'bg-gradient-to-r from-teal-400 to-teal-300 hover:from-teal-300 hover:to-teal-200';
+	if (style === 8)
 		colourTheme =
-			'bg-[#AFEEEE] text-[#2F4F4F] hover:bg-[#9DE5E5] active:bg-[#8BDDDD]';
-	if (style == 16)
+			'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400';
+	if (style === 9)
 		colourTheme =
-			'bg-[#FFA07A] text-[#2F4F4F] hover:bg-[#FF8E66] active:bg-[#FF7C52]';
-	if (style == 17)
+			'bg-gradient-to-r from-green-200 to-green-100 hover:from-green-100 hover:to-green-50 text-gray-700';
+	if (style === 10)
 		colourTheme =
-			'bg-[#EE82EE] text-[#2F4F4F] hover:bg-[#DA70D6] active:bg-[#BA55D3]';
+			'bg-gradient-to-r from-pink-200 to-pink-100 hover:from-pink-100 hover:to-pink-50 text-gray-700';
+	if (style === 11)
+		colourTheme =
+			'bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400';
+	if (style === 12)
+		colourTheme =
+			'bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-400 hover:to-orange-300';
+	if (style === 13)
+		colourTheme =
+			'bg-gradient-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500';
+	if (style === 14)
+		colourTheme =
+			'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-400 hover:to-teal-300';
+	if (style === 15)
+		colourTheme =
+			'bg-gradient-to-r from-red-400 to-red-300 hover:from-red-300 hover:to-red-200';
+	if (style === 16)
+		colourTheme =
+			'bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-600 hover:to-purple-500 text-white';
+	if (style === 17)
+		colourTheme =
+			'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400';
+	if (style === 18)
+		colourTheme =
+			'bg-gradient-to-r from-lime-400 to-lime-300 hover:from-lime-300 hover:to-lime-200 text-gray-700';
+	if (style === 19)
+		colourTheme =
+			'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white';
+	if (style === 20)
+		colourTheme =
+			'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white';
+	if (style === 21)
+		colourTheme =
+			'bg-gradient-to-r from-red-500 to-red-400 hover:from-red-400 hover:to-red-300 text-gray-700';
+	if (style === 22)
+		colourTheme =
+			'bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-400 hover:to-purple-300 text-white';
+	if (style === 23)
+		colourTheme =
+			'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-300';
+	if (style === 24)
+		colourTheme =
+			'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-400 hover:to-teal-300 text-white';
 
 	return (
 		<button

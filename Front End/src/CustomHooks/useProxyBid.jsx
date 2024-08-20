@@ -12,6 +12,7 @@ const fetchProxyBid = async (api, auctionId, userId) => {
 	} catch (error) {
 		console.log(error);
 	}
+	return null;
 };
 
 // for both an auctions proxy bid and if user is passed that users proxy bid

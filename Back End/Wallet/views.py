@@ -16,7 +16,8 @@ from .serializers import WalletSerializer, TransactionSerializer
 from django.conf import settings
 
 # Initialize Razorpay client
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+client = razorpay.Client(
+    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
 class WalletViewSet(viewsets.ModelViewSet):
@@ -25,12 +26,12 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Wallet.objects.filter(user=self.request.user)
-        
+
     def list(self, request, *args, **kwargs):
         wallet, created = Wallet.objects.get_or_create(user=self.request.user)
         serializer = self.get_serializer(wallet)
         return Response(serializer.data)
-        
+
     # success funtion for topup of wallet
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='payment-success')
@@ -42,13 +43,15 @@ class WalletViewSet(viewsets.ModelViewSet):
 
             generated_signature = hmac.new(
                 key=bytes(settings.RAZORPAY_KEY_SECRET, 'utf-8'),
-                msg=bytes(f"{razorpay_order_id}|{razorpay_payment_id}", 'utf-8'),
+                msg=bytes(
+                    f"{razorpay_order_id}|{razorpay_payment_id}", 'utf-8'),
                 digestmod=hashlib.sha256
             ).hexdigest()
 
-            payment_details = client.payment.fetch(razorpay_payment_id)
+            payment_details = client.payment.fetch(  # type: ignore
+                razorpay_payment_id)
             amount = Decimal(payment_details['amount'])/100
-            
+
             if generated_signature == razorpay_signature:
                 # Payment is successful and verified
                 Payment.objects.create(
@@ -62,20 +65,19 @@ class WalletViewSet(viewsets.ModelViewSet):
                 wallet.balance += amount
                 wallet.save()
                 transaction = Transaction.objects.create(
-                    wallet = wallet,
+                    wallet=wallet,
                     amount=amount,
-                    transaction_type = 'DEPOSIT',
+                    transaction_type='DEPOSIT',
                     transaction_id=razorpay_payment_id,
-                    description = f'{wallet.user} deposited {amount} into their wallet'
+                    description=f'{wallet.user} deposited {amount} into their wallet'
                 )
-                return Response({'status': 'success','balance':wallet.balance}, status=status.HTTP_200_OK)
+                return Response({'status': 'success', 'balance': wallet.balance}, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'failed', 'message': 'Invalid signature'}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             print(str(e))
             return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
@@ -89,17 +91,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
         wallet_transactions = self.get_queryset()
         serializer = self.get_serializer(wallet_transactions, many=True)
         return Response(serializer.data)
-    
-
 
     def create(self, request, *args, **kwargs):
         wallet = get_object_or_404(Wallet, user=request.user)
         data = request.data.copy()
-        data['wallet'] = wallet.id
+        data['wallet'] = wallet.id  # type: ignore
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        
+
         transaction = serializer.instance
         if transaction.transaction_type == 'DEPOSIT':
             wallet.balance += transaction.amount
@@ -108,6 +108,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
                 return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
             wallet.balance -= transaction.amount
         wallet.save()
-        
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

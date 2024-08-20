@@ -91,32 +91,38 @@ const BidSection = ({ highestBid, auction }) => {
 				className='block text-sm text-headerColour mb-2'>
 				Your Bid
 			</label>
-			<div className='flex gap-4'>
-				<input
-					onChange={(e) => setBidAmount(e.target.value)}
-					type='number'
-					id='bid-now'
-					placeholder={
-						highestBid?.amount
-							? highestBid.amount
-							: auction?.initial_prize
-					}
-					className='border border-cardBorderColour rounded-lg py-2 px-4 w-full flex-[8] text-headerColour placeholder:text-sectionBgColour8 focus:ring-2 focus:ring-linkHoverColour'
-					disabled={isLoading}
-					min={
-						highestBid?.amount
-							? highestBid.amount
-							: auction?.initial_prize
-					}
-				/>
-				<ThemeButtons
-					text={isLoading ? 'Submitting...' : 'Bid Now'}
-					className='flex-[4] bg-buttonColour1 hover:bg-buttonColour2 text-white rounded-lg py-2 px-4'
-					onclick={handleBidSubmit}
-					disabled={isLoading}
-				/>
+			<div className='md:flex gap-4'>
+				<div className='flex-[8]'>
+					<input
+						onChange={(e) => setBidAmount(e.target.value)}
+						type='number'
+						id='bid-now'
+						placeholder={
+							highestBid?.amount
+								? highestBid.amount
+								: auction?.initial_prize
+						}
+						className='border border-cardBorderColour rounded-lg py-2 px-4 w-full  text-headerColour focus:ring-2 focus:ring-linkHoverColour'
+						disabled={isLoading}
+						min={
+							highestBid?.amount
+								? highestBid.amount
+								: auction?.initial_prize
+						}
+					/>
+					{error && <p className='text-errorColour mt-2'>{error}</p>}
+				</div>
+				<div className='md:mt-0 mt-3 flex-[4]'>
+					<ThemeButtons
+						text={isLoading ? 'Submitting...' : 'Bid Now'}
+						className=' text-white rounded-lg py-2 px-4 w-full'
+						style={14}
+						onclick={handleBidSubmit}
+						disabled={isLoading}
+					/>
+				</div>
 			</div>
-			{error && <p className='text-errorColour mt-2'>{error}</p>}
+
 			<GeneralModal
 				show={showSuccess}
 				onClose={() => setShowSuccess(false)}>

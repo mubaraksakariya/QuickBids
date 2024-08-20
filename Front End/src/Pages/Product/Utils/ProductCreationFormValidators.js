@@ -48,8 +48,7 @@ export const validateProxyAmount = (
 	maxProxy,
 	incriment,
 	highestBid,
-	auction,
-	product
+	auction
 ) => {
 	if (!maxProxy | !incriment)
 		return {
@@ -58,13 +57,13 @@ export const validateProxyAmount = (
 	const recentBid =
 		(highestBid && highestBid?.amount) || auction.initial_prize;
 
-	if (maxProxy <= recentBid)
+	if (Number(maxProxy) <= Number(recentBid))
 		return {
 			message:
 				'Enter a proxy bid amount greater than the current bid or the initial value',
 		};
 
-	if (incriment < (maxProxy - recentBid) / 20)
+	if (Number(incriment) < (Number(maxProxy) - Number(recentBid)) / 20)
 		return {
 			message: `Enter a valid incriment value, minimum value is ${
 				(maxProxy - recentBid) / 20

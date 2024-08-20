@@ -1,4 +1,3 @@
-// ProductPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
@@ -82,7 +81,7 @@ function ProductPage() {
 					images={product?.images}
 					isLoading={productLoading}
 				/>
-				<div className='flex-1 p-6 flex flex-col rounded-lg shadow-lg relative'>
+				<div className='flex-1 p-6 flex flex-col  relative'>
 					<div className='flex flex-col flex-grow'>
 						<div className=''>
 							<ProductDetails
@@ -131,7 +130,12 @@ function ProductPage() {
 							</div>
 						)}
 						<div className=''>
-							<BuyNowSection product={product} />
+							<BuyNowSection
+								product={product}
+								user={currenUser}
+								auction={auction}
+								highestBid={highestBid}
+							/>
 						</div>
 					</div>
 				</div>
