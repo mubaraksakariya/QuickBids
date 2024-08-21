@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from './Card';
-import useProducts from '../../CustomHooks/useProducts';
 import NoProduct from './Components/NoProduct';
+import { useProductContext } from '../../Context/ProductContext';
 
 function Products({ searchString, selectedCategory }) {
-	const {
-		data: products,
-		error,
-		isLoading,
-	} = useProducts(searchString, selectedCategory);
+	const { products, error, isLoading, setSearchString, setSelectedCategory } =
+		useProductContext();
+
+	useEffect(() => {
+		if (searchString !== undefined || searchString !== '')
+			setSearchString(searchString);
+		if (selectedCategory !== undefined || selectedCategory !== '')
+			setSelectedCategory(selectedCategory);
+	}, [searchString, selectedCategory]);
 
 	return (
 		<div className='mt-4 flex flex-wrap gap-4 justify-around md:justify-center'>

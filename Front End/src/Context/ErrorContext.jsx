@@ -13,7 +13,7 @@ export const ErrorProvider = ({ children }) => {
 	};
 
 	const hideError = () => {
-		setError(null);
+		setError(false);
 	};
 
 	return (

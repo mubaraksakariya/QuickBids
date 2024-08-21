@@ -51,7 +51,7 @@ const BiddingOverlay = ({
 		<div className='absolute inset-0 bg-opacity-50 flex items-center justify-center border border-warmGray-400'>
 			<div
 				ref={overlayRef}
-				className='card-overlay relative bg-white p-4 rounded-lg w-full h-full'>
+				className='card-overlay relative p-4 rounded-lg w-full h-full'>
 				<button
 					className='absolute top-2 right-2 text-white bg-black rounded-full px-2'
 					onClick={toggleBiddingWindow}>
@@ -59,7 +59,7 @@ const BiddingOverlay = ({
 				</button>
 				<div className='h-full flex flex-col justify-evenly'>
 					<div>
-						<h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+						<h5 className='mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white'>
 							{product.title}
 						</h5>
 						<p className='mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3'>
@@ -80,11 +80,11 @@ const BiddingOverlay = ({
 					</div>
 					<form className='max-w-sm flex mb-2' onSubmit={manageSubmi}>
 						<div className='flex-1 relative'>
-							<label
+							{/* <label
 								htmlFor='number-input'
 								className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
 								Update your amount:
-							</label>
+							</label> */}
 							<input
 								onChange={() => setInputError(false)}
 								name='newBIdInput'

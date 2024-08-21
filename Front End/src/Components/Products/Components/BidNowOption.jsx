@@ -1,6 +1,8 @@
 import React from 'react';
 import BiddingOverlay from './BiddingOverlay';
 import CurrentBid from './CurrentBid';
+import { BidderProfile } from './BidderProfile';
+import { useSelector } from 'react-redux';
 
 const BidNowOption = ({
 	product,
@@ -14,14 +16,18 @@ const BidNowOption = ({
 	isUpdating,
 	isTimeOver,
 }) => {
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	return (
 		<div className='pb-2'>
+			{highestBid?.amount && isAuthenticated && (
+				<CurrentBid highestBid={highestBid} />
+			)}
 			<section className='flex justify-between items-center'>
-				<CurrentBid
-					isLoading={isHighestBidLoading}
-					highestBidError={highestBidError}
-					highestBid={highestBid}
-				/>
+				{highestBid?.amount && isAuthenticated ? (
+					<BidderProfile user={highestBid?.user} />
+				) : (
+					<CurrentBid highestBid={highestBid} />
+				)}
 				<button
 					disabled={isTimeOver}
 					onClick={toggleBiddingWindow}
@@ -31,7 +37,7 @@ const BidNowOption = ({
 							? 'bg-button2Colour3'
 							: ' bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3'
 					}`}>
-					Bid Now
+					{highestBid?.amount ? 'Out bid' : 'Bid now'}
 				</button>
 			</section>
 			{isBiddingOpen && (

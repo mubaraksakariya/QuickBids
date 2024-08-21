@@ -1,6 +1,9 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 export const UserInfo = ({ user, highestBid }) => {
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	if (!isAuthenticated) return null;
 	return (
 		<div className='flex items-center p-4 bg-sectionBgColour2 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer'>
 			<div className='flex-shrink-0'>

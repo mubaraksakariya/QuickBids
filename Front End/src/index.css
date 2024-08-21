@@ -54,7 +54,7 @@
 	@apply text-gray-600;
 }
 .card-overlay {
-	@apply bg-sectionBgColour2;
+	@apply bg-sectionBgColour3;
 }
 /* for category nav */
 .category-nav {

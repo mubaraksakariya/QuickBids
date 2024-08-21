@@ -2,9 +2,9 @@ import useWebSocket from './useWebSocket';
 
 const useProductWebSocket = (
 	auctionId,
+	refetch,
 	setHighestBid,
-	setProxybid,
-	refetch
+	setProxybid = null
 ) => {
 	const socketUrl = `auction/${auctionId}/`;
 	const socketKey = `auction-${auctionId}`;
@@ -24,7 +24,7 @@ const useProductWebSocket = (
 		}
 		if (message_type === 'proxy_bid_update' && data) {
 			const new_proxy_bid = data.bid;
-			setProxybid(new_proxy_bid);
+			setProxybid && setProxybid(new_proxy_bid);
 			// setTimeout(() => {
 			// 	refetch('proxy_bid_update');
 			// }, 2000);

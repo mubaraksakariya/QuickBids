@@ -1,20 +1,81 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ThemeButtons from '../../../../Components/Buttons/ThemeButton';
+import { useSelector } from 'react-redux';
+import useWallet from '../../../../CustomHooks/useWallet';
+import useBuyNow from '../../../../CustomHooks/useBuyNow';
+import { useError } from '../../../../Context/ErrorContext';
+import GeneralModal from '../../../../Components/Models/GeneralModal';
 
 const BuyNowOverlay = ({
 	product,
 	auction,
 	highestBid,
 	setIsBuyNow,
-	manageBuyNow,
-	error,
+	onSuccess,
+	onError,
+	onCancel,
 }) => {
+	const { showError, hideError } = useError();
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const [isSuccess, setIsSuccess] = useState(false);
+
+	const {
+		mutate: buyNow,
+		isLoading: buyNowLoading,
+		isError: isBuyNowError,
+		isSuccess: isBuyNowSuccess,
+		error: buyNowError,
+	} = useBuyNow();
+
+	const {
+		data: wallet,
+		isLoading: walletLoading,
+		error: walletError,
+	} = useWallet();
+
+	const isBuyable =
+		Number(product.buy_now_prize) > Number(highestBid?.amount) ||
+		!highestBid?.amount;
+
+	useEffect(() => {
+		if (isBuyNowSuccess) {
+			setIsSuccess(true);
+		} else if (isBuyNowError) {
+			onError && onError(buyNowError);
+			showError(buyNowError.message);
+		}
+	}, [isBuyNowSuccess, isBuyNowError, buyNowError]);
+
+	const manageBuyNow = () => {
+		if (!isAuthenticated) {
+			showError('Please login to proceed with the purchase.');
+			setTimeout(() => {
+				navigate('/login', {
+					state: { from: window.location.pathname },
+				});
+				hideError();
+			}, 3000);
+			return;
+		}
+
+		if (!isBuyable) {
+			showError('This product is no longer available for "Buy Now".');
+			return;
+		}
+
+		if (Number(wallet?.balance) < Number(product?.buy_now_prize)) {
+			showError('Insufficient wallet balance to complete this purchase.');
+			return;
+		}
+		buyNow(product?.id);
+	};
+
 	return (
 		<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
 			<div className='relative p-8 rounded-lg shadow-lg min-w-96 w-full max-w-lg bg-sectionBgColour3'>
 				{/* Close Button */}
 				<button
-					onClick={() => setIsBuyNow(false)}
+					onClick={() => onCancel()}
 					className='absolute top-2 right-2 text-gray-600 hover:text-gray-900'>
 					&times;
 				</button>
@@ -23,8 +84,9 @@ const BuyNowOverlay = ({
 					Confirm Buy Now?
 				</h2>
 
+				{/* Product Image */}
 				<div className='flex justify-center mb-6'>
-					{product.images && (
+					{product?.images && (
 						<div className='aspect-square w-48 rounded-lg overflow-hidden shadow-md'>
 							<img
 								src={product.images[0].image}
@@ -49,7 +111,7 @@ const BuyNowOverlay = ({
 							Auction Base Price:
 						</h1>
 						<p className='text-bodyTextColour'>
-							{auction.initial_prize}
+							{auction?.initial_prize}
 						</p>
 					</div>
 
@@ -58,13 +120,15 @@ const BuyNowOverlay = ({
 							Highest Bid:
 						</h1>
 						<p className='text-bodyTextColour'>
-							{highestBid?.amount || highestBid?.message}
+							{highestBid?.amount ||
+								highestBid?.message ||
+								'No bids yet'}
 						</p>
 					</div>
 
 					{/* Emphasized Buy Now Price */}
 					<div className='flex justify-between items-center py-4 px-2 rounded-lg bg-sectionBgColour2 shadow-lg'>
-						<h1 className='font-bold text-lg'>Buy now price:</h1>
+						<h1 className='font-bold text-lg'>Buy Now Price:</h1>
 						<p className='font-bold text-lg'>
 							{product.buy_now_prize}
 						</p>
@@ -72,12 +136,14 @@ const BuyNowOverlay = ({
 				</div>
 
 				{/* Error Message */}
-				<div
-					className={`${
-						error ? '' : 'invisible'
-					} pt-4 text-errorColour`}>
-					<p>{error ? error : 'Buy now errors'}</p>
-				</div>
+				{(isBuyNowError || buyNowError) && (
+					<div className='pt-4 text-errorColour'>
+						<p>
+							{buyNowError?.message ||
+								'An error occurred while processing your request.'}
+						</p>
+					</div>
+				)}
 
 				{/* Buttons */}
 				<div className='flex justify-end gap-4 mt-6'>
@@ -85,16 +151,27 @@ const BuyNowOverlay = ({
 						style={21}
 						text='Cancel'
 						className='py-2 px-4'
-						onclick={() => setIsBuyNow(false)}
+						onclick={() => onCancel()}
 					/>
 					<ThemeButtons
 						text='Confirm'
 						style={2}
 						className='py-2 px-4'
 						onclick={manageBuyNow}
+						disabled={buyNowLoading || walletLoading}
 					/>
 				</div>
 			</div>
+
+			<GeneralModal
+				show={isSuccess}
+				onClose={() => {
+					setIsSuccess(false);
+					onSuccess();
+				}}
+				autoCloseAfter={5000}>
+				<p>Your purchase was successful !!</p>
+			</GeneralModal>
 		</div>
 	);
 };

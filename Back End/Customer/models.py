@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -19,16 +20,19 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
 class CustomUser(AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/', null=True, default='default_profile_picture.jpeg')
     AUTH_PROVIDER_CHOICES = [
         ('local', 'Local'),
         ('google', 'Google'),
     ]
-    auth_provider = models.CharField(max_length=10, choices=AUTH_PROVIDER_CHOICES, default='local')
+    auth_provider = models.CharField(
+        max_length=10, choices=AUTH_PROVIDER_CHOICES, default='local')
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -48,7 +52,6 @@ class CustomUser(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
-
 
 
 class OTP(models.Model):
