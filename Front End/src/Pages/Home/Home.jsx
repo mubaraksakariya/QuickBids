@@ -8,7 +8,7 @@ import Footer from '../../Components/Footer/Footer';
 function Home() {
 	const [searchString, setSearchSTring] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState('');
-
+	// using product context
 	return (
 		<div className='full-page'>
 			<NavBar setSearchSTring={setSearchSTring} />

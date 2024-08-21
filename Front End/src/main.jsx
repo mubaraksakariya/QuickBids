@@ -21,9 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 				<QueryClientProvider client={queryClient}>
 					<ErrorProvider>
 						<NotificationProvider>
-							<ProductProvider>
-								<App />
-							</ProductProvider>
+							<App />
 						</NotificationProvider>
 					</ErrorProvider>
 				</QueryClientProvider>

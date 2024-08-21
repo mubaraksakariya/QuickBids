@@ -10,7 +10,6 @@ const BuyNowOverlay = ({
 	product,
 	auction,
 	highestBid,
-	setIsBuyNow,
 	onSuccess,
 	onError,
 	onCancel,

@@ -17,7 +17,7 @@ export const useProductContext = () => useContext(ProductContext);
 export const ProductProvider = ({ children, initialProducts = [] }) => {
 	const [searchString, setSearchString] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState(null);
-	const [products, setProducts] = useState([]);
+	const [products, setProducts] = useState(initialProducts);
 	// fetch data
 	const { data, error, isLoading, refetch } = useProducts(
 		searchString,
@@ -32,13 +32,13 @@ export const ProductProvider = ({ children, initialProducts = [] }) => {
 
 	const getProductById = useMemo(
 		() => (id) => {
-			return products?.find((product) => product.id === id);
+			return products?.find((product) => product.id === Number(id));
 		},
 		[products]
 	);
 	const removeProductById = (id) => {
 		setProducts((prevProducts) =>
-			prevProducts.filter((product) => product.id !== id)
+			prevProducts.filter((product) => product.id !== Number(id))
 		);
 	};
 

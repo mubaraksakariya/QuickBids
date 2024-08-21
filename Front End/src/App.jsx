@@ -17,6 +17,7 @@ import EditProfile from './Pages/Profile/EditProfile';
 import ResetPassword from './Pages/Profile/ResetPassword';
 import ForgotPassword from './Pages/FrogotPassword/ForgotPassword';
 import ProductPage from './Pages/Product/ProductPage';
+import { ProductProvider } from './Context/ProductContext';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -154,13 +155,15 @@ function App() {
 	return (
 		<div className='flex flex-col justify-center items-center min-h-[100dvh]'>
 			<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-				{isLoading ? (
-					<div className='text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>
-						Loading
-					</div>
-				) : (
-					<RouterProvider router={router} />
-				)}
+				<ProductProvider>
+					{isLoading ? (
+						<div className='text-black text-5xl sm:text-6xl md:text-8xl lg:text-9xl'>
+							Loading
+						</div>
+					) : (
+						<RouterProvider router={router} />
+					)}
+				</ProductProvider>
 			</GoogleOAuthProvider>
 		</div>
 	);
