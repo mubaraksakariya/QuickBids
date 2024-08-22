@@ -36,25 +36,36 @@ class ProxyBidService:
                 {'detail': 'The auction has exceeded your proxy bid offer. Please try a higher value.'})
 
     @staticmethod
-    def invalidate_proxy_bid(auction):
+    def invalidate_proxy_bid(auction, max_bid):
         """
-        Deactivate the most recent active proxy bid for the given auction.
+        Deactivate the most recent active proxy bid for the given auction if the new max bid is higher.
         """
         try:
             # Find the most recent active proxy bid for the given auction
-            recent_proxy_bid = ProxyBid.objects.filter(
-                auction=auction, is_active=True).order_by('-created_at').first()
-
+            recent_proxy_bid = ProxyBidService.get_highest_proxy_bid(
+                auction=auction)
             if recent_proxy_bid:
+                # Check if the new max bid is less than or equal to the current max bid
+                if recent_proxy_bid.max_bid >= max_bid:
+                    raise serializers.ValidationError(
+                        {'detail': 'A higher or equal proxy bid already exists for this auction.'}
+                    )
+
                 # Deactivate the most recent active proxy bid
                 recent_proxy_bid.is_active = False
                 recent_proxy_bid.save()
+
                 return recent_proxy_bid
-            else:
-                # No active proxy bid found
-                return None
+
+            # No active proxy bid found
+            return None
+
+        except serializers.ValidationError as ve:
+            # Propagate validation errors
+            raise ve
 
         except Exception as e:
+            # Catch and raise any other unexpected errors
             raise Exception(f'An unexpected error occurred: {str(e)}')
 
     @staticmethod

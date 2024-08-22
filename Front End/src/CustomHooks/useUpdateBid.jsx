@@ -16,6 +16,8 @@ const useUpdateBid = () => {
 	return useMutation({
 		mutationFn: (bidData) => updateBid(api, bidData),
 		onError: (error) => {
+			console.log(error);
+
 			showError(error.message);
 		},
 	});

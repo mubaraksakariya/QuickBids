@@ -13,7 +13,7 @@ class ProductService:
 
         # Retrieve the auction for the given product
         auction = AuctionService.get_auction_by_product(product_id=product.id)
-        if auction is None:
+        if auction is None or auction.winner:
             raise serializers.ValidationError(
                 {'detail': 'Auction not found for this product.'})
 

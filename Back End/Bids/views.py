@@ -151,7 +151,8 @@ class ProxyBidViewSet(viewsets.ModelViewSet):
                 AuctionService.check_biddable(auction=auction)
 
                 # deactivate the old proxy bid, thorows errors if any
-                ProxyBidService.invalidate_proxy_bid(auction=auction)
+                ProxyBidService.invalidate_proxy_bid(
+                    auction=auction, max_bid=max_bid)
 
                 # Checks:
                 # 1. A higher or equal proxy bid does not already exist.

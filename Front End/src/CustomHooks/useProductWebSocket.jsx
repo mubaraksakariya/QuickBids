@@ -2,9 +2,9 @@ import useWebSocket from './useWebSocket';
 
 const useProductWebSocket = (
 	auctionId,
-	refetch,
 	setHighestBid,
-	setProxybid = null
+	setProxybid,
+	refetch
 ) => {
 	const socketUrl = `auction/${auctionId}/`;
 	const socketKey = `auction-${auctionId}`;
