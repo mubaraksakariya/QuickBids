@@ -82,7 +82,7 @@ function ProductPage() {
 			) : (
 				<div className='container mx-auto lg:flex gap-8 mt-4 p-4'>
 					<button
-						className='fixed top-1/2 right-0 bg-buttonColour1 text-white p-2 rounded-l-lg'
+						className='fixed z-50 top-1/2 right-0 bg-buttonColour1 text-white p-2 rounded-l-lg'
 						onClick={toggleChat}>
 						{isChatVisible ? 'Close Chat' : 'Live Chat'}
 					</button>

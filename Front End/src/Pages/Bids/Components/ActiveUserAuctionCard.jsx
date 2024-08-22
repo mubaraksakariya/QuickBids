@@ -1,10 +1,9 @@
 import React from 'react';
-import useProductById from '../../../CustomHooks/useProductById';
 import TimeRemaining from '../../../Components/Products/Components/TimeRemaining';
 import useHighestBid from '../../../CustomHooks/useHighestBid';
 
 function ActiveUserAuctionCard({ auction }) {
-	const { data: product, error, isLoading } = useProductById(auction.product);
+	const product = auction.product;
 	// get current highest bid details
 	const {
 		data: highestBidData,
@@ -16,8 +15,8 @@ function ActiveUserAuctionCard({ auction }) {
 		console.log(product);
 	};
 
-	if (isLoading) return <div>Loading...</div>;
-	if (error) return <div>Error loading product: {error.message}</div>;
+	// if (isLoading) return <div>Loading...</div>;
+	// if (error) return <div>Error loading product: {error.message}</div>;
 	if (!product) return <div>Product not found.</div>;
 	return (
 		<div className='card  max-w-[20rem] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
@@ -59,7 +58,7 @@ function ActiveUserAuctionCard({ auction }) {
 						)}
 					</div>
 					<TimeRemaining
-						bidEndTime={auction?.end_time}
+						endTime={auction?.end_time}
 						timerEnded={() => {}}
 					/>
 				</div>

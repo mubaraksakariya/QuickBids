@@ -19,6 +19,8 @@ const getAuction = async (api, auctionQuery) => {
 	}
 
 	const response = await api.get(endpoint);
+	console.log(response.data);
+
 	return response.data;
 };
 

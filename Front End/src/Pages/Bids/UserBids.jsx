@@ -22,7 +22,7 @@ function UserBids() {
 		<div className='full-page'>
 			<NoneHomeNavbar />
 			<div className='md:flex py-4'>
-				<div className='flex-[4] flex flex-col justify-center items-center gap-2 h-auto max-h-[55dvh]'>
+				<div className='flex-[4] flex flex-col justify-center items-center gap-2 h-auto max-h-[50dvh]'>
 					<UserIcon user={user} />
 					<h1 className=' font-bold text-xl'>Your Bids</h1>
 					<LeftSideNav setSetlectedTab={setSetlectedTab} />

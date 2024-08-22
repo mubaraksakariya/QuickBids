@@ -3,14 +3,17 @@ from Product.models import Product
 from Product.serializers import ProductSerializer
 from .models import Auction
 
+
 class AuctionSerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    # product = serializers.PrimaryKeyRelatedField(
+    #     queryset=Product.objects.all())
+    product = ProductSerializer()
 
     class Meta:
         model = Auction
         fields = [
             'id',
-            'product', 
+            'product',
             'initial_prize',
             'start_time',
             'end_time',
@@ -36,8 +39,8 @@ class AuctionWithProductSerializer(serializers.ModelSerializer):
             'end_time',
             'is_active',
             'is_deleted',
-            'winning_bid',
-            'winner',
             'created_at',
             'updated_at',
+            'winning_bid',
+            'winner',
         ]
