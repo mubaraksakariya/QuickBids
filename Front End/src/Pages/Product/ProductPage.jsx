@@ -16,12 +16,15 @@ import BiddingSection from './Components/ProoductPage/BiddingSection';
 import PageNotFound from '../../Components/Models/PageNotFound';
 import useProxyBid from '../../CustomHooks/useProxyBid';
 import { useSelector } from 'react-redux';
+import { ProductLiveChat } from './Components/ProoductPage/Chat/ProductLiveChat';
 
 function ProductPage() {
 	const { id } = useParams();
 	const [highestBid, setHighestBid] = useState(null);
 	const [proxyBid, setProxybid] = useState(null);
 	const currenUser = useSelector((state) => state.auth.user);
+	const [isChatVisible, setIsChatVisible] = useState(false);
+	const [liveChatMessages, setLiveChatMessages] = useState([]);
 
 	const {
 		data: product,
@@ -46,6 +49,9 @@ function ProductPage() {
 		refetch: refetchProxyBid,
 	} = useProxyBid(auction?.id, currenUser?.id);
 
+	const toggleChat = () => {
+		setIsChatVisible(!isChatVisible);
+	};
 	const refetchData = (refetchItem) => {
 		if (refetchItem === 'bid_update') refetchHighestBid();
 		if (refetchItem === 'proxy_bid_update') refetchProxyBid();
@@ -58,7 +64,13 @@ function ProductPage() {
 		productLoading || auctionLoading || recentBidLoading || proxyBidLoading;
 
 	// WebSocket connection
-	useProductWebSocket(auction?.id, setHighestBid, setProxybid, refetchData);
+	const { manageSendMessage } = useProductWebSocket(
+		auction?.id,
+		setHighestBid,
+		setProxybid,
+		refetchData,
+		setLiveChatMessages
+	);
 
 	return (
 		<div className='full-page relative'>
@@ -69,6 +81,17 @@ function ProductPage() {
 				<PageNotFound />
 			) : (
 				<div className='container mx-auto lg:flex gap-8 mt-4 p-4'>
+					<button
+						className='fixed top-1/2 right-0 bg-buttonColour1 text-white p-2 rounded-l-lg'
+						onClick={toggleChat}>
+						{isChatVisible ? 'Close Chat' : 'Live Chat'}
+					</button>
+					<ProductLiveChat
+						isChatVisible={isChatVisible}
+						toggleChat={toggleChat}
+						sendMessage={manageSendMessage}
+						messages={liveChatMessages}
+					/>
 					<ProductImageSection
 						images={product?.images}
 						isLoading={productLoading}

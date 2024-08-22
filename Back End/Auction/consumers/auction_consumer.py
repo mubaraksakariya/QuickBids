@@ -24,16 +24,29 @@ class AuctionConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        # Send message to room group
-        await self.channel_layer.group_send(  # type: ignore
-            self.room_group_name,
-            {
-                'type': 'auction_message',
-                'message': message
-            }
-        )
+        message_type = text_data_json.get('type')
+        message = text_data_json.get('data')
+        recipient_group = text_data_json.get('recipient_group')
+        print(text_data_json.get('recipient_group'))
+        if message_type and message:
+            if recipient_group:
+                # Forward message to the specific group if recipient_group is specified
+                await self.channel_layer.group_send(  # type: ignore
+                    recipient_group,
+                    {
+                        'type': 'auction_message',
+                        'message': message
+                    }
+                )
+            else:
+                # Forward message to the room group
+                await self.channel_layer.group_send(  # type: ignore
+                    self.room_group_name,
+                    {
+                        'type': 'auction_message',
+                        'message': message
+                    }
+                )
 
     async def auction_message(self, event):
         message = event['message']

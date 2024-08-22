@@ -50,6 +50,15 @@ class WebSocketService {
 		return socket;
 	}
 
+	sendMessage(key, message) {
+		const socket = this.getSocket(key);
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(JSON.stringify(message));
+		} else {
+			console.error(`Cannot send message, WebSocket ${key} is not open.`);
+		}
+	}
+
 	registerSocket(key, socket) {
 		this.sockets[key] = socket;
 	}

@@ -1,12 +1,15 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import websocketService from '../Services/WebsocketService';
 import { useSelector } from 'react-redux';
 
 const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 	useEffect(() => {
-		if (isAuthenticated) {
-			const socket = websocketService.connect(
+		let socket;
+
+		if (isAuthenticated && url) {
+			socket = websocketService.connect(
 				url,
 				onMessage,
 				onOpen,
@@ -14,13 +17,33 @@ const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 				onError,
 				key
 			);
-			websocketService.registerSocket(key, socket);
+		} else {
+			console.warn(
+				'WebSocket connection not established: Missing URL or user not authenticated.'
+			);
 		}
 
+		// Cleanup on unmount or when dependencies change
 		return () => {
-			websocketService.closeSocket(key);
+			if (socket) {
+				websocketService.closeSocket(key);
+			}
 		};
-	}, [key, url, onMessage, onOpen, onClose, onError, isAuthenticated]);
+	}, [key, url, isAuthenticated, onMessage, onOpen, onClose, onError]);
+
+	// Function to send a message through the WebSocket
+	const sendMessage = useCallback(
+		(message) => {
+			if (isAuthenticated) {
+				websocketService.sendMessage(key, message);
+			} else {
+				console.warn('Message not sent: User is not authenticated.');
+			}
+		},
+		[key, isAuthenticated]
+	);
+
+	return { sendMessage };
 };
 
 export default useWebSocket;
