@@ -26,7 +26,7 @@ class CustomUser(AbstractBaseUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     profile_picture = models.ImageField(
-        upload_to='profile_pictures/', null=True, default='default_profile_picture.jpeg')
+        upload_to='profile_pictures/', null=True, default='profile_pictures/default_profile_picture.jpeg')
     AUTH_PROVIDER_CHOICES = [
         ('local', 'Local'),
         ('google', 'Google'),
