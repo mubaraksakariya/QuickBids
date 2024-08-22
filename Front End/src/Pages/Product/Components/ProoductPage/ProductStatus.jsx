@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import TimeRemaining from '../../../../Components/Products/Components/TimeRemaining';
 import AuctionStatusIndicator from '../../../../Components/Products/Components/AuctionStatusIndicator';
 
-const ProductStatus = ({ auction, productError }) => {
-	const [isAuctionOver, setIsAuctionOver] = useState(false);
-
+const ProductStatus = ({
+	auction,
+	productError,
+	isAuctionOver,
+	setIsAuctionOver,
+}) => {
 	const auctionEnd = () => {
 		setIsAuctionOver(true);
 	};

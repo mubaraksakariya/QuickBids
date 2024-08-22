@@ -65,8 +65,8 @@ class AuctionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
 
-        serialized_auctions = self.get_serializer(
-            active_auctions, many=True).data
+        serialized_auctions = AuctionWithProductSerializer(
+            active_auctions, many=True, context={'request': request}).data
         return Response(serialized_auctions, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-completed-auctions')
@@ -79,7 +79,8 @@ class AuctionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
 
-        serialized_auctions = self.get_serializer(won_auctions, many=True).data
+        serialized_auctions = AuctionWithProductSerializer(
+            won_auctions, many=True, context={'request': request}).data
         return Response(serialized_auctions, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-failed-auctions')
@@ -96,6 +97,6 @@ class AuctionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
 
-        serialized_auctions = self.get_serializer(
-            failed_auctions, many=True).data
+        serialized_auctions = AuctionWithProductSerializer(
+            failed_auctions, many=True, context={'request': request}).data
         return Response(serialized_auctions, status=status.HTTP_200_OK)

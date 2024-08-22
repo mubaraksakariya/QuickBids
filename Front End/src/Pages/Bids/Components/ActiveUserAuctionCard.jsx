@@ -1,9 +1,11 @@
 import React from 'react';
 import TimeRemaining from '../../../Components/Products/Components/TimeRemaining';
 import useHighestBid from '../../../CustomHooks/useHighestBid';
+import { useNavigate } from 'react-router-dom';
 
 function ActiveUserAuctionCard({ auction }) {
 	const product = auction.product;
+	const navigate = useNavigate();
 	// get current highest bid details
 	const {
 		data: highestBidData,
@@ -12,7 +14,7 @@ function ActiveUserAuctionCard({ auction }) {
 	} = useHighestBid(auction?.id);
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		console.log(product);
+		navigate(`/product/${product.id}`);
 	};
 
 	// if (isLoading) return <div>Loading...</div>;
@@ -57,10 +59,12 @@ function ActiveUserAuctionCard({ auction }) {
 							<p>{highestBidData?.message}</p>
 						)}
 					</div>
-					<TimeRemaining
-						endTime={auction?.end_time}
-						timerEnded={() => {}}
-					/>
+					{!!auction.winner && (
+						<TimeRemaining
+							endTime={auction?.end_time}
+							timerEnded={() => {}}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

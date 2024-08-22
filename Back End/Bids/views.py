@@ -1,5 +1,7 @@
 from django.db import transaction
 from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+
 
 from rest_framework import serializers
 from rest_framework import viewsets, status
@@ -38,6 +40,7 @@ class BidViewSet(viewsets.ModelViewSet):
 
             # Fetch the auction details
             auction = AuctionService.get_auction(auction_id)
+            print(auction.end_time)
 
             # check if auction is available for bidding
             AuctionService.check_biddable(auction=auction)
@@ -76,7 +79,7 @@ class BidViewSet(viewsets.ModelViewSet):
         except serializers.ValidationError as e:
             transaction.set_rollback(True)
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-        except Decimal.InvalidOperation:  # type: ignore
+        except InvalidOperation:  # type: ignore
             transaction.set_rollback(True)
             return Response({'detail': 'Invalid bid amount provided.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

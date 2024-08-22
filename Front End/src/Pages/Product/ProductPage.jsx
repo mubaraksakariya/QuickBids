@@ -25,6 +25,7 @@ function ProductPage() {
 	const currenUser = useSelector((state) => state.auth.user);
 	const [isChatVisible, setIsChatVisible] = useState(false);
 	const [liveChatMessages, setLiveChatMessages] = useState([]);
+	const [isAuctionOver, setIsAuctionOver] = useState(false);
 
 	const {
 		data: product,
@@ -98,13 +99,20 @@ function ProductPage() {
 					/>
 					<div className='flex-1 p-6 flex flex-col relative'>
 						<ProductDetails product={product} auction={auction} />
-						<ProductStatus auction={auction} />
+						<ProductStatus
+							auction={auction}
+							setIsAuctionOver={setIsAuctionOver}
+							isAuctionOver={isAuctionOver}
+						/>
+
 						<BiddingSection
 							highestBid={highestBid}
 							auction={auction}
 							product={product}
 							proxyBid={proxyBid}
+							isAuctionOver={isAuctionOver}
 						/>
+
 						<BuyNowSection
 							product={product}
 							auction={auction}

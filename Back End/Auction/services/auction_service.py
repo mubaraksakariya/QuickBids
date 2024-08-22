@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from Auction.models import Auction
 
@@ -5,12 +6,22 @@ from Auction.models import Auction
 class AuctionService:
     @staticmethod
     def check_biddable(auction):
+        # Check if the auction has ended based on the end_time
+        if auction.end_time and auction.end_time <= timezone.now():  # type: ignore
+            raise serializers.ValidationError(
+                {'detail': 'This auction has already ended, you cannot place bid.'}
+            )
+        # Check if the auction has a winner and a winning bid
         if auction.winner and auction.winning_bid:
             raise serializers.ValidationError(
-                {'detail': 'This aucion is already over, try other items.'})
+                {'detail': 'This auction is already over, try other items.'}
+            )
+
+        # Check if the product has been bought via "buy now"
         if auction.winner:
             raise serializers.ValidationError(
-                {'detail': 'This product has been bought, try other items.'})
+                {'detail': 'This product has been bought, try other items.'}
+            )
 
     @staticmethod
     def get_auction(auction_id):
