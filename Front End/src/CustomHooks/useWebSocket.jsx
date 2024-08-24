@@ -1,10 +1,11 @@
 import { useCallback, useEffect } from 'react';
 import websocketService from '../Services/WebsocketService';
 import { useSelector } from 'react-redux';
+import { useError } from '../Context/ErrorContext';
 
 const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+	const { showError } = useError();
 	useEffect(() => {
 		let socket;
 
@@ -37,6 +38,7 @@ const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 			if (isAuthenticated) {
 				websocketService.sendMessage(key, message);
 			} else {
+				showError('Message not sent: Please login.');
 				console.warn('Message not sent: User is not authenticated.');
 			}
 		},

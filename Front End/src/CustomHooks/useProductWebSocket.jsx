@@ -36,8 +36,9 @@ const useProductWebSocket = (
 
 				case 'auction_chat':
 					if (data) {
-						console.log(data);
-						setLiveChatMessages((prev) => [...prev, data]);
+						const message = { ...data, is_read: false };
+						console.log(message);
+						setLiveChatMessages((prev) => [...prev, message]);
 					}
 					break;
 
