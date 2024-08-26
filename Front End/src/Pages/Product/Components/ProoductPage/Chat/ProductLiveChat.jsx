@@ -43,7 +43,7 @@ export const ProductLiveChat = ({ auction }) => {
 				unReadCount={unReadCount}
 			/>
 			<div
-				className={`fixed z-50 bottom-0 right-0 h-[50%]  md:w-96 bg-sectionBgColour10 shadow-lg transform ${
+				className={`fixed z-50 bottom-0 right-0 md:h-[50%] h-96  md:w-96 bg-sectionBgColour10 shadow-lg transform ${
 					isChatVisible ? 'translate-x-0' : 'translate-x-full'
 				} transition-transform duration-300 ease-in-out rounded-t-lg`}>
 				<div className='flex flex-col h-full p-4'>
