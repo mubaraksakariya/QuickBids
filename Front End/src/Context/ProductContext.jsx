@@ -31,8 +31,6 @@ export const ProductProvider = ({ children, initialProducts = [] }) => {
 	);
 
 	useEffect(() => {
-		console.log(data);
-
 		if (data) {
 			if (data.count - pageNumber * pageSize <= 0) setHasMore(false); // No more data to load
 			if (pageNumber === 1) {

@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 
 from Payments.models import Payment
+from QuickBids.pagination import CustomTransactionPagination
 from .models import Wallet, Transaction
 from .serializers import WalletSerializer, TransactionSerializer
 
@@ -83,14 +84,23 @@ class WalletViewSet(viewsets.ModelViewSet):
 class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
+    pagination_class = CustomTransactionPagination
 
     def get_queryset(self):
         return Transaction.objects.filter(wallet__user=self.request.user).order_by('-timestamp')
 
-    def list(self, request, *args, **kwargs):
-        wallet_transactions = self.get_queryset()
-        serializer = self.get_serializer(wallet_transactions, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     wallet_transactions = self.get_queryset()
+
+    #     # Apply pagination
+    #     page = self.paginate_queryset(wallet_transactions)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+
+    #     # If pagination is not applied, return all data
+    #     serializer = self.get_serializer(wallet_transactions, many=True)
+    #     return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         wallet = get_object_or_404(Wallet, user=request.user)

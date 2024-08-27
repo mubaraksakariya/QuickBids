@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from .models import Notification
 from .serializers import NotificationSerializer
 
+
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
@@ -16,17 +17,19 @@ class NotificationViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
-    @action(detail=False, methods=['get'], url_path='recent',permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], url_path='recent', permission_classes=[IsAuthenticated])
     def recent_notifications(self, request):
         user = request.user
         # Fetch the recent 10 notifications
-        notifications = Notification.objects.filter(user=user,is_read = False).order_by('-created_at')
+        notifications = Notification.objects.filter(
+            user=user, is_read=False).order_by('-created_at')
         if not notifications.exists():
-            notifications = Notification.objects.filter(user=user).order_by('-created_at')[:5]
+            notifications = Notification.objects.filter(
+                user=user).order_by('-created_at')[:5]
         serializer = self.get_serializer(notifications, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['patch'],permission_classes=[IsAuthenticated],url_path='mark-as-read')
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated], url_path='mark-as-read')
     def mark_as_read(self, request, pk=None):
         try:
             notification = self.get_object()
@@ -35,5 +38,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response({'status': 'notification marked as read'})
         except Notification.DoesNotExist:
             return Response({'status': 'not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-
