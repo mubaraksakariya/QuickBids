@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import useCategories from '../../CustomHooks/useCategories';
 
 function CategoryNav({ setSelectedCategory }) {
-	const { data, error, isLoading } = useCategories();
 	const [selected, setSelected] = useState('');
 	const [isExpanded, setIsExpanded] = useState(false); // State to control category expansion
 	const [isLargeScreen, setIsLargeScreen] = useState(false); // State to track if screen is large
+	const { data, error, isLoading } = useCategories();
+
 	// Effect to detect screen size changes
 	useEffect(() => {
 		const handleResize = () => {
@@ -65,7 +66,7 @@ function CategoryNav({ setSelectedCategory }) {
 									All
 								</span>
 							</li>
-							{categoriesToShow &&
+							{categoriesToShow?.length > 0 &&
 								categoriesToShow.map((category) => (
 									<li key={category.id}>
 										<span

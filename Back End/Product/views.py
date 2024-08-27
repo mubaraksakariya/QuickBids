@@ -7,6 +7,7 @@ from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 
+from QuickBids.pagination import CustomPagination
 from Auction.serializers import AuctionSerializer
 from Auction.services.auction_service import AuctionService
 from Bids.services.bid_service import BidService
@@ -48,6 +49,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    pagination_class = CustomPagination
     filterset_fields = ['category', 'title']
     search_fields = ['title', 'description']
 
@@ -150,6 +152,15 @@ class ProductViewSet(viewsets.ModelViewSet):
             auction__is_deleted=False,
             auction__winner__isnull=True
         )
+
+        # Apply pagination
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            # Paginated response if pagination is applied
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
