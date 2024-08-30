@@ -12,18 +12,18 @@ const WalletHistorySection = () => {
 		isLoading: isTransactionsLoading,
 	} = useWalletTransactions(currentPage);
 
-	const lastPaymentDate = useMemo(() => {
-		if (isTransactionsLoading) return 'Loading...';
-		if (transactions && transactions[0])
-			return formatDate(transactions[0].timestamp);
-		return 'No transactions available';
-	}, [transactions, isTransactionsLoading]);
+	// const lastPaymentDate = useMemo(() => {
+	// 	if (isTransactionsLoading) return 'Loading...';
+	// 	if (transactions && transactions[0])
+	// 		return formatDate(transactions[0].timestamp);
+	// 	return 'No transactions available';
+	// }, [transactions, isTransactionsLoading]);
 
 	return (
 		<div className='flex-[8] sm:order-1 order-2'>
 			<div className='pb-4'>
 				<h1 className='text-xl'>Wallet history</h1>
-				<p className='text-xs'>Last payment date: {lastPaymentDate}</p>
+				{/* <p className='text-xs'>Last payment date: {lastPaymentDate}</p> */}
 			</div>
 			{transactionsError && <span>{transactionsError.message}</span>}
 			{isTransactionsLoading && <span>Loading transactions...</span>}

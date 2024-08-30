@@ -1,16 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import NoneHomeNavbar from '../../Components/Navbar/NoneHomeNavbar';
-import useWalletTransactions from '../../CustomHooks/useWalletTransactions';
 import useWallet from '../../CustomHooks/useWallet';
 import Footer from '../../Components/Footer/Footer';
 import AddToWallet from './Components/AddToWallet';
-import { formatDate } from './Components/helpers';
 import WalletHistorySection from './Components/WalletHistorySection';
 import WalletBalanceSection from './Components/WalletBalanceSection';
+import Withdrawal from './Components/Withdrawal/Withdrawal';
 
 function Wallet() {
 	const [isAddToWallet, setIsAddToWallet] = useState(false);
-
+	const [isWithdraw, setIsWithdraw] = useState(false);
 	const {
 		data: wallet,
 		error: walletError,
@@ -32,12 +31,14 @@ function Wallet() {
 						walletBalance={walletBalance}
 						isAddToWallet={isAddToWallet}
 						setIsAddToWallet={setIsAddToWallet}
+						setIsWithdraw={setIsWithdraw}
 					/>
 				</div>
 			</div>
 			{isAddToWallet && (
 				<AddToWallet setIsAddToWallet={setIsAddToWallet} />
 			)}
+			{isWithdraw && <Withdrawal setIsWithdraw={setIsWithdraw} />}
 			<Footer />
 		</div>
 	);
