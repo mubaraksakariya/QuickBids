@@ -7,11 +7,12 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 function Login() {
 	const [isLoading, setIsLoading] = useState(false);
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAdmin = useSelector((state) => state.auth.isAdmin);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const from = location.state?.from || '/';
 
-	if (isAuthenticated) {
+	if (isAuthenticated && !isAdmin) {
 		return <Navigate to={from} replace={true} />;
 	}
 

@@ -5,7 +5,8 @@ import requests
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import serializers
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -16,13 +17,25 @@ from django.utils.encoding import force_bytes
 
 from Customer.tasks import send_otp_email_task
 from .models import OTP, CustomUser
-from .serializers import ChangePasswordSerializer, UserSerializer
+from .serializers import AdminTokenObtainSerializer, ChangePasswordSerializer, UserTokenObtainSerializer, UserSerializer
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from django.core.files.base import ContentFile
+
+# user login
+
+
+class UserTokenObtainView(TokenObtainPairView):
+    serializer_class = UserTokenObtainSerializer
+
+# admin login
+
+
+class AdminTokenObtainView(TokenObtainPairView):
+    serializer_class = AdminTokenObtainSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -18,9 +18,11 @@ import ResetPassword from './Pages/Profile/ResetPassword';
 import ForgotPassword from './Pages/FrogotPassword/ForgotPassword';
 import ProductPage from './Pages/Product/ProductPage';
 import { ProductProvider } from './Context/ProductContext';
+import AdminLogin from './Pages/Admin/Login/AdminLogin';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAdmin = useSelector((state) => state.auth.isAdmin);
 	const GOOGLE_CLIENT_ID = import.meta.env.VITE_0AUTH_CLIENT_ID;
 	const { isLoading } = useAuth();
 
@@ -62,53 +64,59 @@ function App() {
 					children: [
 						{
 							path: '',
-							element: isAuthenticated ? (
-								<Profile />
-							) : (
-								<Navigate
-									to='/login'
-									replace={true}
-									state={{ from: '/profile/' }}
-								/>
-							),
+							element:
+								isAuthenticated && !isAdmin ? (
+									<Profile />
+								) : (
+									<Navigate
+										to='/login'
+										replace={true}
+										state={{ from: '/profile/' }}
+									/>
+								),
 						},
 						{
 							path: 'wallet',
-							element: isAuthenticated ? (
-								<Wallet />
-							) : (
-								<Navigate
-									to='/login'
-									replace={true}
-									state={{ from: '/profile/wallet/' }}
-								/>
-							),
+							element:
+								isAuthenticated && !isAdmin ? (
+									<Wallet />
+								) : (
+									<Navigate
+										to='/login'
+										replace={true}
+										state={{ from: '/profile/wallet/' }}
+									/>
+								),
 							// loader: Loader,
 						},
 						{
 							path: 'bids',
-							element: isAuthenticated ? (
-								<UserBids />
-							) : (
-								<Navigate
-									to='/login'
-									replace={true}
-									state={{ from: '/profile/wallet/' }}
-								/>
-							),
+							element:
+								isAuthenticated && !isAdmin ? (
+									<UserBids />
+								) : (
+									<Navigate
+										to='/login'
+										replace={true}
+										state={{ from: '/profile/wallet/' }}
+									/>
+								),
 							// loader: Loader,
 						},
 						{
 							path: 'edit-profile',
-							element: isAuthenticated ? (
-								<EditProfile />
-							) : (
-								<Navigate
-									to='/login'
-									replace={true}
-									state={{ from: '/profile/edit-profile/' }}
-								/>
-							),
+							element:
+								isAuthenticated && !isAdmin ? (
+									<EditProfile />
+								) : (
+									<Navigate
+										to='/login'
+										replace={true}
+										state={{
+											from: '/profile/edit-profile/',
+										}}
+									/>
+								),
 							// loader: Loader,
 						},
 					],
@@ -118,15 +126,16 @@ function App() {
 					children: [
 						{
 							path: 'create',
-							element: isAuthenticated ? (
-								<CreateProduct />
-							) : (
-								<Navigate
-									to='/login'
-									replace={true}
-									state={{ from: '/product/create' }}
-								/>
-							),
+							element:
+								isAuthenticated && !isAdmin ? (
+									<CreateProduct />
+								) : (
+									<Navigate
+										to='/login'
+										replace={true}
+										state={{ from: '/product/create' }}
+									/>
+								),
 
 							// loader: Loader,
 						},
@@ -143,7 +152,21 @@ function App() {
 					children: [
 						{
 							path: '',
-							element: <DashBoard />,
+							element:
+								isAuthenticated && isAdmin ? (
+									<DashBoard />
+								) : (
+									<Navigate
+										to='/admin/login'
+										replace={true}
+										state={{ from: '/admin/' }}
+									/>
+								),
+							// loader: Loader,
+						},
+						{
+							path: 'login',
+							element: <AdminLogin />,
 							// loader: Loader,
 						},
 					],

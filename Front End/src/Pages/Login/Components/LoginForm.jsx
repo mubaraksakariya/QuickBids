@@ -51,18 +51,19 @@ function LoginForm({ isLoading, setIsLoading }) {
 				const refreshToken = response.data.refresh;
 				const user = false;
 				dispatch(login({ accessToken, refreshToken, user }));
-				// response = await api.get('api/users/logged_in_user/');
-				// console.log(response);
 			}
 			setIsLoading(false);
 		} catch (error) {
-			// console.log('Error during signin:', error.message);
+			console.log('Error during signin:', error);
 			// Handle error during signin
 			if (error.response?.data) {
 				const serverErrors = error?.response?.data;
+				console.log(serverErrors);
+
 				if (serverErrors) setOtherError(serverErrors.detail);
 				return;
-			} else setOtherError(error.message);
+			} else if (error.message) setOtherError(error.message);
+			else setOtherError('check your credentials again');
 			setIsLoading(false);
 		}
 	};

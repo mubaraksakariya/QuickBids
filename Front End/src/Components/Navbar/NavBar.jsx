@@ -12,6 +12,7 @@ const Navbar = ({ setSearchSTring }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const user = useSelector((state) => state.auth.user);
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAdmin = useSelector((state) => state.auth.isAdmin);
 	const navigate = useNavigate();
 	return (
 		<nav className='nav-bar'>
@@ -28,9 +29,11 @@ const Navbar = ({ setSearchSTring }) => {
 						<SearchBar setSearchSTring={setSearchSTring} />
 						<div className='flex gap-3 lg:justify-normal justify-center items-center lg:px-0 px-2'>
 							<div className='lg:m-2 mt-2'>
-								{isAuthenticated && <Notifications />}
+								{isAuthenticated && !isAdmin && (
+									<Notifications />
+								)}
 							</div>
-							{user && isAuthenticated ? (
+							{user && isAuthenticated && !isAdmin ? (
 								<div className='lg:m-2 mt-2'>
 									<UserDropdown user={user} />
 								</div>

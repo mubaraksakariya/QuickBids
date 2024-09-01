@@ -4,6 +4,7 @@ from Payments.models import WithdrawalRequest
 
 
 class PaymentService:
+
     @staticmethod
     def create_withdrawal_request(user, account_number, ifsc_code, amount):
         try:

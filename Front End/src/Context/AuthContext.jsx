@@ -29,16 +29,16 @@ const AuthProvider = ({ children }) => {
 	}, [isAuthenticated]);
 	// Initialize authentication state from localStorage on app start
 	useEffect(() => {
-		if (storedAccessToken && storedRefreshToken && storedUser) {
+		if (storedAccessToken && storedRefreshToken) {
 			dispatch(
 				login({
 					accessToken: storedAccessToken,
 					refreshToken: storedRefreshToken,
-					user: storedUser,
+					// user: storedUser,
 				})
 			);
-			if (!storedUser) setUser();
 		}
+		setUser();
 	}, []);
 
 	// Handle logout on localStorage change (e.g., user logs out)
