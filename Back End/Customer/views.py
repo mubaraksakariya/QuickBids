@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.contrib.sites.shortcuts import get_current_site
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
 
@@ -41,6 +41,18 @@ class AdminTokenObtainView(TokenObtainPairView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        recent = self.request.query_params.get('recent', None)  # type: ignore
+        days = self.request.query_params.get('days', 7)  # type: ignore
+        if recent is not None:
+            # Assuming "recent" users are those created within the last 7 days
+            one_week_ago = timezone.now() - timezone.timedelta(days=days)
+            queryset = queryset.filter(
+                created_at__gte=one_week_ago, is_superuser=False)
+
+        return queryset
 
     def get_permissions(self):
         if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password', 'forgot_password']:

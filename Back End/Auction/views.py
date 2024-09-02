@@ -1,9 +1,13 @@
+from datetime import datetime
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Auction
 from .serializers import AuctionSerializer, AuctionWithProductSerializer
+from django.db.models.functions import TruncMonth, TruncDay
+from django.utils import timezone
+from django.db.models import Count
 
 
 class AuctionViewSet(viewsets.ModelViewSet):
@@ -100,3 +104,45 @@ class AuctionViewSet(viewsets.ModelViewSet):
         serialized_auctions = AuctionWithProductSerializer(
             failed_auctions, many=True, context={'request': request}).data
         return Response(serialized_auctions, status=status.HTTP_200_OK)
+
+    @action(detail=False)
+    def monthly_sales(self, request):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        if not start_date or not end_date:
+            # Default to current year if no dates provided
+            now = timezone.now()
+            start_date = now.replace(month=1, day=1)
+            end_date = now
+
+        # Convert start_date and end_date to datetime objects
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')  # type: ignore
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')  # type: ignore
+
+        # Calculate the difference in days between start_date and end_date
+        date_diff = (end_date - start_date).days
+
+        # Choose aggregation based on the date range
+        if date_diff >= 30:
+            # Aggregate by month if the date range is 30 days or more
+            sales_data = Auction.objects.filter(
+                created_at__range=[start_date, end_date],
+                winner__isnull=False
+            ).annotate(
+                period=TruncMonth('updated_at')
+            ).values('period').annotate(
+                sales_count=Count('id')
+            ).order_by('period')
+        else:
+            # Aggregate by day if the date range is less than 30 days
+            sales_data = Auction.objects.filter(
+                created_at__range=[start_date, end_date],
+                winner__isnull=False
+            ).annotate(
+                period=TruncDay('updated_at')
+            ).values('period').annotate(
+                sales_count=Count('id')
+            ).order_by('period')
+
+        return Response(sales_data)

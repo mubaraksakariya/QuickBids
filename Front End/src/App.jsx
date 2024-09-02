@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
 import SignUp from './Pages/Signup/SignUp';
-import DashBoard from './Pages/Admin/Home/DashBoard';
+import DashBoard from './Pages/Admin/DashBoard';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { useAuth } from './Context/AuthContext';

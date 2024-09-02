@@ -58,7 +58,6 @@ const AdminLogin = () => {
 				dispatch(
 					login({ accessToken, refreshToken, user, isAdmin: true })
 				);
-				console.log('Admin logged in successfully:', response.data);
 			}
 		} catch (error) {
 			// Handle login failure
