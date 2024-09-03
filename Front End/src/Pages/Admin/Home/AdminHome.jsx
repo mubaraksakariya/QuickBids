@@ -7,9 +7,9 @@ import SalesChart from './Components/SalesChart';
 
 const AdminHome = () => {
 	return (
-		<div className='m-5'>
+		<div className='m-5 space-y-6'>
 			<div className='flex gap-4'>
-				<div className='flex-grow '>
+				<div className='flex-grow'>
 					<Sales />
 				</div>
 				<div className='flex-grow'>
@@ -23,7 +23,7 @@ const AdminHome = () => {
 				<div className='flex-[9]'>
 					<SalesChart />
 				</div>
-				<div className='flex-[3] max-h-max overflow-auto'>
+				<div className='flex-[3] max-h-max overflow-auto bg-sectionBgColour5 border border-cardBorderColour rounded-lg p-4'>
 					<NewCustomers />
 				</div>
 			</div>

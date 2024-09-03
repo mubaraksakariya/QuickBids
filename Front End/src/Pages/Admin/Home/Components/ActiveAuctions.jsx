@@ -1,6 +1,18 @@
 import React from 'react';
+import useActiveAuctions from '../../../../CustomHooks/useActiveAuctions';
 
 const ActiveAuctions = () => {
+	const { data: activeAuctions, isLoading, error } = useActiveAuctions();
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error: {error.message}</div>;
+	const getTotalPoints = () => {
+		let total = 0;
+		activeAuctions.forEach((element) => {
+			total = total + Number(element.product.buy_now_prize);
+		});
+		return total;
+	};
 	return (
 		<div className='flex justify-between items-center p-4 bg-sectionBgColour5 border border-cardBorderColour rounded-lg shadow-sm'>
 			<div className='flex gap-3 items-center'>
@@ -23,10 +35,15 @@ const ActiveAuctions = () => {
 					<h1 className='text-lg font-semibold text-headerColour'>
 						Active Auctions
 					</h1>
-					<p className='text-sm text-bodyTextColour'>15</p>
+					<p className='text-sm text-bodyTextColour'>
+						count : {activeAuctions.length}
+					</p>
 				</div>
 			</div>
-			<div className='text-sm text-bodyTextColour'>Date</div>
+			<div className='text-sm text-bodyTextColour'>
+				<div>Total Points</div>
+				<div>{getTotalPoints()}</div>
+			</div>
 		</div>
 	);
 };

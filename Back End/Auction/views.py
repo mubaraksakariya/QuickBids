@@ -1,8 +1,10 @@
 from datetime import datetime
 from rest_framework import viewsets, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from Auction.services import auction_service
 from .models import Auction
 from .serializers import AuctionSerializer, AuctionWithProductSerializer
 from django.db.models.functions import TruncMonth, TruncDay
@@ -51,7 +53,7 @@ class AuctionViewSet(viewsets.ModelViewSet):
     def get_active_auctions(self, request):
         active_auctions = Auction.objects.filter(
             is_active=True, is_deleted=False)
-        serializer = self.get_serializer(active_auctions, many=True)
+        serializer = AuctionWithProductSerializer(active_auctions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='user-active-auctions')
@@ -105,8 +107,11 @@ class AuctionViewSet(viewsets.ModelViewSet):
             failed_auctions, many=True, context={'request': request}).data
         return Response(serialized_auctions, status=status.HTTP_200_OK)
 
-    @action(detail=False)
-    def monthly_sales(self, request):
+
+# for admin side
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    def sales_data(self, request):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
@@ -146,3 +151,16 @@ class AuctionViewSet(viewsets.ModelViewSet):
             ).order_by('period')
 
         return Response(sales_data)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    def total_sales(self, request):
+        # Calculate total sales amount
+        total_sales = auction_service.AuctionService.total_sales()
+
+        return Response(total_sales)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    def total_auctions(self, request):
+        total_auctions = auction_service.AuctionService.total_auctions()
+
+        return Response(total_auctions)

@@ -51,7 +51,7 @@ const SalesChart = () => {
 		return <div className='text-errorColour'>Error: {error.message}</div>;
 
 	return (
-		<div className='flex flex-col bg-sectionBgColour2 mt-2 rounded-lg shadow-sm border border-cardBorderColour p-5'>
+		<div className='flex flex-col bg-sectionBgColour2  rounded-lg shadow-sm border border-cardBorderColour p-5'>
 			<div className='flex justify-between items-center mb-4 text-headerColour'>
 				<div className='font-semibold'>Sales</div>
 				<div className='flex gap-2'>
@@ -79,7 +79,16 @@ const SalesChart = () => {
 						xAxis={[
 							{
 								data: periods,
-								type: 'time',
+								type: 'time', // Interpret the data as dates
+								scaleType: 'time',
+								labelFormatter: (value) => {
+									const date = new Date(value);
+									return date.toLocaleDateString(undefined, {
+										year: 'numeric',
+										month: 'short',
+										day: 'numeric',
+									});
+								},
 							},
 						]}
 						series={[

@@ -10,7 +10,7 @@ const fetchWeeklySales = async (api, startDate, endDate) => {
 		)}&end_date=${encodeURIComponent(endDate)}`;
 	}
 
-	const response = await api.get(`/api/auctions/monthly_sales/${query}`);
+	const response = await api.get(`/api/auctions/sales_data/${query}`);
 	return response.data;
 };
 

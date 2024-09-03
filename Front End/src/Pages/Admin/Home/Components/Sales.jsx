@@ -1,6 +1,12 @@
 import React from 'react';
+import useTotalSales from '../../../../CustomHooks/useTotalSales';
 
 const Sales = () => {
+	const { data: totalSales, isLoading, error } = useTotalSales();
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error: {error.message}</div>;
+
 	return (
 		<div className='flex justify-between items-center p-4 bg-sectionBgColour5  border border-cardBorderColour rounded-lg shadow-sm'>
 			<div className='flex gap-3 items-center'>
@@ -23,10 +29,15 @@ const Sales = () => {
 					<h1 className='text-lg font-semibold text-headerColour'>
 						Sales
 					</h1>
-					<p className='text-sm text-bodyTextColour'>10,000</p>
+					<p className='text-sm text-center text-bodyTextColour'>
+						count : {totalSales?.count}
+					</p>
 				</div>
 			</div>
-			<div className='text-sm text-bodyTextColour'>Date</div>
+			<div className='text-sm text-bodyTextColour'>
+				<div>Total Points</div>
+				<div>{totalSales?.amount}</div>
+			</div>
 		</div>
 	);
 };

@@ -50,3 +50,31 @@ class AuctionService:
         except Auction.DoesNotExist:
             raise serializers.ValidationError(
                 {'detail': 'Auction not found for this product.'})
+
+    @staticmethod
+    def total_sales():
+        auctions = Auction.objects.filter(
+            is_active=False, winner__isnull=False)
+
+        total_sales = 0
+        for index, auction in enumerate(auctions):
+            if auction.winning_bid:
+                # Use the amount of the winning bid
+                total_sales += auction.winning_bid.amount
+            else:
+                # Use the buy now price of the product
+                total_sales += auction.product.buy_now_prize
+        return {'amount': total_sales, 'count': index}
+
+    @staticmethod
+    def total_auctions():
+        total_auctions = Auction.objects.all()
+        amount = 0
+        for index, auction in enumerate(total_auctions):
+            if auction.winning_bid:
+                # Use the amount of the winning bid
+                amount += auction.winning_bid.amount
+            else:
+                # Use the buy now price of the product
+                amount += auction.product.buy_now_prize
+        return {'amount': amount, 'count': index}

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../Store/authSlice';
 
 const DashBoardLeftSideNav = ({ setSelectedTab, selectedTab }) => {
 	const dispatch = useDispatch();
+
 	const handleTabClick = (tab) => {
 		setSelectedTab(tab);
 	};
@@ -19,15 +20,15 @@ const DashBoardLeftSideNav = ({ setSelectedTab, selectedTab }) => {
 	];
 
 	return (
-		<div className='flex flex-col h-screen bg-sectionBgColour2 border-r border-cardBorderColour p-4 w-64'>
+		<div className='flex flex-col justify-between h-full bg-sectionBgColour2 border-r border-cardBorderColour p-4 w-64'>
 			<ul className='space-y-4 flex-grow'>
 				{navItems.map((item) => (
 					<li
 						key={item.id}
-						className={`p-3 rounded cursor-pointer ${
+						className={`p-3 rounded cursor-pointer transition-colors duration-200 ${
 							selectedTab === item.name
 								? 'bg-buttonColour1 text-white'
-								: 'text-bodyTextColour hover:bg-sectionBgColour1'
+								: 'text-bodyTextColour hover:bg-sectionBgColour1 hover:text-headerColour'
 						}`}
 						onClick={() => handleTabClick(item.name)}>
 						{item.name}
@@ -36,7 +37,7 @@ const DashBoardLeftSideNav = ({ setSelectedTab, selectedTab }) => {
 			</ul>
 			<div className='mt-auto'>
 				<li
-					className={`p-3 rounded cursor-pointer text-bodyTextColour hover:bg-sectionBgColour1`}
+					className={`p-3 rounded cursor-pointer text-bodyTextColour hover:bg-sectionBgColour1 hover:text-headerColour transition-colors duration-200`}
 					onClick={() => dispatch(logout())}>
 					Logout
 				</li>

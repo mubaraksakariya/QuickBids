@@ -12,30 +12,49 @@ function DashBoard() {
 	const [selectedTab, setSelectedTab] = useState('Home');
 	const [searchString, setSearchString] = useState('');
 
-	const showTab = () => {
-		if (selectedTab == 'Home') return <AdminHome />;
-		if (selectedTab == 'Products') return <AdminProducts />;
-		if (selectedTab == 'Categories') return <AdminCategories />;
-		if (selectedTab == 'Report') return <AdminReport />;
-		if (selectedTab == 'Notifications') return <AdminNotifications />;
-		if (selectedTab == 'Message') return <AdminMessages />;
+	const renderTabContent = () => {
+		switch (selectedTab) {
+			case 'Home':
+				return <AdminHome />;
+			case 'Products':
+				return <AdminProducts />;
+			case 'Categories':
+				return <AdminCategories />;
+			case 'Report':
+				return <AdminReport />;
+			case 'Notifications':
+				return <AdminNotifications />;
+			case 'Message':
+				return <AdminMessages />;
+			default:
+				return <AdminHome />;
+		}
 	};
+
 	return (
-		<div className='full-page'>
-			<div className='flex'>
-				<div className=''>
+		<div className='min-h-screen container mx-auto bg-sectionBgColour7 flex flex-col'>
+			{/* Top Navbar */}
+			<header className='bg-sectionBgColour1 shadow-md'>
+				<AdminTopNavbar
+					selectedTab={selectedTab}
+					setSearchString={setSearchString}
+				/>
+			</header>
+
+			<div className='flex flex-1'>
+				{/* Sidebar */}
+				<aside className='bg-navBg text-navIcon shadow-lg w-64 hidden md:block'>
 					<DashBoardLeftSideNav
 						selectedTab={selectedTab}
 						setSelectedTab={setSelectedTab}
 					/>
-				</div>
-				<div className='flex-1'>
-					<AdminTopNavbar
-						selectedTab={selectedTab}
-						setSearchString={setSearchString}
-					/>
-					{showTab()}
-				</div>
+				</aside>
+
+				{/* Main Content Area */}
+				<main className='flex-1 p-6'>
+					{/* Dynamic Content */}
+					{renderTabContent()}
+				</main>
 			</div>
 		</div>
 	);

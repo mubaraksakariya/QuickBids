@@ -9,20 +9,18 @@ const NewCustomers = () => {
 	if (error) return <p className='text-errorColour'>Error fetching users</p>;
 
 	return (
-		<div className='p-5 bg-sectionBgColour5 border border-cardBorderColour rounded-lg shadow-sm mt-2'>
-			<div className=''>
-				<div className='mb-4'>
-					<h1 className='text-lg font-semibold text-headerColour'>
-						Latest Customers
-					</h1>
-				</div>
-				<div className='space-y-3'>
-					{data?.map((user) => (
-						<UserInfo user={user} key={user.id} />
-					))}
-				</div>
+		<>
+			<div className='mb-4'>
+				<h1 className='text-lg font-semibold text-headerColour'>
+					Latest Customers
+				</h1>
 			</div>
-		</div>
+			<div className='space-y-3'>
+				{data?.map((user) => (
+					<UserInfo user={user} key={user.id} />
+				))}
+			</div>
+		</>
 	);
 };
 
