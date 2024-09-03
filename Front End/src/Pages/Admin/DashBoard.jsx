@@ -7,6 +7,7 @@ import AdminCategories from './Categories/AdminCategories';
 import AdminReport from './Report/AdminReport';
 import AdminNotifications from './Notification/AdminNotifications';
 import AdminMessages from './Message/AdminMessages';
+import AdminUsersMangement from './Users/AdminUsersMangement';
 
 function DashBoard() {
 	const [selectedTab, setSelectedTab] = useState('Home');
@@ -16,6 +17,8 @@ function DashBoard() {
 		switch (selectedTab) {
 			case 'Home':
 				return <AdminHome />;
+			case 'Users':
+				return <AdminUsersMangement />;
 			case 'Products':
 				return <AdminProducts />;
 			case 'Categories':

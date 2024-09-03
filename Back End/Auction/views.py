@@ -4,17 +4,21 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from Auction.services import auction_service
-from .models import Auction
-from .serializers import AuctionSerializer, AuctionWithProductSerializer
 from django.db.models.functions import TruncMonth, TruncDay
 from django.utils import timezone
 from django.db.models import Count
+from django.utils.dateparse import parse_datetime
+
+from Auction.services import auction_service
+from QuickBids.pagination import CustomAuctionPagination
+from .models import Auction
+from .serializers import AuctionSerializer, AuctionWithProductSerializer
 
 
 class AuctionViewSet(viewsets.ModelViewSet):
     queryset = Auction.objects.all()
     serializer_class = AuctionSerializer
+    pagination_class = CustomAuctionPagination
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve', 'get_auction_by_product']:
@@ -164,3 +168,40 @@ class AuctionViewSet(viewsets.ModelViewSet):
         total_auctions = auction_service.AuctionService.total_auctions()
 
         return Response(total_auctions)
+
+    @action(detail=False, methods=['get'], url_path='filter-auctions')
+    def filter_auctions(self, request):
+        """
+        Custom action to filter auctions based on date range, product search string, and sorting.
+        """
+        from_date = request.query_params.get('from_date', None)
+        to_date = request.query_params.get('to_date', None)
+        search_string = request.query_params.get('search', None)
+        ordering = request.query_params.get('sorting', '-created_at')
+        print(ordering)
+        queryset = Auction.objects.all()
+
+        if from_date:
+            from_date = parse_datetime(from_date)
+            queryset = queryset.filter(created_at__gte=from_date)
+
+        if to_date:
+            to_date = parse_datetime(to_date)
+            queryset = queryset.filter(created_at__lte=to_date)
+
+        if search_string:
+            queryset = queryset.filter(product__title__icontains=search_string)
+
+        # Apply ordering
+        if ordering:
+            queryset = queryset.order_by(ordering)
+
+        # Apply pagination
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = AuctionWithProductSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # If pagination is not applied
+        serializer = AuctionWithProductSerializer(queryset, many=True)
+        return Response(serializer.data)

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from Customer.serializers import UserSerializer
 from .models import Category, Product, ProductImage
 
 
@@ -50,6 +52,19 @@ class FullProductImageSerializer(serializers.ModelSerializer):
 
 class FullProductSerializer(ProductSerializer):
     images = FullProductImageSerializer(many=True, required=False)
+    category = CategorySerializer()
+    owner = UserSerializer()
 
-    class Meta(ProductSerializer.Meta):
-        fields = ProductSerializer.Meta.fields + ['images']
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'category',
+            'title',
+            'description',
+            'owner',
+            'buy_now_prize',
+            'selected_state',
+            'current_location',
+            'images'
+        ]

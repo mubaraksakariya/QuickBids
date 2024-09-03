@@ -12,6 +12,7 @@ const DashBoardLeftSideNav = ({ setSelectedTab, selectedTab }) => {
 	// Array of navigation items
 	const navItems = [
 		{ name: 'Home', id: 'home' },
+		{ name: 'Users', id: 'users' },
 		{ name: 'Products', id: 'products' },
 		{ name: 'Categories', id: 'categories' },
 		{ name: 'Report', id: 'report' },
