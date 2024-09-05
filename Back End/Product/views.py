@@ -1,11 +1,20 @@
+from django.core.exceptions import ValidationError
+import json
+from os import name
+from requests import delete
 from rest_framework import serializers
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
+from rest_framework import filters
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.dateparse import parse_datetime
 from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import NotFound
+from django.db.models import Q
 
 from QuickBids.pagination import CustomProductPagination
 from Auction.serializers import AuctionSerializer
@@ -16,10 +25,7 @@ from Product.services.product_services import ProductService
 from Wallet.models import Wallet
 from Wallet.services.wallet_service import WalletService
 from .models import Category, Product, ProductImage
-from django.db.models import Q
 from .serializers import CategorySerializer, ProductSerializer, ProductImageSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -269,6 +275,90 @@ class ProductViewSet(viewsets.ModelViewSet):
         except Exception as e:
             # Catch-all for other exceptions
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # For Admin users only
+
+    # update a product and its Auction
+    @transaction.atomic
+    @action(detail=True, methods=['patch'], url_path='update-product-auction', permission_classes=[IsAdminUser])
+    def update_product_auction(self, request, pk=None):
+        """
+        Custom action to update product and its associated auction.
+        """
+        try:
+
+            product = self.get_object()  # Get the product instance by ID (pk)
+            auction = product.auction
+            # Validate incoming data
+            ProductService.validate_product_data_updation(
+                data=request.data, auction=auction)
+
+            # Extract data from the request
+            title = request.data.get('title')
+            category = request.data.get('category')
+            buy_now_price = request.data.get('buyNowPrice')
+            initial_prize = request.data.get('initialPrize')
+            start_time = parse_datetime(request.data.get('startDate'))
+            end_time = parse_datetime(request.data.get('endDate'))
+            is_active = request.data.get('status') == 'active'
+            description = request.data.get('description')
+            images_to_remove = request.data.get('images_to_remove')
+
+            # Update product fields
+            if title:
+                product.title = title
+            if category:
+                cat = Category.objects.filter(name=category).first()
+                if cat:
+                    product.category = cat
+            if buy_now_price:
+                product.buy_now_prize = buy_now_price
+            if description:
+                product.description = description
+
+            # Handle file uploads (images)
+            images = request.FILES.getlist('images')
+            if images:
+                for image in images:
+                    ProductImage.objects.create(product=product, image=image)
+
+            # Handle file deletion (image_id)
+            if images_to_remove:
+                images_to_remove = json.loads(images_to_remove)
+            if images_to_remove:
+                for image_id in images_to_remove:
+                    try:
+                        # Ensure image_id is a valid integer
+                        image_id = int(image_id)
+                        ProductImage.objects.get(id=image_id).delete()
+                    except (ValueError, ProductImage.DoesNotExist):
+                        print(
+                            f"Skipping invalid or non-existent image_id: {image_id}")
+                        continue  # Skip to the next image_id if this one is invalid or doesn't exist
+
+            # Update auction fields
+            if initial_prize:
+                auction.initial_prize = initial_prize
+            if start_time:
+                auction.start_time = start_time
+            if end_time:
+                auction.end_time = end_time
+            if is_active is not None:
+                auction.is_active = is_active
+
+            # Save both instances
+            product.save()
+            auction.save()
+
+            # Serialize updated data
+            serializer = self.get_serializer(product)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ValidationError as e:
+            print(str(e))
+            return Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductImageViewSet(viewsets.ModelViewSet):

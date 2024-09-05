@@ -169,7 +169,7 @@ class AuctionViewSet(viewsets.ModelViewSet):
 
         return Response(total_auctions)
 
-    @action(detail=False, methods=['get'], url_path='filter-auctions')
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser], url_path='filter-auctions')
     def filter_auctions(self, request):
         """
         Custom action to filter auctions based on date range, product search string, and sorting.

@@ -5,11 +5,14 @@ import ProductTable from './Components/ProductTable';
 import useAuctionsFiltered from '../../../CustomHooks/useAuctionsFiltered';
 import Pagination from '../../../Components/Pagination/Pagination';
 import DateRangePicker from './Components/DateRangePicker';
+import EditProductModal from './Components/EditProductModal';
 
 const AdminProducts = () => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [auctions, setAuctions] = useState([]);
+	const [selectedAuction, setSelectedAuction] = useState(null);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [dateRange, setDateRange] = useState({
 		startDate: subMonths(new Date(), 1),
 		endDate: new Date(),
@@ -19,13 +22,17 @@ const AdminProducts = () => {
 		order: 'asc',
 	});
 
-	const { data, isLoading, isError, error } = useAuctionsFiltered(
+	const { data, isLoading, isError, error, refetch } = useAuctionsFiltered(
 		currentPage,
 		dateRange.startDate,
 		dateRange.endDate,
 		searchQuery,
 		sorting
 	);
+	const editModelColse = () => {
+		setIsEditModalOpen(false);
+		refetch();
+	};
 	useEffect(() => {
 		setAuctions(data?.results);
 	}, [data]);
@@ -45,12 +52,22 @@ const AdminProducts = () => {
 				auctions={auctions ? auctions : []}
 				setSorting={setSorting}
 				sorting={sorting}
+				onEdit={(auction) => {
+					setSelectedAuction(auction);
+					setIsEditModalOpen(true);
+				}}
 			/>
 			<Pagination
 				currentPage={currentPage}
 				totalPages={totalPages}
 				onPageChange={(page) => setCurrentPage(page)}
 			/>
+			{isEditModalOpen && (
+				<EditProductModal
+					auction={selectedAuction}
+					onClose={() => editModelColse()}
+				/>
+			)}
 		</div>
 	);
 };

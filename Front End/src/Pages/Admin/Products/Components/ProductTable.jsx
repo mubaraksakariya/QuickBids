@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProductTable = ({ auctions, sorting, setSorting }) => {
+const ProductTable = ({ auctions, sorting, setSorting, onEdit }) => {
 	const truncateText = (text, maxLength) => {
 		if (text.length > maxLength) {
 			return `${text.substring(0, maxLength)}...`;
@@ -27,7 +27,7 @@ const ProductTable = ({ auctions, sorting, setSorting }) => {
 		return '';
 	};
 	const manageEdit = (auction) => {
-		console.log(auction);
+		onEdit(auction);
 	};
 	return (
 		<table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
