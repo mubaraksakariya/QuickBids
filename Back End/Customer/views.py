@@ -60,7 +60,7 @@ class AdminTokenObtainView(TokenObtainPairView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
     pagination_class = CustomUserPagination
     filter_backends = [DjangoFilterBackend,
@@ -72,15 +72,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
-        # recent = self.request.query_params.get('recent', None)  # type: ignore
-        # days = self.request.query_params.get('days', 7)  # type: ignore
-        # if recent is not None and recent == 'true':
-        #     # Assuming "recent" users are those created within the last 7 days
-        #     one_week_ago = timezone.now() - timezone.timedelta(days=days)
-        #     queryset = queryset.filter(
-        #         created_at__gte=one_week_ago, is_superuser=False)
-
         return queryset
 
     def get_permissions(self):
@@ -312,7 +303,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 # For admin uses
 
-
     @action(detail=True, methods=['get'], permission_classes=[IsAdminUser])
     def user_extras(self, request, pk=None):
         try:
@@ -369,3 +359,47 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = CustomUser.objects.all().order_by('-created_at')[:4]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'], url_path='update-data', permission_classes=[IsAdminUser])
+    def update_user_data(self, request, pk=None):
+        user = self.get_object()
+        profile_picture_remove = request.data.get(
+            'profile_picture_remove') == 'true'
+        is_active = request.data.get('is_active') == 'true'
+        is_blocked = request.data.get('is_blocked') == 'true'
+
+        # Create a dictionary with updated data
+        request_data = {
+            'first_name': request.data.get('first_name', user.first_name),
+            'last_name': request.data.get('last_name', user.last_name),
+            'auth_provider': request.data.get('auth_provider', user.auth_provider),
+            'is_active': is_active,
+            'is_blocked': is_blocked,
+            'profile_picture_remove': profile_picture_remove
+        }
+        print(request_data)
+        old_profile_picture = user.profile_picture
+
+        # Create a serializer instance with partial=True to update only the provided fields
+        serializer = self.get_serializer(
+            user, data=request_data, partial=True)
+
+        if serializer.is_valid():
+            # Save the user instance
+            user = serializer.save()
+
+            # Check if a new profile picture has been uploaded or if the existing one is to be removed
+            if 'profile_picture' in request.FILES or profile_picture_remove:
+                # Delete the old profile picture if it exists and is not the default
+                if old_profile_picture and old_profile_picture != 'profile_pictures/default_profile_picture.jpeg':
+                    old_profile_picture.delete(save=False)
+
+                # If profile_picture_remove is True, set profile_picture to the default
+                if profile_picture_remove:
+                    user.profile_picture = 'profile_pictures/default_profile_picture.jpeg'
+
+            user.save()  # Make sure to save the user instance again after updating profile_picture
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

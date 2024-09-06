@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import useUpdateUser from '../../../../CustomHooks/useUpdateUser';
 import { useError } from '../../../../Context/ErrorContext';
 import GeneralModal from '../../../../Components/Models/GeneralModal';
-import ImageManager from '../../Products/Components/ImageManager';
 import UserDetails from './UserDetails';
 import EditUserInputs from './EditUserInputs';
-import { validateUserFormValues } from './formValidation,js';
+import ProfileImageManager from './ProfileImageManager';
+import { validateUserFormValues } from './formValidation.js';
+import BlockUser from './BlockUser.jsx';
+import useUpdateUserData from '../../../../CustomHooks/useUpdateUserData.jsx';
 
 const EditUserModal = ({ user, onClose }) => {
 	const [isEdited, setIsEdited] = useState(false);
@@ -13,23 +14,29 @@ const EditUserModal = ({ user, onClose }) => {
 	const { showError } = useError();
 
 	const [formValues, setFormValues] = useState({
-		name: user?.name || '',
+		first_name: user?.first_name || '',
+		last_name: user?.last_name || '',
+		auth_provider: user?.auth_provider,
 		email: user?.email || '',
-		role: user?.role || '',
-		status: user?.is_active ? 'active' : 'inactive',
-		profilePicture: user?.profilePicture || [],
-		picture_to_remove: null,
+		is_active: user?.is_active,
+		profile_picture: user?.profile_picture || [],
+		profile_picture_remove: false,
+		is_blocked: user?.is_blocked || false,
 	});
 
-	const { mutate: updateUser, error, isError, isSuccess } = useUpdateUser();
+	const {
+		mutate: updateUser,
+		error,
+		isError,
+		isSuccess,
+	} = useUpdateUserData();
 
 	const handleSave = () => {
 		setErrors({});
 		const validationErrors = validateUserFormValues(formValues);
 		if (Object.keys(validationErrors).length > 0) {
-			console.log(validationErrors);
 			setErrors(validationErrors);
-			showError(validationErrors);
+			console.log(validationErrors);
 			return;
 		}
 		if (!isEdited) {
@@ -38,21 +45,24 @@ const EditUserModal = ({ user, onClose }) => {
 		}
 
 		const formData = new FormData();
-		formData.append('name', formValues.name);
-		formData.append('email', formValues.email);
-		formData.append('role', formValues.role);
-		formData.append('status', formValues.status);
+		formData.append('first_name', formValues.first_name);
+		formData.append('last_name', formValues.last_name);
+		formData.append('auth_provider', formValues.auth_provider);
+		formData.append('is_active', formValues.is_active);
+		formData.append('is_blocked', formValues.is_blocked);
+		formData.append(
+			'profile_picture_remove',
+			formValues.profile_picture_remove
+		);
 
-		if (formValues.picture_to_remove) {
-			formData.append('picture_to_remove', formValues.picture_to_remove);
+		if (formValues.profile_picture?.file) {
+			formData.append('profile_picture', formValues.profile_picture.file);
 		}
-
-		if (formValues.profilePicture?.file) {
-			formData.append('profilePicture', formValues.profilePicture.file);
+		if (!formData) {
+			console.error('FormData is not valid');
+			return;
 		}
-
-		console.log('Saving user data...', formValues);
-		updateUser({ userId: user.id, formData });
+		updateUser({ userId: user.id, userData: formData });
 	};
 
 	const handleInputChange = (name, value) => {
@@ -63,7 +73,8 @@ const EditUserModal = ({ user, onClose }) => {
 	const handleAddProfilePicture = (imageObj) => {
 		setFormValues({
 			...formValues,
-			profilePicture: imageObj,
+			profile_picture: imageObj,
+			profile_picture_remove: true,
 		});
 		setIsEdited(true);
 	};
@@ -71,36 +82,53 @@ const EditUserModal = ({ user, onClose }) => {
 	const handleDeleteProfilePicture = () => {
 		setFormValues({
 			...formValues,
-			profilePicture: null,
-			picture_to_remove: user.profilePicture?.id || null,
+			profile_picture: null,
+			profile_picture_remove: true,
 		});
+		setIsEdited(true);
+	};
+
+	const handleBlockChange = (blockStatus) => {
+		setFormValues((prevValues) => ({
+			...prevValues,
+			is_blocked: blockStatus,
+		}));
 		setIsEdited(true);
 	};
 
 	return (
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-			<div className='lg:flex items-start bg-sectionBgColour2 rounded-lg shadow-lg overflow-hidden'>
+			<div className='lg:flex bg-sectionBgColour2 rounded-lg overflow-hidden shadow-lg min-w-[60%]'>
 				{/* Left Section: User Details */}
-				<div className='flex-1 p-6'>
+				<div className='lg:flex-[6] p-6'>
 					<UserDetails user={user} />
+					<BlockUser
+						user={user}
+						isBlocked={formValues.is_blocked}
+						onBlockChange={handleBlockChange}
+					/>
 				</div>
 
 				{/* Right Section: Edit Form */}
-				<div className='flex-1 bg-sectionBgColour5 p-6 m-6 w-96 rounded-lg shadow-lg'>
-					<EditUserInputs
-						formValues={formValues}
-						onInputChange={handleInputChange}
-						errors={errors}
-						user={user}
-					/>
-					<ImageManager
-						images={[formValues.profilePicture]}
-						onAddImage={handleAddProfilePicture}
-						onDeleteImage={handleDeleteProfilePicture}
-					/>
-					<div className='mt-6 flex justify-end space-x-2'>
+				<div className='lg:flex-[6] flex flex-col justify-between items-center min-w-[24rem] bg-sectionBgColour2 py-6 pe-6'>
+					<div className='p-6 bg-sectionBgColour5 rounded-lg shadow-sm w-full'>
+						<EditUserInputs
+							formValues={formValues}
+							onInputChange={handleInputChange}
+							errors={errors}
+							user={user}
+						/>
+						<ProfileImageManager
+							image={formValues.profile_picture}
+							onAddImage={handleAddProfilePicture}
+							onDeleteImage={handleDeleteProfilePicture}
+						/>
+					</div>
+
+					{/* Action Buttons */}
+					<div className='mt-6 w-full flex justify-end space-x-3 p-6'>
 						<button
-							className='bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400'
+							className='bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300'
 							onClick={onClose}>
 							Cancel
 						</button>
@@ -112,17 +140,18 @@ const EditUserModal = ({ user, onClose }) => {
 					</div>
 				</div>
 			</div>
+
 			<GeneralModal
 				show={isSuccess}
 				onClose={onClose}
 				autoCloseAfter={3000}>
 				<div>
-					<h1 className='text-center text-xl mb-3'>
-						Congratulations !!
+					<h1 className='text-center text-xl mb-3 text-headerColour'>
+						Congratulations!
 					</h1>
-				</div>
-				<div>
-					<p>The user has been updated successfully</p>
+					<p className='text-center text-bodyTextColour'>
+						The user has been updated successfully.
+					</p>
 				</div>
 			</GeneralModal>
 		</div>

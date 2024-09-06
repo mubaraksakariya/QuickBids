@@ -2,8 +2,8 @@ import React from 'react';
 
 const EditUserInputs = ({ formValues, onInputChange, errors }) => {
 	const handleInputChange = (e) => {
-		const { name, value } = e.target;
-		onInputChange(name, value);
+		const { name, value, type, checked } = e.target;
+		onInputChange(name, type === 'checkbox' ? checked : value);
 	};
 
 	return (
@@ -12,24 +12,44 @@ const EditUserInputs = ({ formValues, onInputChange, errors }) => {
 				Edit User
 			</h2>
 			<div className='space-y-4'>
-				{/* Name Input */}
+				{/* First Name Input */}
 				<div>
 					<label className='block text-sm font-medium text-bodyTextColour'>
-						Name
+						First Name
 					</label>
 					<input
 						type='text'
-						name='name'
-						value={formValues?.name}
+						name='first_name'
+						value={formValues?.first_name || ''}
 						onChange={handleInputChange}
 						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'
 					/>
-					{errors?.name && (
-						<p className='text-red-500 text-sm'>{errors.name}</p>
+					{errors?.first_name && (
+						<p className='text-red-500 text-sm'>
+							{errors.first_name}
+						</p>
 					)}
 				</div>
 
-				{/* Email Input */}
+				{/* Last Name Input */}
+				<div>
+					<label className='block text-sm font-medium text-bodyTextColour'>
+						Last Name
+					</label>
+					<input
+						type='text'
+						name='last_name'
+						value={formValues?.last_name || ''}
+						onChange={handleInputChange}
+						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'
+					/>
+					{errors?.last_name && (
+						<p className='text-red-500 text-sm'>
+							{errors.last_name}
+						</p>
+					)}
+				</div>
+				{/* Email (Non-Editable) */}
 				<div>
 					<label className='block text-sm font-medium text-bodyTextColour'>
 						Email
@@ -37,53 +57,53 @@ const EditUserInputs = ({ formValues, onInputChange, errors }) => {
 					<input
 						type='email'
 						name='email'
-						value={formValues?.email}
-						onChange={handleInputChange}
-						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'
+						value={formValues?.email || ''}
+						disabled
+						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-gray-100 text-bodyTextColour opacity-50'
 					/>
 					{errors?.email && (
 						<p className='text-red-500 text-sm'>{errors.email}</p>
 					)}
 				</div>
 
-				{/* Role Input */}
+				{/* Auth Provider Input */}
 				<div>
 					<label className='block text-sm font-medium text-bodyTextColour'>
-						Role
+						Auth Provider
 					</label>
 					<select
-						name='role'
-						value={formValues?.role}
+						name='auth_provider'
+						value={formValues?.auth_provider || 'local'}
 						onChange={handleInputChange}
 						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'>
-						<option value=''>Select Role</option>
-						<option value='admin'>Admin</option>
-						<option value='user'>User</option>
+						<option value='local'>Local</option>
+						<option value='google'>Google</option>
 					</select>
-					{errors?.role && (
-						<p className='text-red-500 text-sm'>{errors.role}</p>
+					{errors?.auth_provider && (
+						<p className='text-red-500 text-sm'>
+							{errors.auth_provider}
+						</p>
 					)}
 				</div>
 
-				{/* Status Input */}
+				{/* Is Active Input */}
 				<div>
 					<label className='block text-sm font-medium text-bodyTextColour'>
-						Account Status
+						Is Active
 					</label>
-					<select
-						name='status'
-						value={formValues?.status}
+					<input
+						type='checkbox'
+						name='is_active'
+						checked={formValues?.is_active}
 						onChange={handleInputChange}
-						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'>
-						<option value='active'>Active</option>
-						<option value='inactive'>Inactive</option>
-					</select>
-					{errors?.status && (
-						<p className='text-red-500 text-sm'>{errors.status}</p>
+						className='mt-1 block'
+					/>
+					{errors?.is_active && (
+						<p className='text-red-500 text-sm'>
+							{errors.is_active}
+						</p>
 					)}
 				</div>
-
-				{/* Additional fields like password change can be added here if needed */}
 			</div>
 		</>
 	);

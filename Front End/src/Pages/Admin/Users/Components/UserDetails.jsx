@@ -3,7 +3,6 @@ import useUserExtraDetails from '../../../../CustomHooks/useUserExtraDetails';
 
 const UserDetails = ({ user }) => {
 	const { data, error, isLoading } = useUserExtraDetails(user.id);
-	if (data) console.log(data);
 	if (error) console.log(error);
 
 	return (

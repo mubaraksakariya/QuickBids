@@ -1,13 +1,6 @@
 import React from 'react';
 
 const UserTable = ({ users, sorting, setSorting, onEdit }) => {
-	const truncateText = (text, maxLength) => {
-		if (text.length > maxLength) {
-			return `${text.substring(0, maxLength)}...`;
-		}
-		return text;
-	};
-
 	// Function to handle header click
 	const handleSort = (field) => {
 		setSorting((prevSorting) => {
@@ -36,15 +29,6 @@ const UserTable = ({ users, sorting, setSorting, onEdit }) => {
 		<table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
 			<thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
 				<tr>
-					{/* <th
-						scope='col'
-						className='px-6 py-3 cursor-pointer'
-						onClick={() => handleSort('username')}>
-						<div className='flex justify-between'>
-							<span>Username</span>
-							<span>{renderSortIndicator('username')}</span>
-						</div>
-					</th> */}
 					<th
 						scope='col'
 						className='px-6 py-3 cursor-pointer'

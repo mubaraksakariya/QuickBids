@@ -7,6 +7,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
     profile_picture = serializers.ImageField(use_url=True, required=False)
+    is_active = serializers.BooleanField()
+    is_blocked = serializers.BooleanField()
 
     class Meta:
         model = CustomUser

@@ -6,6 +6,7 @@ import UserTable from './Components/UserTable';
 import useAllUsers from '../../../CustomHooks/useAllUsers';
 import Pagination from '../../../Components/Pagination/Pagination';
 import { useAdminModals } from '../../../Context/AdminModalContext';
+import RefreshButton from '../../../Components/Buttons/RefreshButton';
 
 const AdminUsersMangement = () => {
 	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
@@ -30,9 +31,6 @@ const AdminUsersMangement = () => {
 		sorting
 	);
 
-	// Log the data if available
-	if (data) console.log(data);
-
 	// Update users when data changes
 	useEffect(() => {
 		setUsers(data?.results);
@@ -49,22 +47,23 @@ const AdminUsersMangement = () => {
 					setFromDate={setFromDate}
 					setToDate={setToDate}
 				/>
-
-				<SearchBar
-					searchQuery={searchQuery}
-					setSearchQuery={setSearchQuery}
-					setCurrentPage={setCurrentPage}
-				/>
+				<div className='flex gap-4'>
+					<RefreshButton refresh={refetch} />
+					<SearchBar
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+						setCurrentPage={setCurrentPage}
+					/>
+				</div>
 			</div>
 			<UserTable
 				users={users || []}
 				setSorting={setSorting}
 				sorting={sorting}
 				onEdit={(user) => {
-					// setSelectedUser(user);
-					// setIsEditModalOpen(true);
 					openUserModal(user);
 				}}
+				refetch
 			/>
 			<Pagination
 				currentPage={currentPage}

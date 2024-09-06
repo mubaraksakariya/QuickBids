@@ -12,8 +12,6 @@ const NewCustomers = () => {
 	if (isError) {
 		return <div>Error loading latest customers.</div>;
 	}
-	if (data) console.log(data);
-
 	return (
 		<>
 			<div className='mb-4'>
