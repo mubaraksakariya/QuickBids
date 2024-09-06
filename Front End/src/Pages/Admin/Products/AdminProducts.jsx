@@ -5,18 +5,15 @@ import ProductTable from './Components/ProductTable';
 import useAuctionsFiltered from '../../../CustomHooks/useAuctionsFiltered';
 import Pagination from '../../../Components/Pagination/Pagination';
 import DateRangePicker from './Components/DateRangePicker';
-import EditProductModal from './Components/EditProductModal';
+import { useAdminModals } from '../../../Context/AdminModalContext';
 
 const AdminProducts = () => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [auctions, setAuctions] = useState([]);
-	const [selectedAuction, setSelectedAuction] = useState(null);
-	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	const [dateRange, setDateRange] = useState({
-		startDate: subMonths(new Date(), 1),
-		endDate: new Date(),
-	});
+	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
+	const [toDate, setToDate] = useState(new Date());
+	const { openProductModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
 		order: 'asc',
@@ -24,15 +21,12 @@ const AdminProducts = () => {
 
 	const { data, isLoading, isError, error, refetch } = useAuctionsFiltered(
 		currentPage,
-		dateRange.startDate,
-		dateRange.endDate,
+		fromDate,
+		toDate,
 		searchQuery,
 		sorting
 	);
-	const editModelColse = () => {
-		setIsEditModalOpen(false);
-		refetch();
-	};
+
 	useEffect(() => {
 		setAuctions(data?.results);
 	}, [data]);
@@ -41,7 +35,11 @@ const AdminProducts = () => {
 	return (
 		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
 			<div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4'>
-				<DateRangePicker setDateRange={setDateRange} />
+				<DateRangePicker
+					setFromDate={setFromDate}
+					setToDate={setToDate}
+				/>
+
 				<SearchBar
 					searchQuery={searchQuery}
 					setSearchQuery={setSearchQuery}
@@ -53,8 +51,7 @@ const AdminProducts = () => {
 				setSorting={setSorting}
 				sorting={sorting}
 				onEdit={(auction) => {
-					setSelectedAuction(auction);
-					setIsEditModalOpen(true);
+					openProductModal(auction);
 				}}
 			/>
 			<Pagination
@@ -62,12 +59,6 @@ const AdminProducts = () => {
 				totalPages={totalPages}
 				onPageChange={(page) => setCurrentPage(page)}
 			/>
-			{isEditModalOpen && (
-				<EditProductModal
-					auction={selectedAuction}
-					onClose={() => editModelColse()}
-				/>
-			)}
 		</div>
 	);
 };

@@ -1,12 +1,18 @@
 import React from 'react';
 import { UserInfo } from '../../../Product/Components/ProoductPage/UserInfo';
-import useAllUsers from '../../../../CustomHooks/useAllUsers';
+import useRecentCustomers from '../../../../CustomHooks/useRecentCustomers';
 
 const NewCustomers = () => {
-	const { data, error, isLoading } = useAllUsers('recent');
+	const { data, isLoading, isError } = useRecentCustomers();
 
-	if (isLoading) return <p className='text-bodyTextColour'>Loading...</p>;
-	if (error) return <p className='text-errorColour'>Error fetching users</p>;
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	if (isError) {
+		return <div>Error loading latest customers.</div>;
+	}
+	if (data) console.log(data);
 
 	return (
 		<>

@@ -26,9 +26,7 @@ const ProductTable = ({ auctions, sorting, setSorting, onEdit }) => {
 		}
 		return '';
 	};
-	const manageEdit = (auction) => {
-		onEdit(auction);
-	};
+
 	return (
 		<table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
 			<thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
@@ -172,7 +170,7 @@ const ProductTable = ({ auctions, sorting, setSorting, onEdit }) => {
 						<td className='px-6 py-4 text-right'>
 							<button
 								className='text-blue-600 dark:text-blue-500 hover:underline'
-								onClick={() => manageEdit(auction)}>
+								onClick={() => onEdit(auction)}>
 								Edit
 							</button>
 						</td>

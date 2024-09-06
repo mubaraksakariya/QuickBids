@@ -49,3 +49,7 @@ class BidService:
             # Catch any other unexpected errors
             raise serializers.ValidationError(
                 {'detail': 'Failed to create bid: ' + str(e)})
+
+    @staticmethod
+    def total_bids_by_user(user):
+        return Bid.objects.filter(user=user).count()

@@ -78,3 +78,27 @@ class AuctionService:
                 # Use the buy now price of the product
                 amount += auction.product.buy_now_prize
         return {'amount': amount, 'count': index}
+
+    @staticmethod
+    def total_auction_won_by_user(user):
+        """
+        Returns the total number of auctions won by a user.
+        """
+        return Auction.objects.filter(winner=user).count()
+
+    @staticmethod
+    def total_auction_participation_by_user(user):
+        """
+        Returns the total number of unique auctions a user has participated in by placing a bid.
+        """
+        return Auction.objects.filter(bid__user=user).distinct().count()
+
+    @staticmethod
+    def total_buy_now_by_user(user):
+        """
+        Returns the total number of 'Buy Now' auctions where the user is the winner and no bid was placed.
+        """
+        return Auction.objects.filter(
+            winner=user,
+            winning_bid__isnull=True,
+        ).count()

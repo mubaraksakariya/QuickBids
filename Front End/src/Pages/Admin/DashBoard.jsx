@@ -8,6 +8,7 @@ import AdminReport from './Report/AdminReport';
 import AdminNotifications from './Notification/AdminNotifications';
 import AdminMessages from './Message/AdminMessages';
 import AdminUsersMangement from './Users/AdminUsersMangement';
+import { AdminModalProvider } from '../../Context/AdminModalContext';
 
 function DashBoard() {
 	const [selectedTab, setSelectedTab] = useState('Home');
@@ -35,31 +36,33 @@ function DashBoard() {
 	};
 
 	return (
-		<div className='min-h-screen container mx-auto bg-sectionBgColour7 flex flex-col'>
-			{/* Top Navbar */}
-			<header className='bg-sectionBgColour1 shadow-md'>
-				<AdminTopNavbar
-					selectedTab={selectedTab}
-					setSearchString={setSearchString}
-				/>
-			</header>
-
-			<div className='flex flex-1'>
-				{/* Sidebar */}
-				<aside className='bg-navBg text-navIcon shadow-lg w-64 hidden md:block'>
-					<DashBoardLeftSideNav
+		<AdminModalProvider>
+			<div className='min-h-screen container mx-auto bg-sectionBgColour7 flex flex-col'>
+				{/* Top Navbar */}
+				<header className='bg-sectionBgColour1 shadow-md'>
+					<AdminTopNavbar
 						selectedTab={selectedTab}
-						setSelectedTab={setSelectedTab}
+						setSearchString={setSearchString}
 					/>
-				</aside>
+				</header>
 
-				{/* Main Content Area */}
-				<main className='flex-1 p-6'>
-					{/* Dynamic Content */}
-					{renderTabContent()}
-				</main>
+				<div className='flex flex-1'>
+					{/* Sidebar */}
+					<aside className='bg-navBg text-navIcon shadow-lg w-64 hidden md:block'>
+						<DashBoardLeftSideNav
+							selectedTab={selectedTab}
+							setSelectedTab={setSelectedTab}
+						/>
+					</aside>
+
+					{/* Main Content Area */}
+					<main className='flex-1 p-6'>
+						{/* Dynamic Content */}
+						{renderTabContent()}
+					</main>
+				</div>
 			</div>
-		</div>
+		</AdminModalProvider>
 	);
 }
 

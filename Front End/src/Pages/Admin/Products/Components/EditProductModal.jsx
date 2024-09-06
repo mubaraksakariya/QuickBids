@@ -7,7 +7,7 @@ import { validateFormValues } from './formValidation';
 import { useError } from '../../../../Context/ErrorContext';
 import GeneralModal from '../../../../Components/Models/GeneralModal';
 
-const EditProductModal = ({ auction, onClose, onSave }) => {
+const EditProductModal = ({ auction, onClose }) => {
 	const [is_edited, setIsEdited] = useState(false);
 	const [errors, setErrors] = useState({});
 	const { showError } = useError();
@@ -90,6 +90,7 @@ const EditProductModal = ({ auction, onClose, onSave }) => {
 		}));
 		setIsEdited(true);
 	};
+	console.log(auction);
 
 	return (
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>

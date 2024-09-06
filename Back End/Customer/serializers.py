@@ -11,7 +11,7 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'auth_provider', 'email', 'is_superuser', 'is_staff',
-                  'password', 'id', 'is_verified', 'profile_picture', 'created_at']
+                  'password', 'id', 'is_verified', 'profile_picture', 'created_at', 'is_active', 'is_blocked']
 
     def create(self, validated_data):
         return CustomUser.objects.create_user(  # type: ignore
@@ -27,7 +27,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
     def validate_new_password(self, value):
-        # You can add custom password validation logic here if needed
+
         return value
 
 

@@ -1,55 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { subMonths, startOfDay, endOfDay, format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { startOfDay, endOfDay, format, subMonths } from 'date-fns';
 
-const DateRangePicker = ({ setDateRange }) => {
-	// Default values: last month as start date and this month as end date
-	const defaultStartDate = subMonths(new Date(), 1);
-	const defaultEndDate = new Date();
-
+const DateRangePicker = ({ setFromDate, setToDate }) => {
+	// Initialize with default values for fromDate and toDate
 	const [startDate, setStartDate] = useState(
-		format(startOfDay(defaultStartDate), "yyyy-MM-dd'T'HH:mm")
+		format(startOfDay(subMonths(new Date(), 1)), "yyyy-MM-dd'T'HH:mm")
 	);
 	const [endDate, setEndDate] = useState(
-		format(endOfDay(defaultEndDate), "yyyy-MM-dd'T'HH:mm")
+		format(endOfDay(new Date()), "yyyy-MM-dd'T'HH:mm")
 	);
 
-	// Update the date range when the component mounts
+	// Effect to set initial date range
 	useEffect(() => {
-		setDateRange({
-			startDate: format(
-				startOfDay(new Date(startDate)),
-				"yyyy-MM-dd'T'HH:mm:ssXXX"
-			),
-			endDate: format(
-				endOfDay(new Date(endDate)),
-				"yyyy-MM-dd'T'HH:mm:ssXXX"
-			),
-		});
-	}, []);
+		setFromDate(new Date(startDate));
+		setToDate(new Date(endDate));
+	}, [startDate, endDate, setFromDate, setToDate]);
 
-	// Handle changes to the start and end dates
+	// Handle date changes
 	const handleStartDateChange = (e) => {
 		const newStartDate = e.target.value;
 		setStartDate(newStartDate);
-		setDateRange((prev) => ({
-			...prev,
-			startDate: format(
-				startOfDay(new Date(newStartDate)),
-				"yyyy-MM-dd'T'HH:mm:ssXXX"
-			),
-		}));
+		setFromDate(new Date(newStartDate));
 	};
 
 	const handleEndDateChange = (e) => {
 		const newEndDate = e.target.value;
 		setEndDate(newEndDate);
-		setDateRange((prev) => ({
-			...prev,
-			endDate: format(
-				endOfDay(new Date(newEndDate)),
-				"yyyy-MM-dd'T'HH:mm:ssXXX"
-			),
-		}));
+		setToDate(new Date(newEndDate));
 	};
 
 	return (

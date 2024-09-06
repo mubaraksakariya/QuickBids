@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from decimal import Decimal
 from Wallet.models import Wallet, Transaction
+from django.db.models import Sum
 
 
 class WalletService:
@@ -53,3 +54,34 @@ class WalletService:
         except Exception as e:
             raise serializers.ValidationError(
                 {'detail': f'Failed to process transaction: {str(e)}'})
+
+    @staticmethod
+    def total_spend_by_user(user):
+        try:
+            # Ensure to handle Wallet not found
+            wallet = Wallet.objects.get(user=user)
+
+            # Aggregate spend amounts from transactions
+            spend_amount = Transaction.objects.filter(
+                wallet=wallet,
+                transaction_type__in=['PAYMENT', 'AUCTION_BUY_NOW']
+            ).aggregate(spend_amount=Sum('amount'))['spend_amount'] or 0
+
+            # Aggregate refund amounts from transactions
+            total_refunds = Transaction.objects.filter(
+                wallet=wallet,
+                transaction_type='REFUND'
+            ).aggregate(refunds=Sum('amount'))['refunds'] or 0
+
+            # Calculate total spend by subtracting refunds from spend amounts
+            total_spend = spend_amount - total_refunds
+
+            return total_spend
+
+        except Wallet.DoesNotExist:
+            # Handle the case where the wallet does not exist for the user
+            return 0
+        except Exception as e:
+            # Handle other possible exceptions
+            print(f"An error occurred: {e}")
+            return 0

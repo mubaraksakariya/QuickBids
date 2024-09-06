@@ -1,31 +1,52 @@
 import os
 import random
-from django.conf import settings
 import requests
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import action
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+from rest_framework import filters
 
-
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
-
-from Customer.tasks import send_otp_email_task
-from .models import OTP, CustomUser
-from .serializers import AdminTokenObtainSerializer, ChangePasswordSerializer, UserTokenObtainSerializer, UserSerializer
-from rest_framework.decorators import action
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
+from django.db.models import Count, Subquery, OuterRef
+from django.db.models.functions import Coalesce
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as django_filters
 from django.core.files.base import ContentFile
 
+from Auction.services.auction_service import AuctionService
+from Bids.services.bid_service import BidService
+from Customer.tasks import send_otp_email_task
+from QuickBids.pagination import CustomUserPagination
+from Wallet.services.wallet_service import WalletService
+from .models import OTP, CustomUser
+from .serializers import AdminTokenObtainSerializer, ChangePasswordSerializer, UserTokenObtainSerializer, UserSerializer
+
+
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 # user login
+
+
+class UserFilter(django_filters.FilterSet):
+    from_date = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr='gte')
+    to_date = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr='lte')
+
+    class Meta:
+        model = CustomUser
+        fields = ['from_date', 'to_date']
 
 
 class UserTokenObtainView(TokenObtainPairView):
@@ -41,22 +62,32 @@ class AdminTokenObtainView(TokenObtainPairView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    pagination_class = CustomUserPagination
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['email', 'first_name', 'last_name']
+    ordering_fields = ['email', 'first_name',
+                       'last_name', 'is_active', 'created_at']
+    filterset_class = UserFilter
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        recent = self.request.query_params.get('recent', None)  # type: ignore
-        days = self.request.query_params.get('days', 7)  # type: ignore
-        if recent is not None:
-            # Assuming "recent" users are those created within the last 7 days
-            one_week_ago = timezone.now() - timezone.timedelta(days=days)
-            queryset = queryset.filter(
-                created_at__gte=one_week_ago, is_superuser=False)
+
+        # recent = self.request.query_params.get('recent', None)  # type: ignore
+        # days = self.request.query_params.get('days', 7)  # type: ignore
+        # if recent is not None and recent == 'true':
+        #     # Assuming "recent" users are those created within the last 7 days
+        #     one_week_ago = timezone.now() - timezone.timedelta(days=days)
+        #     queryset = queryset.filter(
+        #         created_at__gte=one_week_ago, is_superuser=False)
 
         return queryset
 
     def get_permissions(self):
         if self.action in ['signup', 'google_login', 'verify_otp', 'resend_otp', 'reset_password', 'forgot_password']:
             self.permission_classes = [AllowAny]
+        elif self.action in ['list']:
+            self.permission_classes = [IsAdminUser]
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
@@ -153,7 +184,8 @@ class UserViewSet(viewsets.ModelViewSet):
             data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        if not user.check_password(validated_data['old_password']):
+        if not user.check_password(
+                validated_data['old_password']):  # type: ignore
             return Response({'detail': 'Old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(validated_data['new_password'])  # type: ignore
@@ -276,3 +308,64 @@ class UserViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# For admin uses
+
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminUser])
+    def user_extras(self, request, pk=None):
+        try:
+            user = self.get_object()  # Retrieve the user object using the pk
+
+            # Calculate total auctions the user has won
+            total_auctions = AuctionService.total_auction_won_by_user(
+                user=user)
+
+            # Calculate total auctions the user put bid for
+            total_participations = AuctionService.total_auction_participation_by_user(
+                user=user)
+
+            # Calculate total buy now auctions
+            total_buy_now = AuctionService.total_buy_now_by_user(user=user)
+
+            # Get wallet details
+            wallet = WalletService.get_wallet(user=user)
+            if wallet is None:
+                raise ValueError("Wallet not found for the user.")
+
+            total_spend = WalletService.total_spend_by_user(user=user)
+
+            # Calculate total bids the user has placed
+            total_bids = BidService.total_bids_by_user(user=user)
+
+            # Prepare the response data
+            data = {
+                'user': self.get_serializer(user).data,
+                'total_auctions_won': total_auctions,
+                'total_bids': total_bids,
+                'total_participations': total_participations,
+                'wallet_balance': wallet.balance,
+                'total_spend': total_spend,
+                'total_buy_now': total_buy_now,
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+
+        except ValueError as e:
+            # Handle specific errors, e.g., Wallet not found
+            return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            # Handle unexpected errors
+            print(e)
+            return Response({'error': 'An unexpected error occurred: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser], url_path='recent-customers')
+    def recent_customers(self, request):
+        """
+        Custom action to retrieve the latest 5 users.
+        """
+        queryset = CustomUser.objects.all().order_by('-created_at')[:4]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

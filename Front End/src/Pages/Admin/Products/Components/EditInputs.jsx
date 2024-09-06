@@ -5,7 +5,7 @@ import { formatUTCDateTime } from '../../../Product/Utils/helpers';
 
 const EditInputs = ({ formValues, onInputChange, errors, auction }) => {
 	const { data: categories } = useCategories();
-	const { data: highestBid } = useHighestBid(auction.id);
+	const { data: highestBid } = useHighestBid(auction?.id);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -57,7 +57,7 @@ const EditInputs = ({ formValues, onInputChange, errors, auction }) => {
 					</label>
 					<input
 						min={
-							auction.initial_prize > highestBid?.amount
+							auction?.initial_prize > highestBid?.amount
 								? auction.initial_prize
 								: highestBid?.amount || 0
 						}

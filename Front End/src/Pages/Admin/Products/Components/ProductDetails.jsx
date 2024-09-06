@@ -50,11 +50,11 @@ const ProductDetails = ({ auction }) => {
 				</h2>
 				<p className='text-sm text-bodyTextColour'>
 					Auction Starts:{' '}
-					{new Date(auction.start_time).toLocaleDateString()}
+					{new Date(auction?.start_time).toLocaleDateString()}
 				</p>
 				<p className='text-sm text-bodyTextColour'>
 					Auction Ends:{' '}
-					{new Date(auction.end_time).toLocaleDateString()}
+					{new Date(auction?.end_time).toLocaleDateString()}
 				</p>
 			</div>
 			<div className='mb-4'>
