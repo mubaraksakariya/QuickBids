@@ -1,19 +1,14 @@
 from rest_framework import serializers
 
+from Category.serializers import CategorySerializer
 from Customer.serializers import UserSerializer
-from .models import Category, Product, ProductImage
+from .models import Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ['id', 'image']
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id', 'name']
 
 
 class ProductSerializer(serializers.ModelSerializer):

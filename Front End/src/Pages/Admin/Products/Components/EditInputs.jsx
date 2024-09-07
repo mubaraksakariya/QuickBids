@@ -44,7 +44,7 @@ const EditInputs = ({ formValues, onInputChange, errors, auction }) => {
 						onChange={handleInputChange}
 						className='mt-1 block w-full border border-cardBorderColour rounded-md p-2 bg-white text-bodyTextColour focus:outline-none focus:ring-2 focus:ring-buttonColour1'>
 						<option value=''>Select Category</option>
-						{categories?.map((category) => (
+						{categories?.results?.map((category) => (
 							<option key={category.id} value={category.name}>
 								{category.name}
 							</option>

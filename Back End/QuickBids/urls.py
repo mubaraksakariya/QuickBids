@@ -23,10 +23,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 
 from Auction.views import AuctionViewSet
-import Customer
+from Category.views import CategoryViewSet
 from Customer.views import AdminTokenObtainView, UserTokenObtainView, UserViewSet
 from Payments.views import PaymentViewSet
-from Product.views import ProductViewSet, CategoryViewSet, ProductImageViewSet
+from Product.views import ProductViewSet, ProductImageViewSet
 from Bids.views import BidViewSet, ProxyBidViewSet
 from Wallet.views import TransactionViewSet, WalletViewSet
 from Notifications.views import NotificationViewSet

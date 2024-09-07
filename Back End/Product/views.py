@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 import json
-from os import name
 from requests import delete
 from rest_framework import serializers
 from rest_framework import viewsets, status
@@ -25,30 +24,7 @@ from Product.services.product_services import ProductService
 from Wallet.models import Wallet
 from Wallet.services.wallet_service import WalletService
 from .models import Category, Product, ProductImage
-from .serializers import CategorySerializer, ProductSerializer, ProductImageSerializer
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            self.permission_classes = [AllowAny]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
-
-    @action(detail=False, methods=['post'])
-    def create_or_get(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        category, created = Category.objects.get_or_create(
-            name=serializer.validated_data['name'],
-            defaults={'created_by': request.user}
-        )
-        return Response(self.get_serializer(category).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+from .serializers import ProductSerializer, ProductImageSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):

@@ -98,9 +98,9 @@ const EditUserModal = ({ user, onClose }) => {
 
 	return (
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-			<div className='lg:flex bg-sectionBgColour2 rounded-lg overflow-hidden shadow-lg min-w-[60%]'>
+			<div className='flex lg:flex-row flex-col justify-center items-center bg-sectionBgColour2 rounded-lg overflow-hidden shadow-lg min-w-[60%] lg:max-w-[60%]'>
 				{/* Left Section: User Details */}
-				<div className='lg:flex-[6] p-6'>
+				<div className='lg:flex-1 p-6'>
 					<UserDetails user={user} />
 					<BlockUser
 						user={user}
@@ -110,7 +110,7 @@ const EditUserModal = ({ user, onClose }) => {
 				</div>
 
 				{/* Right Section: Edit Form */}
-				<div className='lg:flex-[6] flex flex-col justify-between items-center min-w-[24rem] bg-sectionBgColour2 py-6 pe-6'>
+				<div className='lg:flex-1 flex flex-col justify-between items-center min-w-[24rem] bg-sectionBgColour2 py-6 pe-6'>
 					<div className='p-6 bg-sectionBgColour5 rounded-lg shadow-sm w-full'>
 						<EditUserInputs
 							formValues={formValues}

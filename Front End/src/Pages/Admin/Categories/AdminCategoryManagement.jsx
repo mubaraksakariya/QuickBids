@@ -1,41 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { subMonths } from 'date-fns';
 import SearchBar from '../Common/SearchBar';
-import ProductTable from './Components/ProductTable';
-import useAuctionsFiltered from '../../../CustomHooks/useAuctionsFiltered';
+import CategoryTable from './Components/CategoryTable';
+import useAllCategories from '../../../CustomHooks/useAllCategories';
 import Pagination from '../../../Components/Pagination/Pagination';
-import DateRangePicker from './Components/DateRangePicker';
-import { useAdminModals } from '../../../Context/AdminModalContext';
 import RefreshButton from '../../../Components/Buttons/RefreshButton';
+import DateRangePicker from '../Products/Components/DateRangePicker';
+import { useAdminModals } from '../../../Context/AdminModalContext';
+import CreateCategoryForm from './Components/CreateCategoryForm';
 
-const AdminProducts = () => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [currentPage, setCurrentPage] = useState(1);
-	const [auctions, setAuctions] = useState([]);
+const AdminCategoryManagement = () => {
 	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
 	const [toDate, setToDate] = useState(new Date());
-	const { openProductModal } = useAdminModals();
+	const [searchQuery, setSearchQuery] = useState('');
+	const [currentPage, setCurrentPage] = useState(1);
+	const pageSize = 10;
+	const [categories, setCategories] = useState([]);
+	const { openCategoryModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
-		order: 'asc',
+		order: 'desc',
 	});
 
-	const { data, isLoading, isError, error, refetch } = useAuctionsFiltered(
-		currentPage,
+	// Fetch categories with search, date range, sorting, pagination
+	const { data, isLoading, isError, error, refetch } = useAllCategories(
+		searchQuery,
 		fromDate,
 		toDate,
-		searchQuery,
+		currentPage,
+		pageSize,
 		sorting
 	);
 
+	// Update categories when data changes
 	useEffect(() => {
-		setAuctions(data?.results);
+		setCategories(data?.results);
 	}, [data]);
-	const totalPages = data ? Math.ceil(data.count / 10) : 1;
+
+	// Calculate total pages
+	const totalPages = data ? Math.ceil(data.count / pageSize) : 1;
 
 	return (
 		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
 			<div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4'>
+				{/* Pass setFromDate and setToDate to DateRangePicker */}
 				<DateRangePicker
 					setFromDate={setFromDate}
 					setToDate={setToDate}
@@ -49,14 +57,15 @@ const AdminProducts = () => {
 					/>
 				</div>
 			</div>
-			<ProductTable
-				auctions={auctions ? auctions : []}
+			<CategoryTable
+				categories={categories || []}
 				setSorting={setSorting}
 				sorting={sorting}
-				onEdit={(auction) => {
-					openProductModal(auction);
+				onEdit={(category) => {
+					openCategoryModal(category);
 				}}
 			/>
+			<CreateCategoryForm onSuccess={refetch} />
 			<Pagination
 				currentPage={currentPage}
 				totalPages={totalPages}
@@ -66,4 +75,4 @@ const AdminProducts = () => {
 	);
 };
 
-export default AdminProducts;
+export default AdminCategoryManagement;

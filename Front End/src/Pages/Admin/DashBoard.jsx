@@ -3,12 +3,12 @@ import DashBoardLeftSideNav from './Navbar/DashBoardLeftSideNav';
 import AdminTopNavbar from './Navbar/AdminTopNavbar';
 import AdminHome from './Home/AdminHome';
 import AdminProducts from './Products/AdminProducts';
-import AdminCategories from './Categories/AdminCategories';
 import AdminReport from './Report/AdminReport';
 import AdminNotifications from './Notification/AdminNotifications';
 import AdminMessages from './Message/AdminMessages';
 import AdminUsersMangement from './Users/AdminUsersMangement';
 import { AdminModalProvider } from '../../Context/AdminModalContext';
+import AdminCategoryManagement from './Categories/AdminCategoryManagement';
 
 function DashBoard() {
 	const [selectedTab, setSelectedTab] = useState('Home');
@@ -23,7 +23,7 @@ function DashBoard() {
 			case 'Products':
 				return <AdminProducts />;
 			case 'Categories':
-				return <AdminCategories />;
+				return <AdminCategoryManagement />;
 			case 'Report':
 				return <AdminReport />;
 			case 'Notifications':

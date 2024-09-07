@@ -15,11 +15,8 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
-from django.db.models import Count, Subquery, OuterRef
-from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as django_filters
 from django.core.files.base import ContentFile
@@ -356,7 +353,8 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Custom action to retrieve the latest 5 users.
         """
-        queryset = CustomUser.objects.all().order_by('-created_at')[:4]
+        queryset = CustomUser.objects.filter(
+            is_superuser=False, is_staff=False).order_by('-created_at')[:4]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
