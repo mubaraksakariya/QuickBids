@@ -18,8 +18,7 @@ const useCreateCategory = () => {
 			console.log('Category created or fetched successfully:', data);
 		},
 		onError: (error) => {
-			console.log(error);
-			showError('Failed to create or fetch category.');
+			showError(error.message);
 		},
 	});
 };

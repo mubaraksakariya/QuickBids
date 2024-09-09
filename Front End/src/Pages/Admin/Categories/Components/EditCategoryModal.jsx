@@ -6,6 +6,7 @@ import GeneralModal from '../../../../Components/Models/GeneralModal';
 import ImageManager from '../../Products/Components/ImageManager';
 import CategoryEdit from './CategoryEdit';
 import CategoryDetails from './CategoryDetails';
+import CategoryDelete from './CategoryDelete';
 
 const EditCategoryModal = ({ category, onClose }) => {
 	const [is_edited, setIsEdited] = useState(false);
@@ -80,8 +81,16 @@ const EditCategoryModal = ({ category, onClose }) => {
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>
 			<div className='flex lg:flex-row flex-col justify-center bg-sectionBgColour2 rounded-lg shadow-lg overflow-hidden min-w-[60%] lg:max-w-[60%]'>
 				{/* Left Section: Category Details */}
-				<div className='flex-1 p-6'>
-					<CategoryDetails category={category} />
+				<div>
+					<div className='flex-1 p-6'>
+						<CategoryDetails category={category} />
+					</div>
+					<div className='flex-1 p-6'>
+						<CategoryDelete
+							onDelete={onClose}
+							category={category}
+						/>
+					</div>
 				</div>
 
 				{/* Right Section: Image Manager */}

@@ -10,7 +10,7 @@ from Category.serializers import CategorySerializer
 from Product.filters import CategoryFilter
 from Product.models import Category, Product
 from QuickBids.pagination import CustomCategoryPagination
-from django.db.models import Sum, Q
+from django.db.models import Sum
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -48,15 +48,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # Create a serializer instance with the data from the request
         serializer = self.get_serializer(data=request.data)
-        print(request.data)
         # Check if the data is valid
         if serializer.is_valid():
             validated_data = serializer.validated_data
 
             # Check if a category with the same name already exists
-            if Category.objects.filter(name=validated_data['name']).exists():
+            if Category.objects.filter(name=validated_data['name'], is_deleted=False).exists():
+                print({'error': 'Category with this name already exists.'})
                 return Response(
-                    {'error': 'Category with this name already exists.'},
+                    {'detail': 'Category with this name already exists.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -74,6 +74,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         else:
             # Return validation errors
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # For admin uses

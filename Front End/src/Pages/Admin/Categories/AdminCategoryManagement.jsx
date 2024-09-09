@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { subMonths } from 'date-fns';
 import SearchBar from '../Common/SearchBar';
 import CategoryTable from './Components/CategoryTable';
@@ -8,14 +8,15 @@ import RefreshButton from '../../../Components/Buttons/RefreshButton';
 import DateRangePicker from '../Products/Components/DateRangePicker';
 import { useAdminModals } from '../../../Context/AdminModalContext';
 import CreateCategoryForm from './Components/CreateCategoryForm';
+import ThemeButtons from '../../../Components/Buttons/ThemeButton';
 
 const AdminCategoryManagement = () => {
 	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
 	const [toDate, setToDate] = useState(new Date());
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
+	const [isCreateFormVisible, setCreateFormVisible] = useState(false);
 	const pageSize = 10;
-	const [categories, setCategories] = useState([]);
 	const { openCategoryModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
@@ -32,23 +33,23 @@ const AdminCategoryManagement = () => {
 		sorting
 	);
 
-	// Update categories when data changes
-	useEffect(() => {
-		setCategories(data?.results);
-	}, [data]);
-
 	// Calculate total pages
 	const totalPages = data ? Math.ceil(data.count / pageSize) : 1;
 
+	// Toggle form visibility
+	const toggleCreateForm = () => {
+		setCreateFormVisible(!isCreateFormVisible);
+	};
+
 	return (
-		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
-			<div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4'>
-				{/* Pass setFromDate and setToDate to DateRangePicker */}
+		<div className='relative bg-white shadow-md rounded-lg p-6'>
+			{/* Top Bar: Search, Date Picker, and Refresh */}
+			<div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
 				<DateRangePicker
 					setFromDate={setFromDate}
 					setToDate={setToDate}
 				/>
-				<div className='flex gap-4'>
+				<div className='flex gap-4 mt-4 sm:mt-0'>
 					<RefreshButton refresh={refetch} />
 					<SearchBar
 						searchQuery={searchQuery}
@@ -57,20 +58,47 @@ const AdminCategoryManagement = () => {
 					/>
 				</div>
 			</div>
+
+			{/* Category Table */}
 			<CategoryTable
-				categories={categories || []}
+				categories={data?.results || []}
 				setSorting={setSorting}
 				sorting={sorting}
 				onEdit={(category) => {
 					openCategoryModal(category);
 				}}
 			/>
-			<CreateCategoryForm onSuccess={refetch} />
-			<Pagination
-				currentPage={currentPage}
-				totalPages={totalPages}
-				onPageChange={(page) => setCurrentPage(page)}
-			/>
+
+			{/* Pagination */}
+			<div className='mt-6'>
+				<Pagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					onPageChange={(page) => setCurrentPage(page)}
+				/>
+			</div>
+
+			{/* Button to toggle create category form */}
+			{!isCreateFormVisible && (
+				<div className='flex justify-end pt-4'>
+					<ThemeButtons
+						text='Create'
+						style={4}
+						className={' px-2'}
+						onclick={toggleCreateForm}
+					/>
+				</div>
+			)}
+			{/* Create Category Form Modal */}
+			{isCreateFormVisible && (
+				<CreateCategoryForm
+					onSuccess={() => {
+						refetch();
+						setCreateFormVisible(false);
+					}}
+					onClose={() => setCreateFormVisible(false)}
+				/>
+			)}
 		</div>
 	);
 };

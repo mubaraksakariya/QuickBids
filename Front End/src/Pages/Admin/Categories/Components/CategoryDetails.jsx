@@ -7,6 +7,7 @@ const CategoryDetails = ({ category }) => {
 		error: categoryError,
 		isLoading: categoryLoading,
 	} = useCategoryExtras(category?.id);
+	console.log(data);
 
 	return (
 		<div className='bg-sectionBgColour5 p-6 rounded-lg shadow-lg'>
@@ -19,8 +20,7 @@ const CategoryDetails = ({ category }) => {
 				</h2>
 				<p className='text-sm text-bodyTextColour cursor-pointer'>
 					Created by:{' '}
-					{category?.created_by.first_name ||
-						'No description provided.'}
+					{category?.created_by.email || 'No creater info provided.'}
 				</p>
 				<p className='text-sm text-bodyTextColour'>
 					Description:{' '}

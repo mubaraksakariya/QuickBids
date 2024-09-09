@@ -7,6 +7,7 @@ function ThemeButtons({
 	className,
 	type = 'button',
 	style = 1,
+	disabled = false,
 }) {
 	let colourTheme;
 
@@ -86,6 +87,7 @@ function ThemeButtons({
 
 	return (
 		<button
+			disabled={disabled}
 			type={type}
 			className={`rounded-lg p-1 text-white ${className} ${colourTheme}`}
 			onClick={() => onclick()}>

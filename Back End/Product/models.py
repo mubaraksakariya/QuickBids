@@ -4,7 +4,7 @@ from Customer.models import CustomUser
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=200)
+    description = models.TextField(max_length=200, default='', blank=True)
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     is_approved = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)

@@ -94,7 +94,7 @@ const CategoryTable = ({ categories, sorting, setSorting, onEdit }) => {
 							</span>
 						</td>
 						<td className='px-6 py-4'>
-							{category.created_by.first_name}
+							{category.created_by.email}
 						</td>
 						<td className='px-6 py-4'>
 							{new Date(category.created_at).toLocaleDateString()}
