@@ -1,6 +1,7 @@
 import React from 'react';
 import AdminUserDropDown from './AdminUserDropDown';
 import AdminNotificationDropDown from './AdminNotificationDropDown';
+import Notifications from '../../../Components/Navbar/Components/Notifications';
 
 const AdminTopNavbar = ({ selectedTab, setSearchString }) => {
 	const showSearch = selectedTab == 'Home';
@@ -27,6 +28,7 @@ const AdminTopNavbar = ({ selectedTab, setSearchString }) => {
 			{/* Right Side: Notification Icon and User Dropdown */}
 			<div className='flex items-center space-x-6'>
 				<AdminNotificationDropDown />
+				{/* <Notifications /> */}
 				<AdminUserDropDown />
 			</div>
 		</div>

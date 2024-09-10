@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 
+import Analytics
+import Analytics.urls
 from Auction.views import AuctionViewSet
 from Category.views import AdminCategoryViewSet, CategoryViewSet
 from Customer.views import AdminTokenObtainView, UserTokenObtainView, UserViewSet
@@ -53,7 +55,7 @@ urlpatterns = [
     path('api/login/', UserTokenObtainView.as_view(), name='login'),
     path('api/admin/login/', AdminTokenObtainView.as_view(), name='admin_login'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
+    path('api/report/', include(Analytics.urls)),
     path('api/', include(router.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

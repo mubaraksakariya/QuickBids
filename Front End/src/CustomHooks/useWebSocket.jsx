@@ -5,11 +5,13 @@ import { useError } from '../Context/ErrorContext';
 
 const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAdmin = useSelector((state) => state.auth.isAdmin);
+
 	const { showError } = useError();
 	useEffect(() => {
 		let socket;
 
-		if (isAuthenticated && url) {
+		if (isAuthenticated && url && !isAdmin) {
 			socket = websocketService.connect(
 				url,
 				onMessage,

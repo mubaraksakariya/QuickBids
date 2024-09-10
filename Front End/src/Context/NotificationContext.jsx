@@ -20,7 +20,6 @@ export const NotificationProvider = ({ children }) => {
 		}
 	};
 
-	const webSocketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL;
 	const socketUrl = `notifications/`;
 	const socketKey = 'notifications';
 
