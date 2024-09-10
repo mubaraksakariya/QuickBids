@@ -19,7 +19,7 @@ const fetchAllCategories = async (
 		ordering: `${sorting.order === 'asc' ? '' : '-'}${sorting.field}`,
 	};
 
-	const response = await api.get('/api/categories/', { params });
+	const response = await api.get('/api/admin/categories/', { params });
 	return response.data;
 };
 

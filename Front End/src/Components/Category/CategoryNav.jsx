@@ -7,26 +7,21 @@ function CategoryNav({ setSelectedCategory }) {
 	const [isLargeScreen, setIsLargeScreen] = useState(false); // State to track if screen is large
 	const { data, error, isLoading } = useCategories();
 
+	const categories = data?.results || [];
+
 	// Effect to detect screen size changes
 	useEffect(() => {
 		const handleResize = () => {
-			// Check if the screen size is large (lg: and above)
 			setIsLargeScreen(window.innerWidth >= 1024);
 		};
-
-		// Add event listener for resize
 		window.addEventListener('resize', handleResize);
-
-		// Initial check
 		handleResize();
-
-		// Cleanup event listener on component unmount
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
 	// Function to get the selected class
 	const getSelectedClass = (category) => {
-		if (category == selected) {
+		if (category === selected) {
 			return 'bg-cardBgColour text-cardTextColour rounded-full shadow-md';
 		} else {
 			return 'text-linkColour hover:bg-sectionBgColour2 rounded-full';
@@ -47,7 +42,9 @@ function CategoryNav({ setSelectedCategory }) {
 
 	// Determine categories to show based on screen size and expansion state
 	const categoriesToShow =
-		isLargeScreen || isExpanded ? data : data?.slice(0, 3);
+		isLargeScreen || (isExpanded && !isLoading)
+			? categories
+			: categories.slice(0, 3); // Make sure slice is used on an array
 
 	return (
 		<div className='w-full'>
@@ -66,7 +63,11 @@ function CategoryNav({ setSelectedCategory }) {
 									All
 								</span>
 							</li>
-							{categoriesToShow?.length > 0 &&
+							{isLoading ? (
+								<li className='font-bold text-gray-500'>
+									Loading categories...
+								</li>
+							) : (
 								categoriesToShow.map((category) => (
 									<li key={category.id}>
 										<span
@@ -79,11 +80,11 @@ function CategoryNav({ setSelectedCategory }) {
 											{category.name}
 										</span>
 									</li>
-								))}
+								))
+							)}
 						</ul>
 					</div>
-					{/* Show "View All" button only on small screens if there are more than 3 categories */}
-					{!isLargeScreen && data?.length > 3 && (
+					{!isLargeScreen && categories.length > 3 && (
 						<div className='flex justify-center mt-4 lg:hidden'>
 							<button
 								onClick={toggleExpansion}

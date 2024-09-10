@@ -9,7 +9,7 @@ const CategoryDropdown = ({ categories, handleCategoryClick }) => {
 			aria-orientation='vertical'
 			aria-labelledby='options-menu'>
 			<div className='py-1' role='none'>
-				{categories.map((category) => (
+				{categories?.map((category) => (
 					<CategoryItem
 						key={category.id}
 						category={category.name}

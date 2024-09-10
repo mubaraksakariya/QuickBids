@@ -44,7 +44,7 @@ const AdminUserDropDown = () => {
 			</button>
 			{/* Dropdown menu */}
 			{isOpen && (
-				<div className='absolute right-0 mt-2 w-48 bg-sectionBgColour5 border border-cardBorderColour rounded-lg shadow-lg'>
+				<div className='absolute z-50 right-0 mt-2 w-48 bg-sectionBgColour5 border border-cardBorderColour rounded-lg shadow-lg'>
 					<ul className='py-1'>
 						<li className='p-2 hover:bg-sectionBgColour2 cursor-pointer rounded-t-md transition-colors'>
 							Profile

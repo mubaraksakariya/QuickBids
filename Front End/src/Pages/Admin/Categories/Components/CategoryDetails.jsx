@@ -69,7 +69,7 @@ const CategoryDetails = ({ category }) => {
 						: categoryError
 						? 'Error'
 						: data?.total_revenue
-						? `$${data.total_revenue.toLocaleString()}`
+						? `${data.total_revenue.toLocaleString()}`
 						: 'N/A'}
 				</p>
 			</div>

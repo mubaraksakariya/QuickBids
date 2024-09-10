@@ -5,7 +5,7 @@ import { useError } from '../Context/ErrorContext';
 // Function to handle category update
 const updateCategory = async (api, categoryId, formData) => {
 	const response = await api.patch(
-		`api/categories/${categoryId}/`,
+		`api/admin/categories/${categoryId}/`,
 		formData,
 		{
 			headers: {

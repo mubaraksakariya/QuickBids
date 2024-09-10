@@ -12,7 +12,7 @@ const AdminTopNavbar = ({ selectedTab, setSearchString }) => {
 				<h1 className='text-2xl font-bold text-headerColour'>
 					Dashboard
 				</h1>
-				{!showSearch && (
+				{/* {!showSearch && (
 					<input
 						type='text'
 						placeholder='Search...'
@@ -21,7 +21,7 @@ const AdminTopNavbar = ({ selectedTab, setSearchString }) => {
 							setSearchString && setSearchString(e.target.value)
 						}
 					/>
-				)}
+				)} */}
 			</div>
 
 			{/* Right Side: Notification Icon and User Dropdown */}

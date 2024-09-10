@@ -22,6 +22,10 @@ class AuctionService:
             raise serializers.ValidationError(
                 {'detail': 'This product has been bought, try other items.'}
             )
+        if auction.is_active == False:
+            raise serializers.ValidationError(
+                {'detail': 'This auction is not active at the moment'}
+            )
 
     @staticmethod
     def get_auction(auction_id):

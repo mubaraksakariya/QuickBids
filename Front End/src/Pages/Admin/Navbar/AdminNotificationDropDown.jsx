@@ -64,7 +64,7 @@ const AdminNotificationDropDown = () => {
 			</button>
 			{/* Dropdown menu */}
 			{isOpen && (
-				<div className='absolute right-0 mt-2 w-72 bg-sectionBgColour1 border border-cardBorderColour rounded shadow-lg'>
+				<div className='absolute z-50 right-0 mt-2 w-72 bg-sectionBgColour1 border border-cardBorderColour rounded shadow-lg'>
 					<ul className='divide-y divide-cardBorderColour'>
 						{notifications.length > 0 ? (
 							notifications.map((notification) => (

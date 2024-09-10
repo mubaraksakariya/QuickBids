@@ -102,7 +102,7 @@ function CategoryInput({ setCategory, category, error }) {
 
 				{isDropdownOpen && categories && (
 					<CategoryDropdown
-						categories={categories}
+						categories={categories.results}
 						handleCategoryClick={handleCategoryClick}
 					/>
 				)}

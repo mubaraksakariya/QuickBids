@@ -4,7 +4,7 @@ import { useError } from '../Context/ErrorContext';
 
 const fetchCategoryExtras = async (api, categoryId) => {
 	const response = await api.get(
-		`/api/categories/${categoryId}/category-extras/`
+		`/api/admin/categories/${categoryId}/category-extras/`
 	);
 	return response.data;
 };

@@ -17,6 +17,20 @@ const BidNowOption = ({
 	isTimeOver,
 }) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	if (isTimeOver) {
+		return (
+			<div className='pb-4 text-center text-lg font-semibold text-errorColour'>
+				Bidding is over
+			</div>
+		);
+	}
+	if (auction?.is_active == false) {
+		return (
+			<div className='pb-4 text-center text-lg font-semibold text-errorColour'>
+				This auction is not available at the moment
+			</div>
+		);
+	}
 	return (
 		<div className='pb-2'>
 			{highestBid?.amount && isAuthenticated && (

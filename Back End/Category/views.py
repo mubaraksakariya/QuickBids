@@ -14,7 +14,7 @@ from django.db.models import Sum
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(is_deleted=False)
+    queryset = Category.objects.filter(is_deleted=False, is_approved=True)
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
     pagination_class = CustomCategoryPagination
@@ -45,39 +45,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
         )
         return Response(self.get_serializer(category).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
-    def create(self, request, *args, **kwargs):
-        # Create a serializer instance with the data from the request
-        serializer = self.get_serializer(data=request.data)
-        # Check if the data is valid
-        if serializer.is_valid():
-            validated_data = serializer.validated_data
 
-            # Check if a category with the same name already exists
-            if Category.objects.filter(name=validated_data['name'], is_deleted=False).exists():
-                print({'error': 'Category with this name already exists.'})
-                return Response(
-                    {'detail': 'Category with this name already exists.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            # Create a new category
-            category = Category.objects.create(
-                name=validated_data['name'],
-                description=validated_data.get('description', ''),
-                created_by=request.user
-            )
-
-            # Serialize the category instance
-            response_serializer = self.get_serializer(category)
-
-            # Return a custom response for newly created category
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            # Return validation errors
-            print(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # For admin uses
+# For admin uses
+class AdminCategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.filter(is_deleted=False)
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    pagination_class = CustomCategoryPagination
+    filter_backends = [filters.OrderingFilter,
+                       DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['is_approved', 'created_by']
+    search_fields = ['name']
+    ordering_fields = '__all__'
+    ordering = ['-created_at']
+    filterset_class = CategoryFilter
 
     @action(detail=True, methods=['get'], permission_classes=[IsAdminUser], url_path='category-extras')
     def category_extras(self, request, pk=None):
@@ -130,3 +111,35 @@ class CategoryViewSet(viewsets.ModelViewSet):
             # Log the error for debugging purposes
             print(f"Error in category_extras: {str(e)}")
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request, *args, **kwargs):
+        # Create a serializer instance with the data from the request
+        serializer = self.get_serializer(data=request.data)
+        # Check if the data is valid
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+
+            # Check if a category with the same name already exists
+            if Category.objects.filter(name=validated_data['name'], is_deleted=False).exists():
+                print({'error': 'Category with this name already exists.'})
+                return Response(
+                    {'detail': 'Category with this name already exists.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Create a new category
+            category = Category.objects.create(
+                name=validated_data['name'],
+                description=validated_data.get('description', ''),
+                created_by=request.user
+            )
+
+            # Serialize the category instance
+            response_serializer = self.get_serializer(category)
+
+            # Return a custom response for newly created category
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Return validation errors
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

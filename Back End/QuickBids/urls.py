@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 
 from Auction.views import AuctionViewSet
-from Category.views import CategoryViewSet
+from Category.views import AdminCategoryViewSet, CategoryViewSet
 from Customer.views import AdminTokenObtainView, UserTokenObtainView, UserViewSet
 from Payments.views import PaymentViewSet
 from Product.views import ProductViewSet, ProductImageViewSet
@@ -45,6 +45,8 @@ router.register(r'transactions', TransactionViewSet, basename='transaction')
 router.register(r'payments', PaymentViewSet, basename='payments')
 router.register(r'notifications', NotificationViewSet, basename='notification')
 
+router.register(r'admin/categories', AdminCategoryViewSet,
+                basename='admin/categories')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -53,6 +55,7 @@ urlpatterns = [
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('api/', include(router.urls)),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
