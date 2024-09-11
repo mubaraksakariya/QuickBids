@@ -11,7 +11,7 @@ import RefreshButton from '../../../Components/Buttons/RefreshButton';
 const AdminProducts = () => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
-	const [auctions, setAuctions] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
 	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
 	const [toDate, setToDate] = useState(new Date());
 	const { openProductModal } = useAdminModals();
@@ -20,18 +20,20 @@ const AdminProducts = () => {
 		order: 'asc',
 	});
 
-	const { data, isLoading, isError, error, refetch } = useAuctionsFiltered(
+	const {
+		data: auctions,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useAuctionsFiltered(
 		currentPage,
+		pageSize,
 		fromDate,
 		toDate,
 		searchQuery,
 		sorting
 	);
-
-	useEffect(() => {
-		setAuctions(data?.results);
-	}, [data]);
-	const totalPages = data ? Math.ceil(data.count / 10) : 1;
 
 	return (
 		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
@@ -50,7 +52,7 @@ const AdminProducts = () => {
 				</div>
 			</div>
 			<ProductTable
-				auctions={auctions ? auctions : []}
+				auctions={auctions ? auctions.results : []}
 				setSorting={setSorting}
 				sorting={sorting}
 				onEdit={(auction) => {
@@ -58,8 +60,9 @@ const AdminProducts = () => {
 				}}
 			/>
 			<Pagination
+				pageSize={pageSize}
 				currentPage={currentPage}
-				totalPages={totalPages}
+				totalItem={auctions?.count}
 				onPageChange={(page) => setCurrentPage(page)}
 			/>
 		</div>

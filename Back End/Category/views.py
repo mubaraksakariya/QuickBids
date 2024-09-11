@@ -115,19 +115,18 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # Create a serializer instance with the data from the request
         serializer = self.get_serializer(data=request.data)
+
         # Check if the data is valid
         if serializer.is_valid():
             validated_data = serializer.validated_data
 
             # Check if a category with the same name already exists
             if Category.objects.filter(name=validated_data['name'], is_deleted=False).exists():
-                print({'error': 'Category with this name already exists.'})
                 return Response(
                     {'detail': 'Category with this name already exists.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            # Create a new category
             category = Category.objects.create(
                 name=validated_data['name'],
                 description=validated_data.get('description', ''),
@@ -139,7 +138,7 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
 
             # Return a custom response for newly created category
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
         else:
             # Return validation errors
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

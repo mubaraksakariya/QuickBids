@@ -13,7 +13,7 @@ const AdminUsersMangement = () => {
 	const [toDate, setToDate] = useState(new Date());
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 10;
+	const [pageSize, setPageSize] = useState(10);
 	const [users, setUsers] = useState([]);
 	const { openUserModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
@@ -66,8 +66,9 @@ const AdminUsersMangement = () => {
 				refetch
 			/>
 			<Pagination
+				pageSize={pageSize}
 				currentPage={currentPage}
-				totalPages={totalPages}
+				totalItem={data?.count}
 				onPageChange={(page) => setCurrentPage(page)}
 			/>
 		</div>

@@ -3,7 +3,7 @@ import useApi from '../Context/AxiosContext';
 import { useError } from '../Context/ErrorContext';
 
 const createCategory = async (api, categoryData) => {
-	const response = await api.post('/api/categories/', categoryData);
+	const response = await api.post('/api/admin/categories/', categoryData);
 	return response.data;
 };
 

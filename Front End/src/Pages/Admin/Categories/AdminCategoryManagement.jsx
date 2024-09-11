@@ -15,21 +15,20 @@ const AdminCategoryManagement = () => {
 	const [toDate, setToDate] = useState(new Date());
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 	const [isCreateFormVisible, setCreateFormVisible] = useState(false);
-	const pageSize = 10;
 	const { openCategoryModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
 		order: 'desc',
 	});
 
-	// Fetch categories with search, date range, sorting, pagination
 	const { data, isLoading, isError, error, refetch } = useAllCategories(
-		searchQuery,
-		fromDate,
-		toDate,
 		currentPage,
 		pageSize,
+		fromDate,
+		toDate,
+		searchQuery,
 		sorting
 	);
 
@@ -72,8 +71,9 @@ const AdminCategoryManagement = () => {
 			{/* Pagination */}
 			<div className='mt-6'>
 				<Pagination
+					pageSize={pageSize}
 					currentPage={currentPage}
-					totalPages={totalPages}
+					totalItem={data?.count}
 					onPageChange={(page) => setCurrentPage(page)}
 				/>
 			</div>

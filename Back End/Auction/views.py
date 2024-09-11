@@ -178,7 +178,6 @@ class AuctionViewSet(viewsets.ModelViewSet):
         to_date = request.query_params.get('to_date', None)
         search_string = request.query_params.get('search', None)
         ordering = request.query_params.get('sorting', '-created_at')
-        print(ordering)
         queryset = Auction.objects.all()
 
         if from_date:

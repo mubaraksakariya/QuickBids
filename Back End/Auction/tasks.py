@@ -5,10 +5,12 @@ from Bids.models import Bid
 from Notifications.models import Notification
 from Wallet.models import Transaction, Wallet
 
+
 @shared_task
 def check_ended_auctions():
     now = timezone.now()
-    ended_auctions = Auction.objects.filter(end_time__lt=now, is_deleted=False, is_active = True)
+    ended_auctions = Auction.objects.filter(
+        end_time__lt=now, is_deleted=False, is_active=True)
 
     for auction in ended_auctions:
         auction.is_active = False
@@ -16,9 +18,10 @@ def check_ended_auctions():
         # print(f"Auction ended for product: {auction.product.title}")
 
         # Get the winning bid
-        winning_bid = Bid.objects.filter(auction=auction, is_deleted=False).order_by('-amount').first()
+        winning_bid = Bid.objects.filter(
+            auction=auction, is_deleted=False).order_by('-amount').first()
         if winning_bid:
-            auction.winning_bid = winning_bid
+            auction.winning_bid = winning_bid  # type: ignore
             auction.winner = winning_bid.user
             auction.save()
 
@@ -39,12 +42,11 @@ def check_ended_auctions():
                 description=f'Winning bid amount for auction {auction.id}'
             )
             notification = Notification.objects.create(
-                user = auction.winner,
-                message = f'Congradulations, you have Wone the auction on {auction.product.title}',
-                type = 'WIN',
-                auction = auction,
+                user=auction.winner,
+                message=f'Congradulations, you have Wone the auction on {auction.product.title}',
+                type='WIN',
+                auction=auction,
             )
             print(notification)
         else:
             auction.save()
-             

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import useApi from '../Context/AxiosContext';
+import useApi from '../../../../Context/AxiosContext';
 
-const fetchAllCategories = async (
+const fetchSalesReport = async (
 	api,
 	query,
 	fromDate,
@@ -18,24 +18,23 @@ const fetchAllCategories = async (
 		to_date: toDate,
 		ordering: `${sorting.order === 'asc' ? '' : '-'}${sorting.field}`,
 	};
-
-	const response = await api.get('/api/admin/categories/', { params });
+	const response = await api.get('/api/report/sales', { params });
 	return response.data;
 };
 
-const useAllCategories = (
-	page = 1,
-	pageSize = 10,
+const useSalesReport = (
+	query = '',
 	fromDate,
 	toDate,
-	query = '',
+	page = 1,
+	pageSize = 10,
 	sorting = { field: 'created_at', order: 'desc' }
 ) => {
 	const api = useApi();
 
 	return useQuery({
 		queryKey: [
-			'allCategories',
+			'salesReport',
 			query,
 			fromDate,
 			toDate,
@@ -44,7 +43,7 @@ const useAllCategories = (
 			sorting,
 		],
 		queryFn: () =>
-			fetchAllCategories(
+			fetchSalesReport(
 				api,
 				query,
 				fromDate,
@@ -53,11 +52,8 @@ const useAllCategories = (
 				pageSize,
 				sorting
 			),
-		staleTime: 60000,
-		cacheTime: 300000,
-		refetchOnWindowFocus: false,
-		retry: 1,
+		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 };
 
-export default useAllCategories;
+export default useSalesReport;

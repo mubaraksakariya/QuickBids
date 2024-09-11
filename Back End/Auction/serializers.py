@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from Bids.serializers import BidSerializer
 from Customer.serializers import UserSerializer
 from Product.models import Product
 from Product.serializers import FullProductSerializer, ProductSerializer
@@ -29,6 +30,7 @@ class AuctionSerializer(serializers.ModelSerializer):
 class AuctionWithProductSerializer(serializers.ModelSerializer):
     product = FullProductSerializer()
     winner = UserSerializer()
+    winning_bid = BidSerializer()
 
     class Meta:
         model = Auction

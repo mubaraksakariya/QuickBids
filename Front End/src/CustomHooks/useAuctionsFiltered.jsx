@@ -1,9 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import useApi from '../Context/AxiosContext';
 
-const fetchAuctions = async (api, page, fromDate, toDate, search, sorting) => {
+const fetchAuctions = async (
+	api,
+	page,
+	pageSize,
+	fromDate,
+	toDate,
+	search,
+	sorting
+) => {
 	const params = {
 		page,
+		page_size: pageSize,
 		from_date: fromDate,
 		to_date: toDate,
 		search,
@@ -16,6 +25,7 @@ const fetchAuctions = async (api, page, fromDate, toDate, search, sorting) => {
 
 const useAuctionsFiltered = (
 	page = 1,
+	pageSize = 10,
 	fromDate = '',
 	toDate = '',
 	search = '',
@@ -26,7 +36,15 @@ const useAuctionsFiltered = (
 	return useQuery({
 		queryKey: ['auctions', page, fromDate, toDate, search, sorting],
 		queryFn: () =>
-			fetchAuctions(api, page, fromDate, toDate, search, sorting),
+			fetchAuctions(
+				api,
+				page,
+				pageSize,
+				fromDate,
+				toDate,
+				search,
+				sorting
+			),
 		keepPreviousData: true,
 		onSuccess: (data) => {
 			console.log(data);

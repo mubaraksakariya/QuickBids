@@ -1,7 +1,12 @@
-// Pagination.js
 import React from 'react';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({
+	currentPage,
+	totalItem,
+	onPageChange,
+	pageSize = 10,
+}) => {
+	const totalPages = totalItem ? Math.ceil(totalItem / pageSize) : 1;
 	const handlePageChange = (page) => {
 		if (page >= 1 && page <= totalPages) {
 			onPageChange(page);
@@ -15,11 +20,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 			<span className='text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto'>
 				Showing{' '}
 				<span className='font-semibold text-gray-900 dark:text-white'>
-					{currentPage * 10 - 9}-{currentPage * 10}
+					{currentPage * pageSize - pageSize + 1}-
+					{Math.min(currentPage * pageSize, totalItem)}
 				</span>{' '}
 				of{' '}
 				<span className='font-semibold text-gray-900 dark:text-white'>
-					{totalPages * 10}
+					{totalItem}
 				</span>
 			</span>
 			<ul className='inline-flex -space-x-px rtl:space-x-reverse text-sm h-8'>

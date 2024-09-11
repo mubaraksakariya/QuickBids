@@ -106,3 +106,11 @@ class AuctionService:
             winner=user,
             winning_bid__isnull=True,
         ).count()
+
+    @staticmethod
+    def sold_auctions():
+        return Auction.objects.filter(winner__isnull=False, is_deleted=False)
+
+    @staticmethod
+    def not_sold_auctions():
+        return Auction.objects.filter(winner__isnull=True, is_deleted=False, is_active=False)
