@@ -54,15 +54,9 @@ function LoginForm({ isLoading, setIsLoading }) {
 			}
 			setIsLoading(false);
 		} catch (error) {
-			console.log('Error during signin:', error);
+			console.log('Error during signin:', error.message);
 			// Handle error during signin
-			if (error.response?.data) {
-				const serverErrors = error?.response?.data;
-				console.log(serverErrors);
-
-				if (serverErrors) setOtherError(serverErrors.detail);
-				return;
-			} else if (error.message) setOtherError(error.message);
+			if (error.message) setOtherError(error.message);
 			else setOtherError('check your credentials again');
 			setIsLoading(false);
 		}

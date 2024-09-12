@@ -4,24 +4,27 @@ import useApi from '../../../Context/AxiosContext';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../Store/authSlice';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useError } from '../../../Context/ErrorContext';
 function GoogleSignup() {
 	const api = useApi();
 	const dispactch = useDispatch();
 	const navigate = useNavigate();
+	const { showError } = useError();
 	const onSuccess = async (credentialResponse) => {
 		// console.log(credentialResponse);
 		try {
 			const response = await api.post('api/users/google_login/', {
 				credentialResponse: credentialResponse,
 			});
-			// console.log(response);
 			const accessToken = response.data.access;
 			const refreshToken = response.data.refresh;
 			const user = response.data.user;
 			dispactch(login({ accessToken, refreshToken, user }));
 			navigate('/');
 		} catch (error) {
-			console.log(error.response.data);
+			console.log('Login error:', error.message);
+			showError(error.message);
 		}
 	};
 	return (

@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import transaction
 
@@ -113,14 +114,25 @@ class PaymentViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    @action(detail=False, methods=['post'], url_path='create-withdrawal')
+    @action(detail=False, methods=['post'], url_path='create-withdrawal-card')
     @transaction.atomic
-    def create_withdrawal_request(self, request):
+    def create_withdrawal_request_by_card(self, request):
         try:
             user = request.user
-            account_number = request.data.get('account_number')
-            ifsc_code = request.data.get('ifsc_code')
+            card_number = request.data.get('card_number')
+            cvv = request.data.get('cvv')
+            valid_through = request.data.get('valid_through')
+            name_on_card = request.data.get('name_on_card')
             amount = Decimal(request.data.get('amount'))
+
+            # Create or get the card details
+            card = PaymentService.create_card(
+                user=user,
+                card_number=card_number,
+                cvv=cvv,
+                valid_through=valid_through,
+                name_on_card=name_on_card
+            )
 
             # Get user's wallet
             wallet = WalletService.get_wallet(user=user)
@@ -129,10 +141,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
             WalletService.has_wallet_balance(wallet=wallet, amount=amount)
 
             # Create the withdrawal request
-            withdrawal_request = PaymentService.create_withdrawal_request(
+            withdrawal_request = PaymentService.create_withdrawal_request_by_card(
                 user=user,
-                account_number=account_number,
-                ifsc_code=ifsc_code,
+                card_id=card.id,
                 amount=amount
             )
 
@@ -140,7 +151,112 @@ class PaymentViewSet(viewsets.ModelViewSet):
             WalletService.process_transaction(
                 wallet=wallet,
                 amount=amount,
-                transaction_id=withdrawal_request.id,  # type: ignore
+                transaction_id=withdrawal_request.id,
+                transaction_type='WITHDRAWAL'
+            )
+
+            # Return a success response with the serialized withdrawal request data
+            return Response(
+                {
+                    'status': 'success',
+                    'message': 'Withdrawal request created successfully.',
+                    'data': WithdrawalRequestSerializer(withdrawal_request).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        except serializers.ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['post'], url_path='create-withdrawal-account')
+    @transaction.atomic
+    def create_withdrawal_request_by_account(self, request):
+        try:
+            user = request.user
+            account_number = request.data.get('account_number')
+            ifsc_code = request.data.get('ifsc_code')
+            amount = Decimal(request.data.get('amount'))
+            bank_name = request.data.get('bank_name')
+
+            # Create or get the account details
+            account = PaymentService.create_account(
+                user=user,
+                account_number=account_number,
+                ifsc_code=ifsc_code,
+                bank_name=bank_name,
+            )
+
+            # Get user's wallet
+            wallet = WalletService.get_wallet(user=user)
+
+            # Check if the wallet has sufficient balance
+            WalletService.has_wallet_balance(wallet=wallet, amount=amount)
+
+            # Create the withdrawal request
+            withdrawal_request = PaymentService.create_withdrawal_request_by_account(
+                user=user,
+                account_id=account.id,
+                amount=amount
+            )
+
+            # Process the withdrawal transaction
+            WalletService.process_transaction(
+                wallet=wallet,
+                amount=amount,
+                transaction_id=withdrawal_request.id,
+                transaction_type='WITHDRAWAL'
+            )
+
+            # Return a success response with the serialized withdrawal request data
+            return Response(
+                {
+                    'status': 'success',
+                    'message': 'Withdrawal request created successfully.',
+                    'data': WithdrawalRequestSerializer(withdrawal_request).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        except serializers.ValidationError as e:
+            transaction.rollback()
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            transaction.rollback()
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['post'], url_path='create-withdrawal-upi')
+    @transaction.atomic
+    def create_withdrawal_request_by_upi(self, request):
+        try:
+            user = request.user
+            upi_id = request.data.get('upi_id')
+            amount = Decimal(request.data.get('amount'))
+
+            # Create or get the UPI details
+            upi = PaymentService.create_upi(user=user, upi_id=upi_id)
+
+            # Get user's wallet
+            wallet = WalletService.get_wallet(user=user)
+
+            # Check if the wallet has sufficient balance
+            WalletService.has_wallet_balance(wallet=wallet, amount=amount)
+
+            # Create the withdrawal request
+            withdrawal_request = PaymentService.create_withdrawal_request_by_upi(
+                user=user,
+                upi_id=upi.id,
+                amount=amount
+            )
+
+            # Process the withdrawal transaction
+            WalletService.process_transaction(
+                wallet=wallet,
+                amount=amount,
+                transaction_id=withdrawal_request.id,
                 transaction_type='WITHDRAWAL'
             )
 

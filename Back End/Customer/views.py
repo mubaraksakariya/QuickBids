@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework import filters
+from rest_framework import serializers
 
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -104,7 +105,7 @@ class UserViewSet(viewsets.ModelViewSet):
             OTP.objects.create(user=user, otp=otp)
             self.send_otp_email(user.email, otp)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # print("Signup errors:", serializer.errors)
+        print("Signup errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
@@ -261,32 +262,57 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def google_login(self, request):
         credentialResponse = request.data.get('credentialResponse')
+
+        # Check if token is provided
         if not credentialResponse:
             return Response({"error": "Token not provided"}, status=status.HTTP_400_BAD_REQUEST)
-        token = credentialResponse['credential']
+
+        token = credentialResponse.get('credential')
+        if not token:
+            return Response({"error": "Invalid credential format"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            idinfo = id_token.verify_oauth2_token(token, google_requests.Request(
-            ), settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'])
+            # Verify the Google token
+            idinfo = id_token.verify_oauth2_token(
+                token,
+                google_requests.Request(),
+                settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
+            )
+
             if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                 raise ValueError('Wrong issuer.')
-            email = idinfo['email']
+
+            email = idinfo.get('email')
             first_name = idinfo.get('given_name', '')
             last_name = idinfo.get('family_name', '')
             picture = idinfo.get('picture', '')
+
+            # Get or create the user
             user, created = CustomUser.objects.get_or_create(email=email, defaults={
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
             })
-            user.auth_provider = 'google'
 
+            # Check if the user is blocked
+            if user.is_blocked:
+                return Response({
+                    "error": "This user is blocked."
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Set auth provider and handle profile picture if the user was newly created
+            user.auth_provider = 'google'
             if picture and created:
-                user.profile_picture.save(f'{user.email}_profile.jpg', ContentFile(
-                    requests.get(picture).content), save=True)
+                user.profile_picture.save(
+                    f'{user.email}_profile.jpg',
+                    ContentFile(requests.get(picture).content),
+                    save=True
+                )
             if created:
                 user.is_verified = True
             user.save()
 
+            # Generate and return JWT tokens
             refresh = RefreshToken.for_user(user)
             serialized_user = self.get_serializer(user)
             return Response({
@@ -294,11 +320,16 @@ class UserViewSet(viewsets.ModelViewSet):
                 'access': str(refresh.access_token),  # type: ignore
                 'user': serialized_user.data
             }, status=status.HTTP_200_OK)
+
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        except Exception as e:
+            return Response({"error": "Something went wrong!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # For admin uses
+
 
     @action(detail=True, methods=['get'], permission_classes=[IsAdminUser])
     def user_extras(self, request, pk=None):
@@ -369,13 +400,13 @@ class UserViewSet(viewsets.ModelViewSet):
         # Create a dictionary with updated data
         request_data = {
             'first_name': request.data.get('first_name', user.first_name),
-            'last_name': request.data.get('last_name', user.last_name),
+            'last_name': request.data.get('last_name', user.last_name or ''),
             'auth_provider': request.data.get('auth_provider', user.auth_provider),
             'is_active': is_active,
             'is_blocked': is_blocked,
             'profile_picture_remove': profile_picture_remove
         }
-        print(request_data)
+
         old_profile_picture = user.profile_picture
 
         # Create a serializer instance with partial=True to update only the provided fields
@@ -399,5 +430,5 @@ class UserViewSet(viewsets.ModelViewSet):
             user.save()  # Make sure to save the user instance again after updating profile_picture
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-
+        # print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

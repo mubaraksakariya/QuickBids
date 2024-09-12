@@ -17,10 +17,11 @@ export const AccountInput = ({ setIsWithdraw }) => {
 		mutate: createWithdrawal,
 		isLoading,
 		error,
-	} = useCreateWithdrawalRequest();
+		isError,
+		isSuccess,
+	} = useCreateWithdrawalRequest('account');
 
 	const validate = () => {
-		// Reset messages
 		setErrorMessage('');
 		setSuccessMessage('');
 
@@ -34,7 +35,6 @@ export const AccountInput = ({ setIsWithdraw }) => {
 			setErrorMessage('Please enter a valid amount.');
 			return;
 		}
-
 		setConfirmation(true);
 	};
 
@@ -51,8 +51,8 @@ export const AccountInput = ({ setIsWithdraw }) => {
 					setIfscCode('');
 				},
 				onError: (err) => {
-					console.log(err);
-					setErrorMessage(err.message);
+					console.error(err);
+					setErrorMessage(err.message || 'An error occurred.');
 				},
 			}
 		);
@@ -78,16 +78,16 @@ export const AccountInput = ({ setIsWithdraw }) => {
 			<div className='flex gap-4 justify-center'>
 				<ThemeButtons
 					text={isLoading ? 'Processing...' : 'Request'}
-					onclick={() => validate()}
+					onclick={validate}
 					style={3}
-					className={'p-2 w-full'}
+					className='p-2 w-full'
 					disabled={isLoading}
 				/>
 				<ThemeButtons
 					text='Cancel'
 					onclick={() => setIsWithdraw(false)}
 					style={5}
-					className={'p-2 w-full'}
+					className='p-2 w-full'
 				/>
 			</div>
 
@@ -98,8 +98,10 @@ export const AccountInput = ({ setIsWithdraw }) => {
 				onConfirm={handlePayoutRequest}
 				onCancel={() => setConfirmation(false)}
 			/>
+
+			{/* General Success Modal */}
 			<GeneralModal
-				show={successMessage}
+				show={Boolean(successMessage)}
 				onClose={() => {
 					setIsWithdraw(false);
 					window.location.reload();
@@ -107,11 +109,11 @@ export const AccountInput = ({ setIsWithdraw }) => {
 				<p className='text-successColour mb-4'>{successMessage}</p>
 			</GeneralModal>
 
-			{/* Error and Success Messages */}
+			{/* Error Modal */}
 			{errorMessage && (
 				<ErrorModal
 					message={errorMessage}
-					onClose={() => setErrorMessage(false)}
+					onClose={() => setErrorMessage('')}
 				/>
 			)}
 		</div>

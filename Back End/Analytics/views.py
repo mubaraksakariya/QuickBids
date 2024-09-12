@@ -3,12 +3,14 @@ from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
 from django.db.models import Count, Q
 from rest_framework import status
+from django.core.exceptions import ValidationError
 
 from Auction.models import Auction
 from Auction.serializers import AuctionSerializer, AuctionWithProductSerializer
-from Auction.services.auction_service import AuctionService
+from Auction.services.auction_service import AuctionService, Utilities
 from Product.models import Category
 from QuickBids.pagination import CustomAuctionPagination
+from django.utils.dateparse import parse_datetime
 
 
 class SalesReportView(APIView):
@@ -58,30 +60,90 @@ class SalesReportView(APIView):
         return paginator.get_paginated_response(serializer.data)
 
 
-class AuctionCompletionTypeView(APIView):
+class AuctionBuyNowVsBidNowView(APIView):
     def get(self, request):
-        sold_auctions = AuctionService.sold_auctions()
+        # Get 'from_date' and 'to_date' from query params
+        from_date = request.query_params.get('from_date')
+        to_date = request.query_params.get('to_date')
+
+        try:
+            # Parse and validate the dates
+            from_date = Utilities.parse_and_validate_date(from_date)
+            to_date = Utilities.parse_and_validate_date(to_date)
+        except ValidationError as e:
+            # Return an error response if the date format is invalid
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Retrieve sold auctions and apply date filtering if provided
+        sold_auctions = AuctionService.sold_auctions(
+            from_date=from_date, to_date=to_date
+        )
+
+        # Aggregating the count for 'buy now' and 'winning bids'
         data = sold_auctions.aggregate(
             buy_now_count=Count('id', filter=Q(winning_bid__isnull=True)),
             bid_won_count=Count('id', filter=Q(winning_bid__isnull=False)),
         )
-        not_active_count = AuctionService.not_sold_auctions().count()
-        data['not_active_count'] = not_active_count
+
+        # Filter for auctions that were not sold (not active) and apply date filtering if provided
+        not_active_count = AuctionService.not_sold_auctions(
+            from_date=from_date, to_date=to_date
+        )
+
+        # Add 'not_active_count' to the response data
+        data['not_active_count'] = not_active_count.count()
+
         return Response(data)
 
 
 class AuctionCompletionByCategoryView(APIView):
     def get(self, request):
+        from_date = request.query_params.get('from_date')
+        to_date = request.query_params.get('to_date')
+
+        # Parse the datetime if they are provided
+        if from_date:
+            from_date = parse_datetime(from_date)
+        if to_date:
+            to_date = parse_datetime(to_date)
+
+        # Apply date filters if provided
+        auctions = Auction.objects.all()
+        if from_date and to_date:
+            auctions = auctions.filter(end_time__range=[from_date, to_date])
+        elif from_date:
+            auctions = auctions.filter(end_time__gte=from_date)
+        elif to_date:
+            auctions = auctions.filter(end_time__lte=to_date)
+
         categories = Category.objects.filter(is_deleted=False)
         data = []
+
+        # Loop over each category and count auction completions
         for category in categories:
-            auctions = Auction.objects.filter(
-                product__category=category, is_active=False)
-            buy_now_count = auctions.filter(winning_bid__isnull=True).count()
-            bid_won_count = auctions.filter(winning_bid__isnull=False).count()
+            category_auctions = auctions.filter(product__category=category)
+
+            buy_now_count = category_auctions.filter(
+                winning_bid__isnull=True, winner__isnull=False
+            ).count()
+
+            bid_won_count = category_auctions.filter(
+                winning_bid__isnull=False, winner__isnull=False
+            ).count()
+
+            not_active_count = category_auctions.filter(
+                is_active=False, winner__isnull=True
+            ).count()
+
+            # Append data for each category
             data.append({
                 'category': category.name,
                 'buy_now_count': buy_now_count,
                 'bid_won_count': bid_won_count,
+                'not_active_count': not_active_count
             })
+
         return Response(data)

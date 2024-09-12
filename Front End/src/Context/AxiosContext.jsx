@@ -77,8 +77,15 @@ const createApi = () => {
 				}
 			}
 			// Extract error message from response
-			const errorMessage =
-				error.response?.data?.detail || 'An error occurred';
+			// the errors can be read using error.message from anywhere !!!
+			let errorMessage = 'An error occurred';
+			if (error.response?.data?.detail) {
+				errorMessage = error.response?.data?.detail;
+			} else if (error.response?.data?.error) {
+				errorMessage = error.response.data.error;
+			} else if (error.response?.data?.message) {
+				errorMessage = error.response.data.message;
+			}
 			return Promise.reject(new Error(errorMessage));
 		}
 	);

@@ -2,8 +2,11 @@ import React from 'react';
 import useAuctionCompletionType from './useAuctionCompletionType';
 import { PieChart } from '@mui/x-charts/PieChart';
 
-const AuctionCompletionChart = () => {
-	const { data, isLoading, isError } = useAuctionCompletionType();
+const AuctionCompletionChart = ({ fromDate, toDate }) => {
+	const { data, isLoading, isError } = useAuctionCompletionType(
+		fromDate,
+		toDate
+	);
 
 	if (isLoading)
 		return (

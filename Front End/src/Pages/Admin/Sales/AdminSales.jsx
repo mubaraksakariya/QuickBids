@@ -64,8 +64,11 @@ const AdminSales = () => {
 				/>
 			</div>
 			<div className=' flex justify-evenly'>
-				<AuctionCompletionChart />
-				<AuctionCompletionByCategoryChart />
+				<AuctionCompletionChart fromDate={fromDate} toDate={toDate} />
+				<AuctionCompletionByCategoryChart
+					fromDate={fromDate}
+					toDate={toDate}
+				/>
 			</div>
 		</>
 	);
