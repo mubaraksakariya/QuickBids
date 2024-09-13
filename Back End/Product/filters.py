@@ -1,4 +1,3 @@
-from razorpay import Product
 from Product.models import Category
 from django_filters import rest_framework as django_filters
 

@@ -27,7 +27,7 @@ import Analytics.urls
 from Auction.views import AuctionViewSet
 from Category.views import AdminCategoryViewSet, CategoryViewSet
 from Customer.views import AdminTokenObtainView, UserTokenObtainView, UserViewSet
-from Payments.views import PaymentViewSet
+from Payments.views import PaymentViewSet, PaymentWithdrawalViewSet
 from Product.views import ProductViewSet, ProductImageViewSet
 from Bids.views import BidViewSet, ProxyBidViewSet
 from Wallet.views import TransactionViewSet, WalletViewSet
@@ -46,6 +46,7 @@ router.register(r'wallet', WalletViewSet, basename='wallet')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
 router.register(r'payments', PaymentViewSet, basename='payments')
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'withdrawal', PaymentWithdrawalViewSet, basename='withdrawal')
 
 router.register(r'admin/categories', AdminCategoryViewSet,
                 basename='admin/categories')

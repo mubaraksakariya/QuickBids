@@ -1,5 +1,49 @@
 from rest_framework import serializers
-from .models import Payment, WithdrawalRequest
+
+from Customer.serializers import UserSerializer
+from .models import AccountDetail, CardDetail, Payment, UPIDetail, WithdrawalRequest
+
+
+class AccountDetailSerializer(serializers.ModelSerializer):
+    account_number = serializers.SerializerMethodField()
+    ifsc_code = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AccountDetail
+        fields = ['account_number', 'ifsc_code', 'bank_name']
+
+    def get_account_number(self, obj):
+        return obj.get_account_number()
+
+    def get_ifsc_code(self, obj):
+        return obj.get_ifsc_code()
+
+
+class CardDetailSerializer(serializers.ModelSerializer):
+    card_number = serializers.SerializerMethodField()
+    cvv = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CardDetail
+        fields = ['card_number', 'cvv', 'valid_through',
+                  'name_on_card', 'last_four_digits']
+
+    def get_card_number(self, obj):
+        return obj.card_number
+
+    def get_cvv(self, obj):
+        return obj.cvv
+
+
+class UPIDetailSerializer(serializers.ModelSerializer):
+    upi_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UPIDetail
+        fields = ['upi_id']
+
+    def get_upi_id(self, obj):
+        return obj.upi_id
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -10,36 +54,17 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class WithdrawalRequestSerializer(serializers.ModelSerializer):
-    account_number = serializers.SerializerMethodField()
-    ifsc_code = serializers.SerializerMethodField()
-    bank_name = serializers.SerializerMethodField()
+    account_details = AccountDetailSerializer(
+        source='account_detail', read_only=True)
+    card_details = CardDetailSerializer(source='card_detail', read_only=True)
+    upi_details = UPIDetailSerializer(source='upi_detail', read_only=True)
+    user = UserSerializer()
 
     class Meta:
         model = WithdrawalRequest
         fields = [
-            'id', 'user', 'account_detail', 'account_number', 'ifsc_code',
-            'bank_name', 'amount', 'status', 'processed_at',
-            'failure_reason', 'requested_at'
+            'id', 'user', 'type', 'account_details', 'card_details', 'upi_details',
+            'amount', 'status', 'processed_at', 'failure_reason', 'requested_at'
         ]
         read_only_fields = ['user', 'status',
                             'requested_at', 'processed_at', 'failure_reason']
-
-    def get_account_number(self, obj):
-        """Retrieve and decrypt the account number from the AccountDetail model."""
-        if obj.account_detail:
-            # Assuming you have the method to decrypt
-            return obj.account_detail.get_account_number()
-        return None
-
-    def get_ifsc_code(self, obj):
-        """Retrieve and decrypt the IFSC code from the AccountDetail model."""
-        if obj.account_detail:
-            # Assuming you have the method to decrypt
-            return obj.account_detail.get_ifsc_code()
-        return None
-
-    def get_bank_name(self, obj):
-        """Retrieve the bank name from the AccountDetail model."""
-        if obj.account_detail:
-            return obj.account_detail.bank_name
-        return None

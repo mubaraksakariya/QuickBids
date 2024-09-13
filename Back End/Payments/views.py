@@ -5,21 +5,23 @@ import hashlib
 
 
 from rest_framework import viewsets, status, serializers
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import transaction
-
-from Payments.models import Payment
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from .filters import WithdrawalRequestFilter
+from Payments.models import Payment, WithdrawalRequest
 from Payments.serializers import PaymentSerializer, WithdrawalRequestSerializer
 from Payments.services.payment_services import PaymentService
 from Payments.services.razorpay_service import RazorpayService
+from QuickBids.pagination import CustomPaymentPagination, CustomPaymentWithdrawalPagination
 from Wallet.services import wallet_service
 from Wallet.services.wallet_service import WalletService
-
 # Initialize Razorpay client
 client = razorpay.Client(
     auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -28,7 +30,8 @@ client = razorpay.Client(
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
-    permission_classes = [IsAuthenticated]  # Default permission
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPaymentPagination
 
     def get_permissions(self):
         if self.action in []:
@@ -275,3 +278,35 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# for admin side
+
+class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
+    queryset = WithdrawalRequest.objects.all()
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    pagination_class = CustomPaymentWithdrawalPagination
+    filter_backends = [filters.OrderingFilter,
+                       DjangoFilterBackend, filters.SearchFilter]
+    # filterset_fields = ['is_approved', 'created_by']
+    search_fields = ['user__email', 'user__first_name']
+    ordering_fields = '__all__'
+    ordering = ['-requested_at']
+    filterset_class = WithdrawalRequestFilter
+
+    # @action(detail=False, methods=['get'], url_path='withdrawal-requests')
+    # def get_withdrawal_requests(self, request):
+
+    #     withdrawal_requests = WithdrawalRequest.objects.filter(
+    #         status='PENDING')
+
+    #     paginator = CustomPaymentWithdrawalPagination()
+    #     paginated_requests = paginator.paginate_queryset(
+    #         withdrawal_requests, request)
+
+    #     # Step 3: Serialize the paginated data
+    #     serializer = WithdrawalRequestSerializer(paginated_requests, many=True)
+
+    #     # Step 4: Return the paginated response
+    #     return paginator.get_paginated_response(serializer.data)

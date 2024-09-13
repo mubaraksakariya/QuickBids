@@ -16,6 +16,7 @@ const DashBoardLeftSideNav = ({ setSelectedTab, selectedTab }) => {
 		{ name: 'Products', id: 'products' },
 		{ name: 'Categories', id: 'categories' },
 		{ name: 'Sales', id: 'sales' },
+		{ name: 'Payments', id: 'Payments' },
 		{ name: 'Notifications', id: 'notifications' },
 		{ name: 'Message', id: 'message' },
 	];

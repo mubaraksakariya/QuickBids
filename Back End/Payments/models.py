@@ -36,13 +36,17 @@ class CardDetail(models.Model):
 
         super().save(*args, **kwargs)
 
-    def __getattribute__(self, name):
-        value = super().__getattribute__(name)
-        if name in ['card_number', 'cvv']:
-            encryption_key = settings.ENCRYPTION_SECRET_KEY
-            cipher = Fernet(encryption_key)
-            return cipher.decrypt(value).decode()
-        return value
+    def get_card_number(self):
+        encryption_key = settings.ENCRYPTION_SECRET_KEY
+        cipher = Fernet(encryption_key)
+        # Decrypt and return the card number
+        return cipher.decrypt(self.card_number).decode()
+
+    def get_cvv(self):
+        encryption_key = settings.ENCRYPTION_SECRET_KEY
+        cipher = Fernet(encryption_key)
+        # Decrypt and return the CVV
+        return cipher.decrypt(self.cvv).decode()
 
 
 class AccountDetail(models.Model):
@@ -88,13 +92,11 @@ class UPIDetail(models.Model):
 
         super().save(*args, **kwargs)
 
-    def __getattribute__(self, name):
-        value = super().__getattribute__(name)
-        if name == 'upi_id':
-            encryption_key = settings.ENCRYPTION_SECRET_KEY
-            cipher = Fernet(encryption_key)
-            return cipher.decrypt(value).decode()
-        return value
+    def get_upi_id(self):
+        """Decrypt and return the UPI ID."""
+        encryption_key = settings.ENCRYPTION_SECRET_KEY
+        cipher = Fernet(encryption_key)
+        return cipher.decrypt(self.upi_id).decode()
 
 
 class Payment(models.Model):

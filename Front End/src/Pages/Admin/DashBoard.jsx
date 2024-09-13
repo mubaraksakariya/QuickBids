@@ -9,6 +9,7 @@ import AdminUsersMangement from './Users/AdminUsersMangement';
 import { AdminModalProvider } from '../../Context/AdminModalContext';
 import AdminCategoryManagement from './Categories/AdminCategoryManagement';
 import AdminSales from './Sales/AdminSales';
+import AdminPaymentManagement from './Payments/AdminPaymentManagement';
 
 function DashBoard() {
 	const [selectedTab, setSelectedTab] = useState('Home');
@@ -26,6 +27,8 @@ function DashBoard() {
 				return <AdminCategoryManagement />;
 			case 'Sales':
 				return <AdminSales />;
+			case 'Payments':
+				return <AdminPaymentManagement />;
 			case 'Notifications':
 				return <AdminNotifications />;
 			case 'Message':
