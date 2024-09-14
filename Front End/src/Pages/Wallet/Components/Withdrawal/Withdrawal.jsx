@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Tabs from './Tabs';
 import ThemeButtons from '../../../../Components/Buttons/ThemeButton';
 import { AccountInput } from './AccountInput';
-import CardInput from './CardInput';
-import UpiInput from './UpiInput';
+import CardInput from './Debit/CardInput';
+import UpiInput from './Upi/UpiInput';
 
 const Withdrawal = ({ setIsWithdraw }) => {
 	const [selectedTab, setSeletctTab] = useState('account');

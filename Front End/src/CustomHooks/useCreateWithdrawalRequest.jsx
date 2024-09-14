@@ -1,14 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
 import useApi from '../Context/AxiosContext';
+import { convertExpiryDate } from '../Pages/Wallet/Components/Withdrawal/Debit/helpers';
 
 const createWithdrawalRequestByCard = async (
 	api,
-	{ cardNumber, cvv, validThrough, nameOnCard, amount }
+	{ cardNumber, cvv, expiryDate, nameOnCard, amount }
 ) => {
-	const response = await api.post('/api/payments/create-withdrawal-card/', {
+	const response = await api.post('/api/withdrawal/create-withdrawal-card/', {
 		card_number: cardNumber,
 		cvv,
-		valid_through: validThrough,
+		valid_through: convertExpiryDate(expiryDate),
 		name_on_card: nameOnCard,
 		amount,
 	});
@@ -22,7 +23,7 @@ const createWithdrawalRequestByAccount = async (
 	{ accountNumber, ifscCode, amount }
 ) => {
 	const response = await api.post(
-		'/api/payments/create-withdrawal-account/',
+		'/api/withdrawal/create-withdrawal-account/',
 		{
 			account_number: accountNumber,
 			ifsc_code: ifscCode,
@@ -35,7 +36,7 @@ const createWithdrawalRequestByAccount = async (
 
 // Function to create a withdrawal request by UPI
 const createWithdrawalRequestByUpi = async (api, { upiId, amount }) => {
-	const response = await api.post('/api/payments/create-withdrawal-upi/', {
+	const response = await api.post('/api/withdrawal/create-withdrawal-upi/', {
 		upi_id: upiId,
 		amount,
 	});
@@ -50,7 +51,7 @@ const useCreateWithdrawalRequest = (type) => {
 	const createRequestFunctions = {
 		card: createWithdrawalRequestByCard,
 		account: createWithdrawalRequestByAccount,
-		upii: createWithdrawalRequestByUpi,
+		upi: createWithdrawalRequestByUpi,
 	};
 
 	return useMutation({

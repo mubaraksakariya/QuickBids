@@ -16,7 +16,12 @@ class CardDetail(models.Model):
                              on_delete=models.CASCADE)
     type = models.CharField(
         max_length=20, choices=TYPE_CHOICES, default='DEBIT')
+
+    # encrypted_card_number = cipher.encrypt(card_number.encode())
     card_number = models.BinaryField()
+
+    # card_hash = hashlib.sha256(card_number.encode()).hexdigest()
+    card_hash = models.CharField(max_length=64, unique=True)
     cvv = models.BinaryField()
     valid_through = models.DateField()
     name_on_card = models.CharField(max_length=50)
@@ -81,7 +86,12 @@ class AccountDetail(models.Model):
 class UPIDetail(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+
+    # encrypted_upi_id = cipher.encrypt(upi_id.encode())
     upi_id = models.BinaryField()
+
+    # upi_id_hash = hashlib.sha256(upi_id.encode()).hexdigest()
+    upi_id_hash = models.CharField(max_length=64, unique=True)
 
     def save(self, *args, **kwargs):
         encryption_key = settings.ENCRYPTION_SECRET_KEY

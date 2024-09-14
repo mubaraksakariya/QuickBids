@@ -117,6 +117,22 @@ class PaymentViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+# for admin side
+
+
+class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
+    queryset = WithdrawalRequest.objects.all()
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPaymentWithdrawalPagination
+    filter_backends = [filters.OrderingFilter,
+                       DjangoFilterBackend, filters.SearchFilter]
+    # filterset_fields = ['is_approved', 'created_by']
+    search_fields = ['user__email', 'user__first_name']
+    ordering_fields = '__all__'
+    ordering = ['-requested_at']
+    filterset_class = WithdrawalRequestFilter
+
     @action(detail=False, methods=['post'], url_path='create-withdrawal-card')
     @transaction.atomic
     def create_withdrawal_request_by_card(self, request):
@@ -128,6 +144,12 @@ class PaymentViewSet(viewsets.ModelViewSet):
             name_on_card = request.data.get('name_on_card')
             amount = Decimal(request.data.get('amount'))
 
+            # Get user's wallet
+            wallet = WalletService.get_wallet(user=user)
+
+            # Check if the wallet has sufficient balance
+            WalletService.has_wallet_balance(wallet=wallet, amount=amount)
+
             # Create or get the card details
             card = PaymentService.create_card(
                 user=user,
@@ -137,16 +159,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
                 name_on_card=name_on_card
             )
 
-            # Get user's wallet
-            wallet = WalletService.get_wallet(user=user)
-
-            # Check if the wallet has sufficient balance
-            WalletService.has_wallet_balance(wallet=wallet, amount=amount)
-
             # Create the withdrawal request
             withdrawal_request = PaymentService.create_withdrawal_request_by_card(
                 user=user,
-                card_id=card.id,
+                card_id=card.id,  # type: ignore
                 amount=amount
             )
 
@@ -154,7 +170,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
             WalletService.process_transaction(
                 wallet=wallet,
                 amount=amount,
-                transaction_id=withdrawal_request.id,
+                transaction_id=withdrawal_request.id,  # type: ignore
                 transaction_type='WITHDRAWAL'
             )
 
@@ -251,7 +267,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
             # Create the withdrawal request
             withdrawal_request = PaymentService.create_withdrawal_request_by_upi(
                 user=user,
-                upi_id=upi.id,
+                upi_id=upi.id,  # type: ignore
                 amount=amount
             )
 
@@ -278,35 +294,3 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# for admin side
-
-class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
-    queryset = WithdrawalRequest.objects.all()
-    serializer_class = WithdrawalRequestSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    pagination_class = CustomPaymentWithdrawalPagination
-    filter_backends = [filters.OrderingFilter,
-                       DjangoFilterBackend, filters.SearchFilter]
-    # filterset_fields = ['is_approved', 'created_by']
-    search_fields = ['user__email', 'user__first_name']
-    ordering_fields = '__all__'
-    ordering = ['-requested_at']
-    filterset_class = WithdrawalRequestFilter
-
-    # @action(detail=False, methods=['get'], url_path='withdrawal-requests')
-    # def get_withdrawal_requests(self, request):
-
-    #     withdrawal_requests = WithdrawalRequest.objects.filter(
-    #         status='PENDING')
-
-    #     paginator = CustomPaymentWithdrawalPagination()
-    #     paginated_requests = paginator.paginate_queryset(
-    #         withdrawal_requests, request)
-
-    #     # Step 3: Serialize the paginated data
-    #     serializer = WithdrawalRequestSerializer(paginated_requests, many=True)
-
-    #     # Step 4: Return the paginated response
-    #     return paginator.get_paginated_response(serializer.data)
