@@ -21,12 +21,13 @@ class Transaction(models.Model):
     TRANSACTION_TYPE_CHOICES = [
         ('DEPOSIT', 'Deposit'),
         ('WITHDRAWAL', 'Withdrawal'),
+        ('WITHDRAWAL_FAILED', 'Withdrawal failed'),
         ('PAYMENT', 'Payment'),
         ('TOPUP', 'Top-Up'),
         ('TRANSFER', 'Transfer'),
         ('REFUND', 'Refund'),
         ('AUCTION_SALE', 'Action_sale'),
-        ('AUCTION_BUY_NOW', 'Auction_buy_now')
+        ('AUCTION_BUY_NOW', 'Auction_buy_now'),
     ]
     transaction_type = models.CharField(
         max_length=20, choices=TRANSACTION_TYPE_CHOICES)

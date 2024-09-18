@@ -34,7 +34,7 @@ class WalletService:
         This method can be used to charge or refund a wallet depending on the transaction type.
         """
         try:
-            if transaction_type == 'REFUND' or transaction_type == 'AUCTION_SALE':
+            if transaction_type == 'REFUND' or transaction_type == 'AUCTION_SALE' or transaction_type == 'WITHDRAWAL_FAILED':
                 wallet.balance += amount
             elif transaction_type == 'PAYMENT' or transaction_type == 'AUCTION_BUY_NOW' or transaction_type == 'WITHDRAWAL':
                 wallet.balance -= amount

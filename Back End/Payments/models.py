@@ -37,7 +37,10 @@ class CardDetail(models.Model):
             self.cvv = cipher.encrypt(self.cvv.encode())
 
         # Store last 4 digits for display purposes
-        self.last_four_digits = self.card_number[-4:].decode()  # type: ignore
+        if not self.last_four_digits:
+            decrypted_card_number = cipher.decrypt(self.card_number).decode()
+            self.last_four_digits = decrypted_card_number[-4:]
+            print(self.last_four_digits)
 
         super().save(*args, **kwargs)
 

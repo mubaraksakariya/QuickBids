@@ -33,13 +33,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPaymentPagination
 
-    def get_permissions(self):
-        if self.action in []:
-            self.permission_classes = [AllowAny]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
-
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='create-order')
     def create_order(self, request):
         amount = request.data.get('amount')
@@ -116,22 +109,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
             {"error": "Failed to verify bank account details."},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-# for admin side
-
-
-class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
-    queryset = WithdrawalRequest.objects.all()
-    serializer_class = WithdrawalRequestSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPaymentWithdrawalPagination
-    filter_backends = [filters.OrderingFilter,
-                       DjangoFilterBackend, filters.SearchFilter]
-    # filterset_fields = ['is_approved', 'created_by']
-    search_fields = ['user__email', 'user__first_name']
-    ordering_fields = '__all__'
-    ordering = ['-requested_at']
-    filterset_class = WithdrawalRequestFilter
 
     @action(detail=False, methods=['post'], url_path='create-withdrawal-card')
     @transaction.atomic
@@ -294,3 +271,61 @@ class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# for admin side
+
+
+class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
+    queryset = WithdrawalRequest.objects.all()
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsAdminUser]
+    pagination_class = CustomPaymentWithdrawalPagination
+    filter_backends = [filters.OrderingFilter,
+                       DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['user__email', 'user__first_name']
+    ordering_fields = '__all__'
+    ordering = ['-requested_at']
+    filterset_class = WithdrawalRequestFilter
+
+    # def list(self, request, *args, **kwargs):
+    #     self.queryset = self.queryset.filter(status='PENDING')
+    #     return super().list(request, *args, **kwargs)
+
+    # Override the update method (for PUT requests)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            withdrawal_request = self.get_object()
+
+            # Check if the withdrawal request can be updated
+            PaymentService.check_withdrawal_updatable(
+                withdrawal_request=withdrawal_request)
+
+            # Custom logic to modify the request data or perform extra validation
+            status_update = request.data.get('status')
+            failure_reason = request.data.get('failure_reason')
+
+            # Ensure that failure_reason is provided if the status is REJECTED or FAILED
+            if status_update in ['REJECTED', 'FAILED'] and not failure_reason:
+                return Response({'error': 'Failure reason is required for REJECTED or FAILED status'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Update the withdrawal request via PaymentService
+            withdrawal_request = PaymentService.update_withdrawal_request(
+                withdrawal_request=withdrawal_request,
+                status_update=status_update,
+                failure_reason=failure_reason
+            )
+
+            # Return the updated data in the response
+            return Response(self.get_serializer(withdrawal_request).data, status=status.HTTP_201_CREATED)
+
+        except ValidationError as e:
+            # Handle the case when the request cannot be updated (e.g., already processed)
+            return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # Handle any other unforeseen errors
+            return Response({'error': 'An unexpected error occurred', 'details': str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

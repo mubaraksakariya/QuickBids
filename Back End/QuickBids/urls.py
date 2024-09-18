@@ -44,8 +44,8 @@ router.register(r'bids', BidViewSet)
 router.register(r'proxy-bids', ProxyBidViewSet)
 router.register(r'wallet', WalletViewSet, basename='wallet')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
-router.register(r'payments', PaymentViewSet, basename='payments')
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'payments', PaymentViewSet, basename='payments')
 router.register(r'withdrawal', PaymentWithdrawalViewSet, basename='withdrawal')
 
 router.register(r'admin/categories', AdminCategoryViewSet,

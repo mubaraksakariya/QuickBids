@@ -29,10 +29,10 @@ class CardDetailSerializer(serializers.ModelSerializer):
                   'name_on_card', 'last_four_digits']
 
     def get_card_number(self, obj):
-        return obj.card_number
+        return obj.get_card_number()
 
     def get_cvv(self, obj):
-        return obj.cvv
+        return obj.get_cvv()
 
 
 class UPIDetailSerializer(serializers.ModelSerializer):
@@ -43,7 +43,7 @@ class UPIDetailSerializer(serializers.ModelSerializer):
         fields = ['upi_id']
 
     def get_upi_id(self, obj):
-        return obj.upi_id
+        return obj.get_upi_id()
 
 
 class PaymentSerializer(serializers.ModelSerializer):

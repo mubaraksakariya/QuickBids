@@ -15,7 +15,7 @@ const WithdrawalRequests = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [isCreateFormVisible, setCreateFormVisible] = useState(false);
-	const { openCategoryModal } = useAdminModals();
+	const { openWithdrawalRequestModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
 		order: 'desc',
@@ -56,7 +56,7 @@ const WithdrawalRequests = () => {
 				setSorting={setSorting}
 				sorting={sorting}
 				onEdit={(item) => {
-					openCategoryModal(item);
+					openWithdrawalRequestModal(item);
 				}}
 			/>
 

@@ -6,7 +6,7 @@ const createWithdrawalRequestByCard = async (
 	api,
 	{ cardNumber, cvv, expiryDate, nameOnCard, amount }
 ) => {
-	const response = await api.post('/api/withdrawal/create-withdrawal-card/', {
+	const response = await api.post('/api/payments/create-withdrawal-card/', {
 		card_number: cardNumber,
 		cvv,
 		valid_through: convertExpiryDate(expiryDate),
@@ -23,7 +23,7 @@ const createWithdrawalRequestByAccount = async (
 	{ accountNumber, ifscCode, amount }
 ) => {
 	const response = await api.post(
-		'/api/withdrawal/create-withdrawal-account/',
+		'/api/payments/create-withdrawal-account/',
 		{
 			account_number: accountNumber,
 			ifsc_code: ifscCode,
@@ -36,7 +36,7 @@ const createWithdrawalRequestByAccount = async (
 
 // Function to create a withdrawal request by UPI
 const createWithdrawalRequestByUpi = async (api, { upiId, amount }) => {
-	const response = await api.post('/api/withdrawal/create-withdrawal-upi/', {
+	const response = await api.post('/api/payments/create-withdrawal-upi/', {
 		upi_id: upiId,
 		amount,
 	});

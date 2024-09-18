@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Tabs from './Tabs';
-import ThemeButtons from '../../../../Components/Buttons/ThemeButton';
 import { AccountInput } from './AccountInput';
 import CardInput from './Debit/CardInput';
 import UpiInput from './Upi/UpiInput';
@@ -15,7 +14,6 @@ const Withdrawal = ({ setIsWithdraw }) => {
 		if (selectedTab == 'upi')
 			return <UpiInput setIsWithdraw={setIsWithdraw} />;
 	};
-	const manageWithdrawal = () => {};
 	return (
 		<div className='fixed inset-0 z-50 bg-black bg-opacity-50 flex flex-col justify-center items-center'>
 			<div className=' bg-sectionBgColour2 shadow-lg rounded-lg xl:min-w-[30%] lg:min-w-[50%] md:min-w-[50%]'>
