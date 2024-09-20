@@ -1,7 +1,8 @@
 import React from 'react';
+import DashBoard from '../DashBoard';
 
 const AdminNotifications = () => {
-	return <div>AdminNotifications</div>;
+	return <DashBoard>AdminNotifications</DashBoard>;
 };
 
 export default AdminNotifications;

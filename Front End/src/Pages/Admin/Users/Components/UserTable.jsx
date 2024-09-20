@@ -1,6 +1,9 @@
 import React from 'react';
+import { useAdminModals } from '../../../../Context/AdminModalContext';
 
-const UserTable = ({ users, sorting, setSorting, onEdit }) => {
+const UserTable = ({ users, sorting, setSorting }) => {
+	const { openUserModal: onEdit } = useAdminModals();
+
 	// Function to handle header click
 	const handleSort = (field) => {
 		setSorting((prevSorting) => {

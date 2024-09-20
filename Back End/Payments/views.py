@@ -289,7 +289,11 @@ class PaymentWithdrawalViewSet(viewsets.ModelViewSet):
     filterset_class = WithdrawalRequestFilter
 
     # def list(self, request, *args, **kwargs):
-    #     self.queryset = self.queryset.filter(status='PENDING')
+    #     filter_item = request.data.get('filter')
+    #     print(request.data)
+    #     if filter_item:
+    #         print(filter_item)
+    #         # self.queryset = self.queryset.filter(filter_item)
     #     return super().list(request, *args, **kwargs)
 
     # Override the update method (for PUT requests)

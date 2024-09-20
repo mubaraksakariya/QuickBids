@@ -20,13 +20,18 @@ const WithdrawalRequests = () => {
 		field: 'created_at',
 		order: 'desc',
 	});
+	const [filter, setFilter] = useState({
+		field: 'status',
+		value: 'PENDING',
+	});
 	const { data, isLoading, isError, error, refetch } = useWithdrawalRequests(
 		currentPage,
 		pageSize,
 		fromDate,
 		toDate,
 		searchQuery,
-		sorting
+		sorting,
+		filter
 	);
 
 	// Calculate total pages
@@ -34,6 +39,10 @@ const WithdrawalRequests = () => {
 
 	return (
 		<div className='relative bg-white shadow-md rounded-lg p-6'>
+			{/* Title */}
+			<h1 className='text-2xl font-semibold text-headerColour mb-6'>
+				Withdrawal Requests
+			</h1>
 			{/* Top Bar: Search, Date Picker, and Refresh */}
 			<div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
 				<DateRangePicker
@@ -58,6 +67,8 @@ const WithdrawalRequests = () => {
 				onEdit={(item) => {
 					openWithdrawalRequestModal(item);
 				}}
+				setFilter={setFilter}
+				filter={filter}
 			/>
 
 			{/* Pagination */}

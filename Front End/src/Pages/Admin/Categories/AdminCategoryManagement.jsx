@@ -9,6 +9,7 @@ import DateRangePicker from '../Products/Components/DateRangePicker';
 import { useAdminModals } from '../../../Context/AdminModalContext';
 import CreateCategoryForm from './Components/CreateCategoryForm';
 import ThemeButtons from '../../../Components/Buttons/ThemeButton';
+import DashBoard from '../DashBoard';
 
 const AdminCategoryManagement = () => {
 	const [fromDate, setFromDate] = useState(subMonths(new Date(), 1));
@@ -17,7 +18,6 @@ const AdminCategoryManagement = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const [isCreateFormVisible, setCreateFormVisible] = useState(false);
-	const { openCategoryModal } = useAdminModals();
 	const [sorting, setSorting] = useState({
 		field: 'created_at',
 		order: 'desc',
@@ -41,65 +41,64 @@ const AdminCategoryManagement = () => {
 	};
 
 	return (
-		<div className='relative bg-white shadow-md rounded-lg p-6'>
-			{/* Top Bar: Search, Date Picker, and Refresh */}
-			<div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
-				<DateRangePicker
-					setFromDate={setFromDate}
-					setToDate={setToDate}
+		<DashBoard>
+			<div className='relative bg-white shadow-md rounded-lg p-6'>
+				{/* Top Bar: Search, Date Picker, and Refresh */}
+				<div className='flex flex-col sm:flex-row sm:items-center justify-between mb-6'>
+					<DateRangePicker
+						setFromDate={setFromDate}
+						setToDate={setToDate}
+					/>
+					<div className='flex gap-4 mt-4 sm:mt-0'>
+						<RefreshButton refresh={refetch} />
+						<SearchBar
+							searchQuery={searchQuery}
+							setSearchQuery={setSearchQuery}
+							setCurrentPage={setCurrentPage}
+						/>
+					</div>
+				</div>
+
+				{/* Category Table */}
+				<CategoryTable
+					categories={data?.results || []}
+					setSorting={setSorting}
+					sorting={sorting}
 				/>
-				<div className='flex gap-4 mt-4 sm:mt-0'>
-					<RefreshButton refresh={refetch} />
-					<SearchBar
-						searchQuery={searchQuery}
-						setSearchQuery={setSearchQuery}
-						setCurrentPage={setCurrentPage}
+
+				{/* Pagination */}
+				<div className='mt-6'>
+					<Pagination
+						pageSize={pageSize}
+						currentPage={currentPage}
+						totalItem={data?.count}
+						onPageChange={(page) => setCurrentPage(page)}
 					/>
 				</div>
-			</div>
 
-			{/* Category Table */}
-			<CategoryTable
-				categories={data?.results || []}
-				setSorting={setSorting}
-				sorting={sorting}
-				onEdit={(category) => {
-					openCategoryModal(category);
-				}}
-			/>
-
-			{/* Pagination */}
-			<div className='mt-6'>
-				<Pagination
-					pageSize={pageSize}
-					currentPage={currentPage}
-					totalItem={data?.count}
-					onPageChange={(page) => setCurrentPage(page)}
-				/>
-			</div>
-
-			{/* Button to toggle create category form */}
-			{!isCreateFormVisible && (
-				<div className='flex justify-end pt-4'>
-					<ThemeButtons
-						text='Create'
-						style={4}
-						className={' px-2'}
-						onclick={toggleCreateForm}
+				{/* Button to toggle create category form */}
+				{!isCreateFormVisible && (
+					<div className='flex justify-end pt-4'>
+						<ThemeButtons
+							text='Create'
+							style={4}
+							className={' px-2'}
+							onclick={toggleCreateForm}
+						/>
+					</div>
+				)}
+				{/* Create Category Form Modal */}
+				{isCreateFormVisible && (
+					<CreateCategoryForm
+						onSuccess={() => {
+							refetch();
+							setCreateFormVisible(false);
+						}}
+						onClose={() => setCreateFormVisible(false)}
 					/>
-				</div>
-			)}
-			{/* Create Category Form Modal */}
-			{isCreateFormVisible && (
-				<CreateCategoryForm
-					onSuccess={() => {
-						refetch();
-						setCreateFormVisible(false);
-					}}
-					onClose={() => setCreateFormVisible(false)}
-				/>
-			)}
-		</div>
+				)}
+			</div>
+		</DashBoard>
 	);
 };
 

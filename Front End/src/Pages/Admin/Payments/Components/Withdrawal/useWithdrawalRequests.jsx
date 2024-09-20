@@ -8,7 +8,8 @@ const getRequests = async (
 	fromDate,
 	toDate,
 	searchQuery,
-	sorting
+	sorting,
+	filter
 ) => {
 	const response = await api.get('api/withdrawal/', {
 		params: {
@@ -18,6 +19,7 @@ const getRequests = async (
 			to_date: toDate.toISOString(),
 			search: searchQuery,
 			ordering: `${sorting.order === 'asc' ? '' : '-'}${sorting.field}`,
+			[filter.field]: filter.value,
 		},
 	});
 	return response.data;
@@ -29,7 +31,8 @@ const useWithdrawalRequests = (
 	fromDate,
 	toDate,
 	searchQuery,
-	sorting
+	sorting,
+	filter = null
 ) => {
 	const api = useApi();
 	return useQuery({
@@ -41,6 +44,7 @@ const useWithdrawalRequests = (
 			toDate,
 			searchQuery,
 			sorting,
+			filter,
 		],
 		queryFn: () =>
 			getRequests(
@@ -50,7 +54,8 @@ const useWithdrawalRequests = (
 				fromDate,
 				toDate,
 				searchQuery,
-				sorting
+				sorting,
+				filter
 			),
 	});
 };

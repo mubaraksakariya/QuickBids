@@ -1,6 +1,9 @@
 import React from 'react';
+import { useAdminModals } from '../../../../Context/AdminModalContext';
 
-const ProductTable = ({ auctions, sorting, setSorting, onEdit }) => {
+const ProductTable = ({ auctions, sorting, setSorting }) => {
+	const { openProductModal: onEdit } = useAdminModals();
+
 	const truncateText = (text, maxLength) => {
 		if (text.length > maxLength) {
 			return `${text.substring(0, maxLength)}...`;

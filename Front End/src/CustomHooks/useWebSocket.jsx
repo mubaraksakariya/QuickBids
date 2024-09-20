@@ -11,7 +11,7 @@ const useWebSocket = (key, url, onMessage, onOpen, onClose, onError) => {
 	useEffect(() => {
 		let socket;
 
-		if (isAuthenticated && url && !isAdmin) {
+		if (isAuthenticated && url) {
 			socket = websocketService.connect(
 				url,
 				onMessage,

@@ -1,6 +1,9 @@
 import React from 'react';
+import { useAdminModals } from '../../../../Context/AdminModalContext';
 
-const CategoryTable = ({ categories, sorting, setSorting, onEdit }) => {
+const CategoryTable = ({ categories, sorting, setSorting }) => {
+	const { openCategoryModal: onEdit } = useAdminModals();
+
 	// Function to truncate text if it's too long
 	const truncateText = (text, maxLength) => {
 		if (text.length > maxLength) {

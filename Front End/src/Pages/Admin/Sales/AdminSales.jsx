@@ -9,6 +9,7 @@ import useSalesReport from './Components/useSalesReport';
 import SalesTable from './Components/SalesTable';
 import AuctionCompletionChart from './Components/Charts/AuctionCompletionChart/AuctionCompletionChart';
 import AuctionCompletionByCategoryChart from './Components/Charts/AuctionCompletionByCategoryChart/AuctionCompletionByCategoryChart';
+import DashBoard from '../DashBoard';
 
 const AdminSales = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -32,7 +33,7 @@ const AdminSales = () => {
 	);
 
 	return (
-		<>
+		<DashBoard>
 			<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
 				<div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4'>
 					<DateRangePicker
@@ -70,7 +71,7 @@ const AdminSales = () => {
 					toDate={toDate}
 				/>
 			</div>
-		</>
+		</DashBoard>
 	);
 };
 

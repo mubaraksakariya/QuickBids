@@ -1,7 +1,8 @@
 import React from 'react';
+import DashBoard from '../DashBoard';
 
 const AdminMessages = () => {
-	return <div>AdminMessages</div>;
+	return <DashBoard>AdminMessages</DashBoard>;
 };
 
 export default AdminMessages;

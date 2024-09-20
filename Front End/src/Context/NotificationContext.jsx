@@ -1,8 +1,13 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNotification, addNotifications } from '../Store/notificationSlice';
+import {
+	addNotification,
+	addNotifications,
+	markNotificationRead,
+} from '../Store/notificationSlice';
 import useApi from './AxiosContext';
 import useWebSocket from '../CustomHooks/useWebSocket';
+import useMarkNotificationAsRead from '../CustomHooks/useMarkNotificationAsRead';
 
 const NotificationContext = createContext();
 
@@ -10,6 +15,7 @@ export const NotificationProvider = ({ children }) => {
 	const dispatch = useDispatch();
 	const api = useApi();
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const { mutate: markAsRead } = useMarkNotificationAsRead();
 
 	const getNotification = async () => {
 		try {
@@ -52,13 +58,20 @@ export const NotificationProvider = ({ children }) => {
 		handleError
 	);
 
+	const manageMarkAsRead = (notification) => {
+		if (!notification.is_read) {
+			markAsRead(notification.id);
+			dispatch(markNotificationRead(notification.id));
+		}
+	};
+
 	useEffect(() => {
 		if (isAuthenticated) {
 			getNotification();
 		}
 	}, [dispatch, isAuthenticated]);
 
-	const contextValue = {};
+	const contextValue = { manageMarkAsRead };
 
 	return (
 		<NotificationContext.Provider value={contextValue}>

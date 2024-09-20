@@ -3,12 +3,11 @@ from django.dispatch import receiver
 
 from .models import CustomUser
 from Notifications.models import Notification
-from Wallet.models import Wallet
+
 
 @receiver(post_save, sender=CustomUser)
 def create_user_notification(sender, instance, created, **kwargs):
-    if created:
-        print('user', instance)
+    if created and not instance.is_superuser:
         message = f"Welcome {instance.first_name}! Happy Biddig!!."
         Notification.objects.create(
             user=instance,

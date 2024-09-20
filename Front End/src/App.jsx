@@ -19,6 +19,15 @@ import ForgotPassword from './Pages/FrogotPassword/ForgotPassword';
 import ProductPage from './Pages/Product/ProductPage';
 import { ProductProvider } from './Context/ProductContext';
 import AdminLogin from './Pages/Admin/Login/AdminLogin';
+import AdminUsersMangement from './Pages/Admin/Users/AdminUsersMangement';
+import AdminHome from './Pages/Admin/Home/AdminHome';
+import AdminProducts from './Pages/Admin/Products/AdminProducts';
+import AdminCategoryManagement from './Pages/Admin/Categories/AdminCategoryManagement';
+import AdminSales from './Pages/Admin/Sales/AdminSales';
+import AdminPaymentManagement from './Pages/Admin/Payments/AdminPaymentManagement';
+import AdminNotifications from './Pages/Admin/Notification/AdminNotifications';
+import AdminMessages from './Pages/Admin/Message/AdminMessages';
+import AdminProtectedRoute from './Components/Route/AdminProtectedRoute';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -151,22 +160,91 @@ function App() {
 					path: 'admin',
 					children: [
 						{
+							path: 'home',
+							element: (
+								<AdminProtectedRoute>
+									<AdminHome />
+								</AdminProtectedRoute>
+							),
+
+							// loader: Loader,
+						},
+						{
 							path: '',
-							element:
-								isAuthenticated && isAdmin ? (
-									<DashBoard />
-								) : (
-									<Navigate
-										to='/admin/login'
-										replace={true}
-										state={{ from: '/admin/' }}
-									/>
-								),
+							element: (
+								<AdminProtectedRoute>
+									<AdminHome />
+								</AdminProtectedRoute>
+							),
+
 							// loader: Loader,
 						},
 						{
 							path: 'login',
 							element: <AdminLogin />,
+							// loader: Loader,
+						},
+						{
+							path: 'users',
+							element: (
+								<AdminProtectedRoute>
+									<AdminUsersMangement />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'products',
+							element: (
+								<AdminProtectedRoute>
+									<AdminProducts />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'categories',
+							element: (
+								<AdminProtectedRoute>
+									<AdminCategoryManagement />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'sales',
+							element: (
+								<AdminProtectedRoute>
+									<AdminSales />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'payments',
+							element: (
+								<AdminProtectedRoute>
+									<AdminPaymentManagement />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'notifications',
+							element: (
+								<AdminProtectedRoute>
+									<AdminNotifications />,
+								</AdminProtectedRoute>
+							),
+							// loader: Loader,
+						},
+						{
+							path: 'messages',
+							element: (
+								<AdminProtectedRoute>
+									<AdminMessages />,
+								</AdminProtectedRoute>
+							),
 							// loader: Loader,
 						},
 					],

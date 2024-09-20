@@ -13,6 +13,7 @@ const AuthProvider = ({ children }) => {
 	const storedAccessToken = localStorage.getItem('accessToken');
 	const storedRefreshToken = localStorage.getItem('refreshToken');
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const user = useSelector((state) => state.auth.user);
 	const storedUser = JSON.parse(localStorage.getItem('user'));
 	const dispatch = useDispatch();
 	const api = useApi();
@@ -24,9 +25,9 @@ const AuthProvider = ({ children }) => {
 		dispatch(updateUser({ user }));
 	};
 	useEffect(() => {
-		if (isAuthenticated == null) setIsloading(true);
+		if (isAuthenticated == null && user == null) setIsloading(true);
 		else setIsloading(false);
-	}, [isAuthenticated]);
+	}, [isAuthenticated, storedUser]);
 	// Initialize authentication state from localStorage on app start
 	useEffect(() => {
 		if (storedAccessToken && storedRefreshToken) {
