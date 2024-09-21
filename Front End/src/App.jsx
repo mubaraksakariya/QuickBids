@@ -28,6 +28,7 @@ import AdminPaymentManagement from './Pages/Admin/Payments/AdminPaymentManagemen
 import AdminNotifications from './Pages/Admin/Notification/AdminNotifications';
 import AdminMessages from './Pages/Admin/Message/AdminMessages';
 import AdminProtectedRoute from './Components/Route/AdminProtectedRoute';
+import UserProtectedRoute from './Components/Route/UserProtectedRoute';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -73,59 +74,40 @@ function App() {
 					children: [
 						{
 							path: '',
-							element:
-								isAuthenticated && !isAdmin ? (
-									<Profile />
-								) : (
-									<Navigate
-										to='/login'
-										replace={true}
-										state={{ from: '/profile/' }}
-									/>
-								),
+							element: (
+								<UserProtectedRoute>
+									<Profile />,
+								</UserProtectedRoute>
+							),
 						},
 						{
 							path: 'wallet',
-							element:
-								isAuthenticated && !isAdmin ? (
+							element: (
+								<UserProtectedRoute>
 									<Wallet />
-								) : (
-									<Navigate
-										to='/login'
-										replace={true}
-										state={{ from: '/profile/wallet/' }}
-									/>
-								),
+								</UserProtectedRoute>
+							),
+
 							// loader: Loader,
 						},
 						{
 							path: 'bids',
-							element:
-								isAuthenticated && !isAdmin ? (
+							element: (
+								<UserProtectedRoute>
 									<UserBids />
-								) : (
-									<Navigate
-										to='/login'
-										replace={true}
-										state={{ from: '/profile/wallet/' }}
-									/>
-								),
+								</UserProtectedRoute>
+							),
+
 							// loader: Loader,
 						},
 						{
 							path: 'edit-profile',
-							element:
-								isAuthenticated && !isAdmin ? (
+							element: (
+								<UserProtectedRoute>
 									<EditProfile />
-								) : (
-									<Navigate
-										to='/login'
-										replace={true}
-										state={{
-											from: '/profile/edit-profile/',
-										}}
-									/>
-								),
+								</UserProtectedRoute>
+							),
+
 							// loader: Loader,
 						},
 					],
@@ -135,16 +117,11 @@ function App() {
 					children: [
 						{
 							path: 'create',
-							element:
-								isAuthenticated && !isAdmin ? (
+							element: (
+								<UserProtectedRoute>
 									<CreateProduct />
-								) : (
-									<Navigate
-										to='/login'
-										replace={true}
-										state={{ from: '/product/create' }}
-									/>
-								),
+								</UserProtectedRoute>
+							),
 
 							// loader: Loader,
 						},

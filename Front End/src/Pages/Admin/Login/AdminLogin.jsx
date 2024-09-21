@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useApi from '../../../Context/AxiosContext'; // Assuming you have AxiosContext for API calls
+import useApi from '../../../Context/AxiosContext';
 import { validateAdminLogin } from './Component/validateAdminLogin';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../../Store/authSlice';
@@ -17,6 +17,8 @@ const AdminLogin = () => {
 	const isAdmin = useSelector((state) => state.auth.isAdmin);
 	const location = useLocation();
 	const from = location.state?.from || '/admin/';
+
+	console.log('login');
 
 	if (isAuthenticated && isAdmin) {
 		return <Navigate to={from} replace={true} />;

@@ -10,7 +10,7 @@ function ProfileProductCard({ product }) {
 		data: auction,
 		error: auctionError,
 		isLoading: isAuctionLoading,
-	} = useAuction(product.id);
+	} = useAuction(product?.id);
 
 	// get current highest bid details
 	const {
@@ -29,7 +29,7 @@ function ProfileProductCard({ product }) {
 				onClick={manageProductOpen}>
 				<img
 					className='rounded-t-lg w-full h-full object-cover'
-					src={baseUrl + product.images[0].image}
+					src={baseUrl + product?.images[0]?.image}
 					alt='Card Image'
 				/>
 			</div>
@@ -38,15 +38,15 @@ function ProfileProductCard({ product }) {
 				<div className='border-b mb-2'>
 					<a className='cursor-pointer' onClick={manageProductOpen}>
 						<h5
-							title={product.title}
+							title={product?.title}
 							className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-wrap overflow-hidden max-h-8'>
-							{product.title}
+							{product?.title}
 						</h5>
 					</a>
 					<p
 						className='mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3'
-						title={product.description}>
-						{product.description}
+						title={product?.description}>
+						{product?.description}
 					</p>
 				</div>
 				<div>
