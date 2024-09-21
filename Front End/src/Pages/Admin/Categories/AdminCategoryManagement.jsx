@@ -32,9 +32,6 @@ const AdminCategoryManagement = () => {
 		sorting
 	);
 
-	// Calculate total pages
-	const totalPages = data ? Math.ceil(data.count / pageSize) : 1;
-
 	// Toggle form visibility
 	const toggleCreateForm = () => {
 		setCreateFormVisible(!isCreateFormVisible);

@@ -17,7 +17,7 @@ export const NotificationProvider = ({ children }) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	const { mutate: markAsRead } = useMarkNotificationAsRead();
 
-	const getNotification = async () => {
+	const getRecentNotifications = async () => {
 		try {
 			const response = await api.get('/api/notifications/recent');
 			dispatch(addNotifications(response.data));
@@ -67,7 +67,7 @@ export const NotificationProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			getNotification();
+			getRecentNotifications();
 		}
 	}, [dispatch, isAuthenticated]);
 

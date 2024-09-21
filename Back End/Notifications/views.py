@@ -2,13 +2,17 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
+from QuickBids.pagination import CustomNotificationPagination
 from .models import Notification
 from .serializers import NotificationSerializer
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by('-created_at')
     serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomNotificationPagination
 
     def get_permissions(self):
         if self.action in []:
@@ -16,6 +20,10 @@ class NotificationViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
+
+    def list(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(user=request.user)
+        return super().list(request, *args, **kwargs)
 
     @action(detail=False, methods=['get'], url_path='recent', permission_classes=[IsAuthenticated])
     def recent_notifications(self, request):
