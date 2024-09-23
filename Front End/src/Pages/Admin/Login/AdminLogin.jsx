@@ -18,8 +18,6 @@ const AdminLogin = () => {
 	const location = useLocation();
 	const from = location.state?.from || '/admin/';
 
-	console.log('login');
-
 	if (isAuthenticated && isAdmin) {
 		return <Navigate to={from} replace={true} />;
 	}

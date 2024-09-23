@@ -17,7 +17,7 @@ const DashBoardLeftSideNav = () => {
 		{ name: 'sales', id: 'sales' },
 		{ name: 'payments', id: 'payments' },
 		{ name: 'notifications', id: 'notifications' },
-		{ name: 'messages', id: 'messages' },
+		// { name: 'messages', id: 'messages' },
 	];
 
 	useEffect(() => {

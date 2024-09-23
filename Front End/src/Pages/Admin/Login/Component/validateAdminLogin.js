@@ -5,9 +5,9 @@ export const validateAdminLogin = ({ email, password }) => {
 		errors.email = 'email is required';
 	}
 
-	if (!password || password.length < 6) {
-		errors.password = 'Password must be at least 6 characters';
-	}
+	// if (!password || password.length < 6) {
+	// 	errors.password = 'Password must be at least 6 characters';
+	// }
 
 	return {
 		isValid: Object.keys(errors).length === 0,

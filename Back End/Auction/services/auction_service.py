@@ -98,27 +98,31 @@ class AuctionService:
             is_active=False, winner__isnull=False)
 
         total_sales = 0
-        for index, auction in enumerate(auctions):
+        count = 0
+        for auction in auctions:
             if auction.winning_bid:
                 # Use the amount of the winning bid
                 total_sales += auction.winning_bid.amount
             else:
                 # Use the buy now price of the product
                 total_sales += auction.product.buy_now_prize
-        return {'amount': total_sales, 'count': index}
+            count += 1
+        return {'amount': total_sales, 'count': count}
 
     @staticmethod
     def total_auctions():
         total_auctions = Auction.objects.all()
         amount = 0
-        for index, auction in enumerate(total_auctions):
+        count = 0
+        for auction in total_auctions:
             if auction.winning_bid:
                 # Use the amount of the winning bid
                 amount += auction.winning_bid.amount
             else:
                 # Use the buy now price of the product
                 amount += auction.product.buy_now_prize
-        return {'amount': amount, 'count': index}
+            count += 1
+        return {'amount': amount, 'count': count}
 
     @staticmethod
     def total_auction_won_by_user(user):

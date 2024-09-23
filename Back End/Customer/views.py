@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from rest_framework import filters
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -99,14 +100,33 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def signup(self, request):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+        try:
+            # Validate and save the user
+            serializer.is_valid(raise_exception=True)
             user = serializer.save()
+
+            # Generate and send OTP
             otp = self.generate_otp()
             OTP.objects.create(user=user, otp=otp)
             self.send_otp_email(user.email, otp)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print("Signup errors:", serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValidationError as e:
+            # Decompose the error messages to a readable string format
+            error_data = {
+                # Flattening the error object to return it as a simple key-value pair
+                "detail": f'{item}:{error[0].title()}' for item, error in e.detail.items()
+            }
+            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # Catch unexpected errors and provide a generic message
+            print("Unexpected signup error:", str(e))
+            return Response(
+                {"message": "An unexpected error occurred during signup."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def resend_otp(self, request):

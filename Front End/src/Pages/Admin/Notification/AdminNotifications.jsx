@@ -21,7 +21,7 @@ const AdminNotifications = () => {
 			</h2>
 			<div className='overflow-y-auto bg-sectionBgColour5 border border-cardBorderColour rounded-lg'>
 				{data?.results.length === 0 ? (
-					<p className='text-bodyTextColour'>
+					<p className='text-bodyTextColour text-center p-4 space-y-4'>
 						No notifications available
 					</p>
 				) : (

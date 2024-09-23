@@ -70,22 +70,18 @@ function SignUpForm({ isLoading, setIsLoading }) {
 			}
 		} catch (error) {
 			setIsLoading(false);
-			// console.log('Error during signup:', error);
+
 			// Handle error during signup (e.g., display error message)
-			if (error.response) {
-				const serverErrors = error.response.data;
+			if (error) {
+				const serverError = error?.message;
 				try {
-					for (const key in serverErrors) {
-						const errorString = `${currentTime}: ${serverErrors[
-							key
-						].join(', ')}`;
-						if (key === 'firstName') setFirstNameError(errorString);
-						if (key === 'lastName') setLastNameError(errorString);
-						if (key === 'email') setEmailError(errorString);
-						if (key === 'password') setPasswordError(errorString);
-						if (key === 'repassword')
-							setRePasswordError(errorString);
-					}
+					const [key, errorMessage] = serverError.split(':');
+					const errorString = `${currentTime}: ${errorMessage}`;
+					if (key === 'firstName') setFirstNameError(errorString);
+					if (key === 'lastName') setLastNameError(errorString);
+					if (key === 'email') setEmailError(errorString);
+					if (key === 'password') setPasswordError(errorString);
+					if (key === 'repassword') setRePasswordError(errorString);
 				} catch (error) {
 					console.log(error);
 				}
