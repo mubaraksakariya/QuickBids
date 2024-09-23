@@ -3,6 +3,7 @@ import BiddingOverlay from './BiddingOverlay';
 import CurrentBid from './CurrentBid';
 import { BidderProfile } from './BidderProfile';
 import { useSelector } from 'react-redux';
+import ThemeButtons from '../../Buttons/ThemeButton';
 
 const BidNowOption = ({
 	product,
@@ -42,17 +43,14 @@ const BidNowOption = ({
 				) : (
 					<CurrentBid highestBid={highestBid} />
 				)}
-				<button
+
+				<ThemeButtons
+					onclick={toggleBiddingWindow}
 					disabled={isTimeOver}
-					onClick={toggleBiddingWindow}
-					type='button'
-					className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 ${
-						isTimeOver
-							? 'bg-button2Colour3'
-							: ' bg-button2Colour1 hover:bg-button2Colour2 active:bg-button2Colour3'
-					}`}>
-					{highestBid?.amount ? 'Out bid' : 'Bid now'}
-				</button>
+					style={3}
+					text={highestBid?.amount ? 'Out bid' : 'Bid now'}
+					className='font-medium rounded-lg text-sm px-5 py-2.5'
+				/>
 			</section>
 			{isBiddingOpen && (
 				<BiddingOverlay

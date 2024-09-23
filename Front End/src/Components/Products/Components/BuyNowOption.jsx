@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BuyNowOverlay from '../../../Pages/Product/Components/ProoductPage/BuyNowOverLay';
 import { useProductContext } from '../../../Context/ProductContext';
+import ThemeButtons from '../../Buttons/ThemeButton';
 
 function BuyNowOption({ product, auction, highestBid, refetch }) {
 	const [isBuyNow, setIsBuyNow] = useState(false);
@@ -23,14 +24,19 @@ function BuyNowOption({ product, auction, highestBid, refetch }) {
 	return (
 		<div className=' pb-2'>
 			<div className='flex justify-between items-center'>
-				<p>Buy now : {product?.buy_now_prize}</p>
-				<button
+				<p>
+					Buy now :{' '}
+					<span className=' font-bold bg-sectionBgColour1 rounded-lg px-3 py-1 shadow-sm'>
+						{product?.buy_now_prize}
+					</span>
+				</p>
+				<ThemeButtons
+					onclick={openOverLay}
 					disabled={!isBuyable}
-					onClick={openOverLay}
-					type='button'
-					className='focus:outline-none text-white bg-buttonColour1 hover:bg-buttonColour2 active:bg-buttonColour3  font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 '>
-					Buy Now
-				</button>
+					style={9}
+					text='Buy Now'
+					className='font-medium rounded-lg text-sm px-5 py-2.5'
+				/>
 			</div>
 			{isBuyNow && (
 				<BuyNowOverlay

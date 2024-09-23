@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import AuctionStatusIndicator from './Components/AuctionStatusIndicator';
 import { useNavigate } from 'react-router-dom';
 import useProductWebSocket from '../../CustomHooks/useProductWebSocket';
+import CardImage from './Components/CardImage';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
@@ -82,25 +83,9 @@ function Card({ product }) {
 				/>
 			</div>
 			<div className='card max-w-sm  flex flex-col relative'>
-				{/* <div className='absolute z-[100] left-0 bottom-0'>
-					<AuctionUserIndicator
-						currentUser={user}
-						highestBidder={highestBid?.user}
-						auction={auction}
-						highestBid={highestBid}
-					/>
-				</div> */}
-				<div
-					className='w-full aspect-video overflow-hidden cursor-pointer rounded-t-lg'
-					onClick={manageProductOpen}>
-					<img
-						className='w-full h-full opacity-80 object-contain transition-all duration-200 hover:scale-105 hover:opacity-100'
-						src={product.images[0].image}
-						alt='Card Image'
-					/>
-				</div>
+				<CardImage product={product} onClick={manageProductOpen} />
 
-				<div className='px-5 flex flex-col flex-[3] relative'>
+				<div className='px-3 flex flex-col flex-[3] relative'>
 					<div className='border-b flex-grow'>
 						<a
 							className='cursor-pointer'

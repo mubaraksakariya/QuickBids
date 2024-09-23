@@ -1,17 +1,17 @@
 import React from 'react';
 
 const CurrentBid = ({ highestBid }) => (
-	<div className='flex justify-between items-center pb-2'>
-		<span className='text-bodyTextColour font-bold'>Current Bid:</span>
+	<div className='flex justify-between items-center'>
+		<span className='text-bodyTextColour font-medium'>Current Bid: </span>
 
 		{highestBid?.message && (
-			<p className=' text-headerColour rounded-lg px-3 py-1 font-semibold'>
+			<p className='bg-sectionBgColour2 text-headerColour rounded-lg px-3 py-1 font-semibold shadow-sm'>
 				{highestBid.message}
 			</p>
 		)}
 
 		{highestBid?.amount && (
-			<p className=' text-headerColour rounded-lg px-3 py-1 font-bold'>
+			<p className='bg-sectionBgColour1 text-headerColour rounded-lg px-3 py-1 font-bold shadow-sm'>
 				{highestBid.amount}
 			</p>
 		)}
