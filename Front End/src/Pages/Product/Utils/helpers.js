@@ -16,4 +16,13 @@ function formatUTCDateTime(date) {
 	return date.toISOString().slice(0, 16);
 }
 
-export { formatLocalDateTime, formatUTCDateTime };
+const formatDateForDateTimeLocal = (dateString) => {
+	const date = new Date(dateString);
+	const pad = (n) => (n < 10 ? '0' + n : n);
+
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+		date.getDate()
+	)}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+export { formatLocalDateTime, formatUTCDateTime, formatDateForDateTimeLocal };

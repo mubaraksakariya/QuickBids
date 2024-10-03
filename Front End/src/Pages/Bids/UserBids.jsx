@@ -27,7 +27,7 @@ function UserBids() {
 					<h1 className=' font-bold text-xl'>Your Bids</h1>
 					<LeftSideNav setSetlectedTab={setSetlectedTab} />
 				</div>
-				<div className='flex-[8] flex flex-col md:max-h-[80dvh] md:overflow-y-scroll py-3 min-h-[50dvh]'>
+				<div className='flex-[8] flex flex-col md:max-h-[80dvh] md:overflow-y-scroll py-3'>
 					{getSelectedTab()}
 				</div>
 			</div>

@@ -3,7 +3,7 @@ import TimeRemaining from '../../../Components/Products/Components/TimeRemaining
 import useAuction from '../../../CustomHooks/useAuction';
 import useHighestBid from '../../../CustomHooks/useHighestBid';
 
-function ProfileProductCard({ product }) {
+function ProfileProductCard({ product, setAuctionEdit }) {
 	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 
 	const {
@@ -20,7 +20,8 @@ function ProfileProductCard({ product }) {
 	} = useHighestBid(auction?.id);
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		console.log(highestBidData);
+		setAuctionEdit({ state: true, acuction: auction });
+		// console.log(auction);
 	};
 	return (
 		<div className='card  max-w-[20rem] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
@@ -63,10 +64,11 @@ function ProfileProductCard({ product }) {
 						)}
 					</div>
 					<TimeRemaining
-						bidEndTime={auction?.end_time}
+						endTime={auction?.end_time}
 						timerEnded={() => {}}
 					/>
 				</div>
+				<div></div>
 			</div>
 		</div>
 	);

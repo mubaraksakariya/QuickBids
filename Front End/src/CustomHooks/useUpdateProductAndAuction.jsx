@@ -25,7 +25,7 @@ const useUpdateProductAndAuction = () => {
 			updateProductAndAuction(auctionId, formData, api),
 		onSuccess: (data) => {
 			// Handle successful update
-			console.log('Product and Auction updated successfully:', data);
+			// console.log('Product and Auction updated successfully:', data);
 		},
 		onError: (error) => {
 			// Handle error

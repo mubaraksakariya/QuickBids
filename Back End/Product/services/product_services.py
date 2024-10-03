@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from Auction.services.auction_service import AuctionService
 from Bids.services.bid_service import BidService
-from Product.models import Category
+from Product.models import Category, Product
 
 
 class ProductService:
@@ -34,49 +34,64 @@ class ProductService:
 
     @staticmethod
     def validate_product_data_updation(data, auction):
-        errors = None
 
-        # Title validation
-        if not data.get('title'):
-            errors = "Title is required."
-
+        highest_bid = BidService.get_highest_bid(auction=auction)
         # Category validation
-        if not data.get('category'):
-            errors = "Category is required."
-        elif not Category.objects.filter(name=data['category']).exists():
-            errors = "Category does not exist."
+        category_name = data.get('category')
+        if category_name and not Category.objects.filter(name=category_name).exists():
+            raise ValidationError("Category does not exist.")
 
-        # Buy Now Price validation
-        buy_now_price = data.get('buyNowPrice')
-        if not buy_now_price or float(buy_now_price) <= 0:
-            errors = "Buy Now Price must be a positive number."
+        # Buy Now Price and Initial Prize validation
+        buy_now_price = float(data.get('buyNowPrice', 0))
+        initial_prize = float(data.get('initialPrize', 0))
 
-        # Initial Prize validation
-        initial_prize = data.get('initialPrize')
-        if not initial_prize or float(initial_prize) <= 0:
-            errors = "Initial Prize must be a positive number."
+        if highest_bid and buy_now_price and buy_now_price != auction.product.buy_now_prize:
+            raise ValidationError(
+                "This auction is being bidded. Buy now price cannot be changed")
+
+        if buy_now_price <= 0:
+            raise ValidationError("Buy Now Price must be a positive number.")
+
+        if initial_prize < 0:
+            raise ValidationError(
+                "Initial prize must be a positive number or zero.")
+        if initial_prize > buy_now_price:
+            raise ValidationError(
+                "Initial prize must be less than Buy Now Price.")
 
         # End Date validation
         end_time = data.get('endDate')
         if end_time:
-            end_time_obj = timezone.datetime.fromisoformat(end_time)
             try:
+                end_time_obj = timezone.datetime.fromisoformat(end_time)
                 if end_time_obj != auction.end_time and end_time_obj <= timezone.now():
-                    errors = " End Date must be in the future."
+                    raise ValidationError("End Date must be in the future.")
             except ValueError:
-                errors = "Invalid End Date format."
+                raise ValidationError("Invalid End Date format.")
 
-         # Status validation
+        # Status validation
         status = data.get('status')
         if status not in ['active', 'inactive']:
-            errors = "Status must be 'active' or 'inactive'."
+            raise ValidationError("Status must be 'active' or 'inactive'.")
 
-        # Additional check: if status is being changed to 'active', validate the end time
+        # Validate when status is set to 'active'
         if status == 'active':
-            # If there's no end time or the end time is in the past, the auction cannot be activated
+            if highest_bid and auction.end_time != timezone.datetime.fromisoformat(end_time):
+                raise ValidationError(
+                    "This auction is being bidded, cannot alter the ending time now.")
             if not end_time or timezone.datetime.fromisoformat(end_time) <= timezone.now():
-                errors = "Auction cannot be set to active when the End Date is in the past."
+                raise ValidationError(
+                    "Auction cannot be set to active when the End Date is in the past.")
             if auction.winner:
-                errors = f'Cannot activate, This acution is already wone by {auction.winner}'
-        if errors:
-            raise ValidationError(errors)
+                raise ValidationError(
+                    f"Cannot activate, this auction is already won by {auction.winner}.")
+
+        # Validate when status is set to 'inactive'
+        if status == 'inactive' and highest_bid:
+            raise ValidationError(
+                "This auction is being bidded by users, cannot deactivate it now.")
+
+    @staticmethod
+    def get_users_active_products(user):
+        return Product.objects.filter(
+            owner=user, is_deleted=False, auction__winner__isnull=True).order_by('-created_at')

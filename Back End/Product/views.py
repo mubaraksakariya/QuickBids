@@ -24,7 +24,7 @@ from Product.services.product_services import ProductService
 from Wallet.models import Wallet
 from Wallet.services.wallet_service import WalletService
 from .models import Category, Product, ProductImage
-from .serializers import ProductSerializer, ProductImageSerializer
+from .serializers import FullProductSerializer, ProductSerializer, ProductImageSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -101,9 +101,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='profile-products')
     def my_products(self, request):
         user = request.user
-        user_products = Product.objects.filter(
-            owner=user, is_deleted=False).order_by('-created_at')
-        serializer = ProductSerializer(user_products, many=True)
+        user_products = ProductService.get_users_active_products(
+            user=user)
+        serializer = FullProductSerializer(user_products, many=True)
         return Response(serializer.data)
 
     # overriden list to exclude logged in user products

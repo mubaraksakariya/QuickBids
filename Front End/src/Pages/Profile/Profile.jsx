@@ -16,7 +16,7 @@ function Profile() {
 		<div className='full-page'>
 			<NoneHomeNavbar />
 			<div className='md:flex py-4'>
-				<div className='flex-[4] flex flex-col items-center gap-2 h-[65dvh]'>
+				<div className='flex-[4] flex flex-col items-center gap-2 md:min-h-[65dvh]'>
 					<UserIcon user={user} />
 					<div className='mt-4 flex gap-4 md:flex-col md:gap-6'>
 						<BigButton
@@ -81,7 +81,7 @@ function Profile() {
 						/>
 					</div>
 				</div>
-				<div className='flex-[8] flex flex-col md:max-h-[80dvh] md:overflow-y-scroll py-3'>
+				<div className='flex-[8] flex flex-col md:max-h-[65dvh] md:overflow-y-scroll py-3 relative'>
 					<ProfilePosts />
 				</div>
 			</div>
