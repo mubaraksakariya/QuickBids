@@ -7,6 +7,7 @@ import LeftSideNav from './Components/LeftSideNav';
 import CurrentBids from './Components/CurrentBids';
 import CompletedBids from './Components/CompletedBids';
 import FailedBids from './Components/FailedBids';
+import Footer from '../../Components/Footer/Footer';
 
 function UserBids() {
 	const user = useSelector((state) => state.auth.user);
@@ -31,6 +32,7 @@ function UserBids() {
 					{getSelectedTab()}
 				</div>
 			</div>
+			<Footer />
 		</div>
 	);
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import useSales from '../../../../CustomHooks/useSales';
 import { extractSalesData } from './extractSalesData';
+import DateRangePicker from '../../Products/Components/DateRangePicker';
 
 const SalesChart = () => {
 	const currentDate = new Date();
@@ -14,7 +15,6 @@ const SalesChart = () => {
 		year -= 1;
 	}
 
-	const januaryFirst = new Date(year, 0, 1);
 	const firstDayOfPreviousMonth = new Date(year, previousMonth, 1);
 
 	const [startDate, setStartDate] = useState(
@@ -79,16 +79,8 @@ const SalesChart = () => {
 						xAxis={[
 							{
 								data: periods,
-								type: 'time', // Interpret the data as dates
-								scaleType: 'time',
-								labelFormatter: (value) => {
-									const date = new Date(value);
-									return date.toLocaleDateString(undefined, {
-										year: 'numeric',
-										month: 'short',
-										day: 'numeric',
-									});
-								},
+								scaleType: 'utc',
+								// hideTooltip: true,
 							},
 						]}
 						series={[

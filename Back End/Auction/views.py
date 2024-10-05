@@ -128,6 +128,8 @@ class AuctionViewSet(viewsets.ModelViewSet):
         # Convert start_date and end_date to datetime objects
         start_date = datetime.strptime(start_date, '%Y-%m-%d')  # type: ignore
         end_date = datetime.strptime(end_date, '%Y-%m-%d')  # type: ignore
+        # Set the end_date's time to 11:59:59 PM (23:59:59)
+        end_date = end_date.replace(hour=23, minute=59, second=59)
 
         # Calculate the difference in days between start_date and end_date
         date_diff = (end_date - start_date).days
