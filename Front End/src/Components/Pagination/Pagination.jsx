@@ -1,10 +1,12 @@
 import React from 'react';
+import PageSizeChangeButton from './PageSizeChangeButton';
 
 const Pagination = ({
 	currentPage,
 	totalItem,
 	onPageChange,
 	pageSize = 10,
+	setPageSize,
 }) => {
 	const totalPages = totalItem ? Math.ceil(totalItem / pageSize) : 1;
 	const handlePageChange = (page) => {
@@ -15,19 +17,28 @@ const Pagination = ({
 
 	return (
 		<nav
-			className='flex items-center flex-column flex-wrap md:flex-row justify-between pt-4'
+			className='flex items-center flex-column flex-wrap md:flex-row justify-between py-4 '
 			aria-label='Table navigation'>
-			<span className='text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto'>
-				Showing{' '}
-				<span className='font-semibold text-gray-900 dark:text-white'>
-					{currentPage * pageSize - pageSize + 1}-
-					{Math.min(currentPage * pageSize, totalItem)}
-				</span>{' '}
-				of{' '}
-				<span className='font-semibold text-gray-900 dark:text-white'>
-					{totalItem}
+			<div className='flex gap-4 items-center justify-center'>
+				<span className='text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto'>
+					Showing{' '}
+					<span className='font-semibold text-gray-900 dark:text-white'>
+						{currentPage * pageSize - pageSize + 1}-
+						{Math.min(currentPage * pageSize, totalItem)}
+					</span>{' '}
+					of{' '}
+					<span className='font-semibold text-gray-900 dark:text-white'>
+						{totalItem}
+					</span>
 				</span>
-			</span>
+
+				{setPageSize && (
+					<PageSizeChangeButton
+						pageSize={pageSize}
+						setPageSize={setPageSize}
+					/>
+				)}
+			</div>
 			<ul className='inline-flex -space-x-px rtl:space-x-reverse text-sm h-8'>
 				<li>
 					<button

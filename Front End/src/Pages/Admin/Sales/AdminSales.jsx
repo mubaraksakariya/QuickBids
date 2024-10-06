@@ -10,6 +10,8 @@ import SalesTable from './Components/SalesTable';
 import AuctionCompletionChart from './Components/Charts/AuctionCompletionChart/AuctionCompletionChart';
 import AuctionCompletionByCategoryChart from './Components/Charts/AuctionCompletionByCategoryChart/AuctionCompletionByCategoryChart';
 import DashBoard from '../DashBoard';
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import SalesPDFDocument from './Components/PdfReport/SalesPDFDocument';
 
 const AdminSales = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +51,7 @@ const AdminSales = () => {
 						/>
 					</div>
 				</div>
+
 				<SalesTable
 					sales={data ? data.results : []}
 					setSorting={setSorting}
@@ -59,11 +62,38 @@ const AdminSales = () => {
 				/>
 				<Pagination
 					pageSize={pageSize}
+					setPageSize={setPageSize}
 					currentPage={currentPage}
 					totalItem={data?.count}
 					onPageChange={(page) => setCurrentPage(page)}
 				/>
+				<div className='my-4'>
+					<PDFDownloadLink
+						document={
+							<SalesPDFDocument
+								sales={data ? data.results : []}
+								fromDate={fromDate}
+								toDate={toDate}
+							/>
+						}
+						fileName='sales_report.pdf'>
+						{({ loading }) =>
+							loading
+								? 'Generating PDF...'
+								: 'Download Sales Report as PDF'
+						}
+					</PDFDownloadLink>
+				</div>
 			</div>
+			{/* <div className=' min-w-full min-h-[50dvh]'>
+				<PDFViewer width={'1000'} height={'1000'}>
+					<SalesPDFDocument
+						sales={data ? data.results : []}
+						fromDate={fromDate}
+						toDate={toDate}
+					/>
+				</PDFViewer>
+			</div> */}
 			<div className=' flex justify-evenly'>
 				<AuctionCompletionChart fromDate={fromDate} toDate={toDate} />
 				<AuctionCompletionByCategoryChart

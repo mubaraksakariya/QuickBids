@@ -58,14 +58,14 @@ const SalesTable = ({ sales, sorting, setSorting }) => {
 							<span>{renderSortIndicator('initial_prize')}</span>
 						</div>
 					</th>
-					{/* <th
+					<th
 						className='px-6 py-3 cursor-pointer'
 						onClick={() => handleSort('buy_now_prize')}>
 						<div className='flex justify-between'>
 							<span>Buy Now Price</span>
 							<span>{renderSortIndicator('buy_now_prize')}</span>
 						</div>
-					</th> */}
+					</th>
 					<th
 						className='px-6 py-3 cursor-pointer'
 						onClick={() => handleSort('winning_bid')}>
@@ -114,9 +114,9 @@ const SalesTable = ({ sales, sorting, setSorting }) => {
 							{auction.product.category.name}
 						</td>
 						<td className='px-6 py-4'>{auction.initial_prize}</td>
-						{/* <td className='px-6 py-4'>
+						<td className='px-6 py-4'>
 							{auction.product.buy_now_prize || '-'}
-						</td> */}
+						</td>
 						<td className='px-6 py-4'>
 							{/* Display winning amount: either final bid or buy now price */}
 							{auction.winning_bid
