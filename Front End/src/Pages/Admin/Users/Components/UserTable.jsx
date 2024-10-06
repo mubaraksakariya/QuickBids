@@ -101,11 +101,13 @@ const UserTable = ({ users, sorting, setSorting }) => {
 						<td className='px-6 py-4'>
 							<span
 								className={`${
-									user.is_active
+									user.is_active && !user.is_blocked
 										? 'text-green-600'
 										: 'text-red-600'
 								} font-semibold`}>
-								{user.is_active ? 'Active' : 'Inactive'}
+								{user.is_active && !user.is_blocked
+									? 'Active'
+									: 'Inactive'}
 							</span>
 						</td>
 						<td className='px-6 py-4 text-right'>

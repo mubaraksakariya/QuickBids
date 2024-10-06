@@ -32,9 +32,13 @@ const UserDetails = ({ user }) => {
 					</h3>
 					<p
 						className={`text-sm  flex flex-col justify-center items-center ${
-							user?.is_active ? 'text-green-600' : 'text-red-600'
+							user?.is_active && !user.is_blocked
+								? 'text-green-600'
+								: 'text-red-600'
 						}`}>
-						{user?.is_active ? 'Active' : 'Inactive'}
+						{user?.is_active && !user.is_blocked
+							? 'Active'
+							: 'Inactive'}
 					</p>
 				</div>
 				<div className='flex justify-between'>

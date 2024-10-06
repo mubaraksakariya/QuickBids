@@ -98,7 +98,7 @@ const EditUserModal = ({ user, onClose }) => {
 
 	return (
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-			<div className='flex lg:flex-row flex-col justify-center bg-sectionBgColour2 rounded-lg shadow-lg overflow-hidden min-w-[60%] lg:max-w-[60%]'>
+			<div className='flex lg:flex-row flex-col justify-center bg-sectionBgColour2 rounded-lg shadow-lg overflow-hidden min-w-[50%] lg:max-w-[60%]'>
 				{' '}
 				{/* Left Section: User Details */}
 				<div className='lg:flex-1 p-6'>
@@ -108,9 +108,21 @@ const EditUserModal = ({ user, onClose }) => {
 						isBlocked={formValues.is_blocked}
 						onBlockChange={handleBlockChange}
 					/>
+					<div className='mt-6 w-full flex justify-end space-x-3 p-6'>
+						<button
+							className='bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300'
+							onClick={onClose}>
+							Cancel
+						</button>
+						<button
+							className='bg-buttonColour1 text-white py-2 px-4 rounded-md hover:bg-buttonColour2 focus:outline-none focus:ring-2 focus:ring-buttonColour3'
+							onClick={handleSave}>
+							Save
+						</button>
+					</div>
 				</div>
 				{/* Right Section: Edit Form */}
-				<div className='lg:flex-1 flex flex-col justify-between items-center min-w-[24rem] bg-sectionBgColour2 py-6 pe-6'>
+				{/* <div className='lg:flex-1 flex flex-col justify-between items-center min-w-[24rem] bg-sectionBgColour2 py-6 pe-6'>
 					<div className='p-6 bg-sectionBgColour5 rounded-lg shadow-sm w-full'>
 						<EditUserInputs
 							formValues={formValues}
@@ -125,7 +137,6 @@ const EditUserModal = ({ user, onClose }) => {
 						/>
 					</div>
 
-					{/* Action Buttons */}
 					<div className='mt-6 w-full flex justify-end space-x-3 p-6'>
 						<button
 							className='bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300'
@@ -138,7 +149,7 @@ const EditUserModal = ({ user, onClose }) => {
 							Save
 						</button>
 					</div>
-				</div>
+				</div> */}
 			</div>
 
 			<GeneralModal
