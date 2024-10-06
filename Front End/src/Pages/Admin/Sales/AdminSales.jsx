@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { subMonths } from 'date-fns';
 import Pagination from '../../../Components/Pagination/Pagination';
-import { useAdminModals } from '../../../Context/AdminModalContext';
 import RefreshButton from '../../../Components/Buttons/RefreshButton';
 import DateRangePicker from '../Products/Components/DateRangePicker';
 import SearchBar from '../Common/SearchBar';
@@ -12,6 +11,10 @@ import AuctionCompletionByCategoryChart from './Components/Charts/AuctionComplet
 import DashBoard from '../DashBoard';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import SalesPDFDocument from './Components/PdfReport/SalesPDFDocument';
+import SalesExcelReport from './Components/ExcelReport/SalesExcelReport';
+import { formatSalesDataForExcel } from './Components/ExcelReport/dataFormatter';
+import { saveAs } from 'file-saver';
+import DownloadDropdown from './Components/DownloadDropdown';
 
 const AdminSales = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -33,16 +36,34 @@ const AdminSales = () => {
 		pageSize,
 		sorting
 	);
+	const handlePdfClick = async () => {
+		// Generate PDF as a Blob
+		const blob = await pdf(
+			<SalesPDFDocument
+				sales={sales}
+				fromDate={fromDate}
+				toDate={toDate}
+			/>
+		).toBlob();
 
+		// Save the generated PDF
+		saveAs(blob, 'sales_report.pdf');
+	};
 	return (
 		<DashBoard>
-			<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
+			<div className='relative overflow-x-auto shadow-md sm:rounded-lg pb-2'>
 				<div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4'>
 					<DateRangePicker
 						setFromDate={setFromDate}
 						setToDate={setToDate}
 					/>
+
 					<div className='flex gap-4'>
+						<DownloadDropdown
+							data={data}
+							fromDate={fromDate}
+							toDate={toDate}
+						/>
 						<RefreshButton refresh={refetch} />
 						<SearchBar
 							searchQuery={searchQuery}
@@ -67,34 +88,9 @@ const AdminSales = () => {
 					totalItem={data?.count}
 					onPageChange={(page) => setCurrentPage(page)}
 				/>
-				<div className='my-4'>
-					<PDFDownloadLink
-						document={
-							<SalesPDFDocument
-								sales={data ? data.results : []}
-								fromDate={fromDate}
-								toDate={toDate}
-							/>
-						}
-						fileName='sales_report.pdf'>
-						{({ loading }) =>
-							loading
-								? 'Generating PDF...'
-								: 'Download Sales Report as PDF'
-						}
-					</PDFDownloadLink>
-				</div>
 			</div>
-			{/* <div className=' min-w-full min-h-[50dvh]'>
-				<PDFViewer width={'1000'} height={'1000'}>
-					<SalesPDFDocument
-						sales={data ? data.results : []}
-						fromDate={fromDate}
-						toDate={toDate}
-					/>
-				</PDFViewer>
-			</div> */}
-			<div className=' flex justify-evenly'>
+
+			<div className='flex flex-wrap justify-evenly py-2'>
 				<AuctionCompletionChart fromDate={fromDate} toDate={toDate} />
 				<AuctionCompletionByCategoryChart
 					fromDate={fromDate}
