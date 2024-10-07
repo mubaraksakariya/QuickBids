@@ -2,10 +2,12 @@ import React from 'react';
 import { useAdminModals } from '../../../../Context/AdminModalContext';
 
 export const UserInfo = ({ user, highestBid }) => {
-	// const { openUserModal: onEdit } = useAdminModals();
+	const { openUserModal: onEdit } = useAdminModals();
 
 	return (
-		<div className='flex items-center p-4 bg-sectionBgColour2 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer'>
+		<div
+			className='flex items-center p-4 bg-sectionBgColour2 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer'
+			onClick={() => onEdit(user)}>
 			<div className='flex-shrink-0'>
 				{user?.profile_picture ? (
 					<img
