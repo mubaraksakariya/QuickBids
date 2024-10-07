@@ -135,7 +135,7 @@ class AuctionViewSet(viewsets.ModelViewSet):
         date_diff = (end_date - start_date).days
 
         # Choose aggregation based on the date range
-        if date_diff >= 30:
+        if date_diff >= 90:
             # Aggregate by month if the date range is 30 days or more
             sales_data = Auction.objects.filter(
                 created_at__range=[start_date, end_date],

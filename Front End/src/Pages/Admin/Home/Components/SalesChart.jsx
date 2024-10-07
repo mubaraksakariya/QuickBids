@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import useSales from '../../../../CustomHooks/useSales';
-import { extractSalesData } from './extractSalesData';
-import DateRangePicker from '../../Products/Components/DateRangePicker';
+import { extractSalesData, xAxisValueFormatter } from './Helpers';
 
 const SalesChart = () => {
 	const currentDate = new Date();
@@ -25,15 +24,16 @@ const SalesChart = () => {
 	);
 	const [periods, setPeriods] = useState([]);
 	const [salesCounts, setSalesCounts] = useState([]);
+	const [isMonthly, setIsMonthly] = useState(false);
 
 	// Fetch sales data based on the selected date range
 	const { data, isLoading, error } = useSales(startDate, endDate);
 
 	useEffect(() => {
 		if (data) {
-			const [extractedPeriods, extractedSalesCounts] =
+			const [extractedPeriods, extractedSalesCounts, isMonthly] =
 				extractSalesData(data);
-
+			setIsMonthly(isMonthly);
 			setPeriods(extractedPeriods.map((period) => new Date(period)));
 			setSalesCounts(extractedSalesCounts);
 		}
@@ -79,8 +79,9 @@ const SalesChart = () => {
 						xAxis={[
 							{
 								data: periods,
+								valueFormatter: (value) =>
+									xAxisValueFormatter(value),
 								scaleType: 'utc',
-								// hideTooltip: true,
 							},
 						]}
 						series={[
