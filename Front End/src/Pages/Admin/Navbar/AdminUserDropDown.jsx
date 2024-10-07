@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../Store/authSlice';
 
 const AdminUserDropDown = () => {
 	// State to manage dropdown visibility
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef(null);
 	const user = useSelector((state) => state.auth.user);
-
+	const dispatch = useDispatch();
 	// Function to toggle the dropdown visibility
 	const toggleDropdown = () => {
 		setIsOpen(!isOpen);
@@ -28,6 +29,10 @@ const AdminUserDropDown = () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, [dropdownRef]);
+
+	const manageLogout = () => {
+		console.log('logout');
+	};
 
 	return (
 		<div className='relative' ref={dropdownRef}>
@@ -52,7 +57,9 @@ const AdminUserDropDown = () => {
 						<li className='p-2 hover:bg-sectionBgColour2 cursor-pointer transition-colors'>
 							Settings
 						</li>
-						<li className='p-2 hover:bg-sectionBgColour2 cursor-pointer rounded-b-md transition-colors'>
+						<li
+							className='p-2 hover:bg-sectionBgColour2 cursor-pointer rounded-b-md transition-colors'
+							onClick={() => dispatch(logout())}>
 							Logout
 						</li>
 					</ul>

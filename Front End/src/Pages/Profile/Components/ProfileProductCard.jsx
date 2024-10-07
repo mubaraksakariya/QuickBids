@@ -1,77 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TimeRemaining from '../../../Components/Products/Components/TimeRemaining';
 import useAuction from '../../../CustomHooks/useAuction';
 import useHighestBid from '../../../CustomHooks/useHighestBid';
+import Options from './Card/Options';
+import { useNavigate } from 'react-router-dom';
+import ProductImage from './Card/ProductImage';
+import ProductInfo from './Card/ProductInfo';
+import AuctionDetails from './Card/AuctionDetails';
 
-function ProfileProductCard({ product, setAuctionEdit }) {
+const ProfileProductCard = ({ product, setAuctionEdit }) => {
+	const [showOptions, setShowOptions] = useState(false);
+	const navigate = useNavigate();
 	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 
-	const {
-		data: auction,
-		error: auctionError,
-		isLoading: isAuctionLoading,
-	} = useAuction(product?.id);
+	const { data: auction } = useAuction(product?.id);
+	const { data: highestBidData } = useHighestBid(auction?.id);
 
-	// get current highest bid details
-	const {
-		data: highestBidData,
-		error: highestBidErrorData,
-		isLoading: isHighestBidLoading,
-	} = useHighestBid(auction?.id);
 	const manageProductOpen = (e) => {
 		e.preventDefault();
-		setAuctionEdit({ state: true, acuction: auction });
-		// console.log(auction);
+		navigate(`/product/${product.id}`);
 	};
-	return (
-		<div className='card  max-w-[20rem] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col'>
-			<div
-				className='w-full aspect-video overflow-hidden cursor-pointer'
-				onClick={manageProductOpen}>
-				<img
-					className='rounded-t-lg w-full h-full object-cover'
-					src={baseUrl + product?.images[0]?.image}
-					alt='Card Image'
-				/>
-			</div>
 
-			<div className='px-5 relative'>
-				<div className='border-b mb-2'>
-					<a className='cursor-pointer' onClick={manageProductOpen}>
-						<h5
-							title={product?.title}
-							className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-wrap overflow-hidden max-h-8'>
-							{product?.title}
-						</h5>
-					</a>
-					<p
-						className='mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3'
-						title={product?.description}>
-						{product?.description}
-					</p>
-				</div>
-				<div>
-					<div className='flex justify-between pb-2'>
-						<p>Starting Bid:</p>
-						<p>{auction?.initial_prize}</p>
-					</div>
-					<div className='flex justify-between pb-2'>
-						<p>Current Bid:</p>
-						{highestBidData?.amount ? (
-							<p>{highestBidData?.amount}</p>
-						) : (
-							<p>{highestBidData?.message}</p>
-						)}
-					</div>
+	return (
+		<div
+			className='card bg-sectionBgColour5 border-cardBorderColour rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 flex flex-col max-w-[22rem] p-4 relative transition duration-200 ease-in-out hover:shadow-xl'
+			onMouseEnter={() => setShowOptions(true)}
+			onMouseLeave={() => setShowOptions(false)}
+			onTouchMove={() => setShowOptions(true)}>
+			{showOptions && (
+				<Options
+					onEdit={() =>
+						setAuctionEdit({ state: true, acuction: auction })
+					}
+				/>
+			)}
+
+			<ProductImage
+				product={product}
+				baseUrl={baseUrl}
+				onClick={manageProductOpen}
+			/>
+
+			<div className='px-2 relative mt-4'>
+				<ProductInfo product={product} onClick={manageProductOpen} />
+				<AuctionDetails
+					auction={auction}
+					highestBidData={highestBidData}
+				/>
+				<div className='mt-4 flex justify-center'>
 					<TimeRemaining
 						endTime={auction?.end_time}
 						timerEnded={() => {}}
 					/>
 				</div>
-				<div></div>
 			</div>
 		</div>
 	);
-}
+};
 
 export default ProfileProductCard;

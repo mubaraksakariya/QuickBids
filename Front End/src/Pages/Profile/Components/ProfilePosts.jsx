@@ -32,7 +32,7 @@ function ProfilePosts() {
 	return (
 		<>
 			{profileProducts.length > 0 ? (
-				<div className='flex flex-wrap gap-4 justify-center py-5'>
+				<div className='flex flex-wrap gap-7 justify-center py-5'>
 					{profileProducts.map((product) => (
 						<ProfileProductCard
 							product={product}
