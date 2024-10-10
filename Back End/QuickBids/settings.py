@@ -36,7 +36,7 @@ USE_TZ = True
 TIME_ZONE = 'Asia/Kolkata'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['34.131.172.212']
 
 
 # Application definition
