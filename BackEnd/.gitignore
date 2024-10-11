@@ -65,7 +65,6 @@ coverage.xml
 *.pyc
 *.pyo
 __pycache__/
-migrations/
 
 # Jupyter Notebook
 .ipynb_checkpoints
