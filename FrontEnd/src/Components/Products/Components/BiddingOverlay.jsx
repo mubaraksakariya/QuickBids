@@ -106,7 +106,7 @@ const BiddingOverlay = ({
 								required
 							/>
 							{inputError && (
-								<span className='absolute text-errorColour text-xs -left-3 -bottom-6'>
+								<span className='absolute text-errorColour text-xs -left-0 -bottom-9'>
 									{inputError}
 								</span>
 							)}

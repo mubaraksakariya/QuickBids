@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import BidNowOption from './Components/BidNowOption';
 import BuyNowOption from './Components/BuyNowOption';
 import TimeRemaining from './Components/TimeRemaining';
 import useAuction from '../../CustomHooks/useAuction';
 import useHighestBid from '../../CustomHooks/useHighestBid';
-import useUpdateBid from '../../CustomHooks/useUpdateBid';
 import { useSelector } from 'react-redux';
 import AuctionStatusIndicator from './Components/AuctionStatusIndicator';
 import { useNavigate } from 'react-router-dom';
@@ -13,13 +12,12 @@ import CardImage from './Components/CardImage';
 
 function Card({ product }) {
 	const [isTimeOver, setIsTimeOver] = useState(false);
-	const [isBiddingOpen, setIsBiddingOpen] = useState(false);
 	const [highestBid, setHighestBid] = useState(null);
 	const [highestBidError, setHighestBidError] = useState(null);
 	const navigate = useNavigate();
 	const user = useSelector((state) => state.auth.user);
 
-	// get Auction detail for this product
+	// Get auction details for this product
 	const {
 		data: auction,
 		error: auctionError,
@@ -27,7 +25,7 @@ function Card({ product }) {
 		refetch: refetchProduct,
 	} = useAuction(product.id);
 
-	// get current highest bid details
+	// Get current highest bid details
 	const {
 		data: highestBidData,
 		error: highestBidErrorData,
@@ -35,28 +33,11 @@ function Card({ product }) {
 		refetch: refetchHighestBidData,
 	} = useHighestBid(auction?.id);
 
-	// to update auction
-	const { mutate: updateBid, isLoading: isUpdating } = useUpdateBid();
-
 	useEffect(() => {
 		if (highestBidData) setHighestBid(highestBidData);
 		if (highestBidErrorData)
 			setHighestBidError(highestBidErrorData.response.data.detail);
 	}, [highestBidData, highestBidErrorData]);
-
-	const toggleBiddingWindow = useCallback(() => {
-		setIsBiddingOpen((prev) => !prev);
-	}, []);
-
-	const handleUpdateBid = (newBidAmount) => {
-		const bidData = { auctionId: auction.id, amount: newBidAmount };
-		updateBid(bidData, {
-			onSuccess: (response) => {
-				setHighestBid(response);
-				toggleBiddingWindow();
-			},
-		});
-	};
 
 	const manageTimeover = () => {
 		setIsTimeOver(true);
@@ -66,15 +47,16 @@ function Card({ product }) {
 		e.preventDefault();
 		navigate(`/product/${product.id}`);
 	};
+
 	const refetchData = () => {
 		refetchHighestBidData();
 		// refetchProduct();
 	};
+
 	// Use the WebSocket hook
 	useProductWebSocket(auction?.id, refetchData, setHighestBid);
 
 	return (
-		// card, card-header, card-description are custom classes
 		<div className='flex justify-center pb-10 relative'>
 			<div className='absolute z-50 right-2'>
 				<AuctionStatusIndicator
@@ -82,7 +64,7 @@ function Card({ product }) {
 					isTimeOver={isTimeOver}
 				/>
 			</div>
-			<div className='card max-w-sm  flex flex-col relative'>
+			<div className='card max-w-sm flex flex-col relative'>
 				<CardImage product={product} onClick={manageProductOpen} />
 
 				<div className='px-3 flex flex-col flex-[3] relative'>
@@ -92,7 +74,7 @@ function Card({ product }) {
 							onClick={manageProductOpen}>
 							<h5
 								title={product.title}
-								className='card-header  mb-2 text-xl font-semibold tracking-tight dark:text-white overflow-hidden max-h-8'>
+								className='card-header mb-2 text-xl font-semibold tracking-tight dark:text-white overflow-hidden max-h-8'>
 								{product.title}
 							</h5>
 						</a>
@@ -135,13 +117,9 @@ function Card({ product }) {
 						<BidNowOption
 							product={product}
 							auction={auction}
-							isBiddingOpen={isBiddingOpen}
 							highestBid={highestBid}
 							highestBidError={highestBidError}
 							isHighestBidLoading={isHighestBidLoading}
-							toggleBiddingWindow={toggleBiddingWindow}
-							handleUpdateBid={handleUpdateBid}
-							isUpdating={isUpdating}
 							isTimeOver={isTimeOver}
 						/>
 					</div>
