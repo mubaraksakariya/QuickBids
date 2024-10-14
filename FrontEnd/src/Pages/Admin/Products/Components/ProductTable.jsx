@@ -1,5 +1,7 @@
 import React from 'react';
 import { useAdminModals } from '../../../../Context/AdminModalContext';
+import { getAddress } from '../../../../Components/Utilities/gpsLocation';
+import LocationCell from './LocationCell';
 
 const ProductTable = ({ auctions, sorting, setSorting }) => {
 	const { openProductModal: onEdit } = useAdminModals();
@@ -156,9 +158,12 @@ const ProductTable = ({ auctions, sorting, setSorting }) => {
 							{new Date(auction.end_time).toLocaleDateString()}
 						</td>
 						<td className='px-6 py-4'>
-							{auction.product.current_location
-								? auction.product.current_location.city
-								: auction.product.selected_state}
+							<LocationCell
+								locationString={
+									auction.product.current_location
+								}
+								fallbackState={auction.product.selected_state}
+							/>
 						</td>
 						<td className='px-6 py-4'>
 							<span
