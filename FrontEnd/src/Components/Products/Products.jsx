@@ -21,6 +21,15 @@ function Products({ searchString, selectedCategory }) {
 			setSelectedCategory(selectedCategory);
 	}, [searchString, selectedCategory]);
 
+	// Render loading state for initial load
+	const renderInitialLoading = isLoading && products.length === 0;
+
+	// Render loading state for fetching more data (pagination)
+	const renderFetchingMore = isLoading && products.length > 0;
+
+	// NoProduct should only be shown when there are zero products and not loading
+	const showNoProduct = !isLoading && products.length === 0;
+
 	return (
 		<>
 			<div className='mt-4 flex flex-wrap gap-4 justify-around md:justify-center'>
@@ -29,24 +38,38 @@ function Products({ searchString, selectedCategory }) {
 						Error loading products
 					</div>
 				)}
-				{isLoading && (
-					<div className='text-center text-errorColour'>
-						Loading...
+
+				{/* Initial loading state */}
+				{renderInitialLoading && (
+					<div className='text-center text-primary'>
+						Loading products...
 					</div>
 				)}
-				{products?.length > 0 ? (
-					products?.map((item) => (
+
+				{/* Display products if available */}
+				{!renderInitialLoading &&
+					products.length > 0 &&
+					products.map((item) => (
 						<Card product={item} key={item.id} />
-					))
-				) : (
-					<NoProduct />
+					))}
+
+				{/* Show NoProduct if no products and not loading */}
+				{showNoProduct && <NoProduct />}
+
+				{/* Loading indicator for fetching more products */}
+				{renderFetchingMore && (
+					<div className='text-center text-primary'>
+						Fetching more products...
+					</div>
 				)}
 			</div>
+
+			{/* Show 'Load More' button if there are more products to fetch */}
 			<div className='flex justify-center pb-2 '>
-				{hasMore && (
+				{hasMore && !renderFetchingMore && (
 					<span
 						onClick={manageNextPage}
-						className='cursor-pointer  hover:scale-[1.2] transition-all ease-in-out'>
+						className='cursor-pointer hover:scale-[1.2] transition-all ease-in-out'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
 							fill='none'
