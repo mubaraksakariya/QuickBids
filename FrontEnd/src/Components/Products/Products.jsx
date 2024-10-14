@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Card from './Card';
 import NoProduct from './Components/NoProduct';
 import { useProductContext } from '../../Context/ProductContext';
-import ThemeButtons from '../Buttons/ThemeButton';
 
 function Products({ searchString, selectedCategory }) {
 	const {
@@ -25,14 +24,14 @@ function Products({ searchString, selectedCategory }) {
 	return (
 		<>
 			<div className='mt-4 flex flex-wrap gap-4 justify-around md:justify-center'>
-				{isLoading && (
-					<div className='text-center text-errorColour'>
-						Loading...
-					</div>
-				)}
 				{error && (
 					<div className='text-center text-errorColour'>
 						Error loading products
+					</div>
+				)}
+				{isLoading && (
+					<div className='text-center text-errorColour'>
+						Loading...
 					</div>
 				)}
 				{products?.length > 0 ? (

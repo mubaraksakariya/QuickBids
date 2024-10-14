@@ -29,10 +29,16 @@ export const ProductProvider = ({ children, initialProducts = [] }) => {
 		pageSize,
 		hasMore
 	);
+	const changePageNumber = async (page = null) => {
+		if (page) setPageNumber(page);
+		else setPageNumber((old) => old + 1);
+	};
 
 	useEffect(() => {
 		if (data) {
-			if (data.count - pageNumber * pageSize <= 0) setHasMore(false); // No more data to load
+			if (data.count - pageNumber * pageSize <= 0)
+				setHasMore(false); // No more data to load
+			else setHasMore(true);
 			if (pageNumber === 1) {
 				setProducts(data.results);
 			} else {
@@ -41,19 +47,13 @@ export const ProductProvider = ({ children, initialProducts = [] }) => {
 		}
 	}, [data]);
 	useEffect(() => {
-		setHasMore(true);
 		setProducts([]);
-		setPageNumber(1);
-		refetch();
+		changePageNumber(1).then(() => refetch());
 	}, [searchString, selectedCategory]);
-
-	useEffect(() => {
-		refetch();
-	}, [pageNumber]);
 
 	const manageNextPage = () => {
 		if (!hasMore) return;
-		setPageNumber((prevPage) => prevPage + 1);
+		changePageNumber().then(() => refetch());
 	};
 
 	const getProductById = useMemo(
@@ -81,6 +81,7 @@ export const ProductProvider = ({ children, initialProducts = [] }) => {
 				refetch,
 				manageNextPage,
 				setPageSize,
+				setPageNumber,
 			}}>
 			{children}
 		</ProductContext.Provider>
