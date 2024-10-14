@@ -103,7 +103,7 @@ class AuctionViewSet(viewsets.ModelViewSet):
 
         if not failed_auctions.exists():
             return Response(
-                {'message': 'Looks like you have won it all, congaradulation!!'},
+                {'message': 'Looks like you have won it all, congratulation!!'},
                 status=status.HTTP_200_OK
             )
 
