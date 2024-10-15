@@ -74,18 +74,29 @@ const BidSection = ({ highestBid, auction }) => {
 					{auction?.initial_prize?.toLocaleString()}
 				</span>
 			</div>
-			<div className=' text-headerColour mb-4'>
-				<h1 className='pb-3 text-xl font-semibold'>Current Bid</h1>
+			<div className='text-headerColour mb-4'>
+				<div className='flex justify-between'>
+					<h1 className='pb-3 text-xl font-semibold'>Current Bid</h1>
+					{!isAuthenticated && highestBid?.amount && (
+						<span className='text-lg font-semibold text-linkColour'>
+							{highestBid.amount.toLocaleString()}
+						</span>
+					)}
+				</div>
+
 				<div className='font-semibold text-linkColour'>
 					{highestBid?.amount ? (
-						<UserInfo user={user} highestBid={highestBid} />
+						isAuthenticated && (
+							<UserInfo user={user} highestBid={highestBid} />
+						)
 					) : (
-						<span className=' font-normal text-black'>
+						<span className='font-normal text-black'>
 							Be the first one to bid !!
 						</span>
 					)}
 				</div>
 			</div>
+
 			<label
 				htmlFor='bid-now'
 				className='block text-sm text-headerColour mb-2'>
