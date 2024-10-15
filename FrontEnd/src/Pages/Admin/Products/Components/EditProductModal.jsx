@@ -94,14 +94,14 @@ const EditProductModal = ({ auction, onClose }) => {
 
 	return (
 		<div className='fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-			<div className='flex lg:flex-row flex-col justify-center bg-sectionBgColour2 rounded-lg shadow-lg overflow-hidden min-w-[60%] lg:max-w-[60%]'>
+			<div className='flex lg:flex-row flex-col justify-center bg-sectionBgColour2 rounded-lg shadow-lg max-h-[95dvh] min-w-[60%] lg:max-w-[60%] overflow-auto'>
 				{/* Left Section: Product Details */}
 				<div className='flex-1 p-6'>
 					<ProductDetails auction={auction} />
 				</div>
 
 				{/* Right Section: Edit Form */}
-				<div className='flex-1 bg-sectionBgColour5 p-6 m-6 lg:w-96 w-full rounded-lg shadow-lg'>
+				<div className='flex-1 bg-sectionBgColour5 p-6 m-6 lg:w-96 w-full rounded-lg shadow-lg h-full'>
 					<EditInputs
 						formValues={formValues}
 						onInputChange={handleInputChange}
