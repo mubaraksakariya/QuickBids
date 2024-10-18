@@ -262,9 +262,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         Custom action to update product and its associated auction.
         """
         try:
-
             product = self.get_object()  # Get the product instance by ID (pk)
             auction = product.auction
+
             # Validate incoming data
             ProductService.validate_product_data_updation(
                 data=request.data, auction=auction)
@@ -301,16 +301,28 @@ class ProductViewSet(viewsets.ModelViewSet):
             # Handle file deletion (image_id)
             if images_to_remove:
                 images_to_remove = json.loads(images_to_remove)
-            if images_to_remove:
-                for image_id in images_to_remove:
-                    try:
-                        # Ensure image_id is a valid integer
-                        image_id = int(image_id)
-                        ProductImage.objects.get(id=image_id).delete()
-                    except (ValueError, ProductImage.DoesNotExist):
-                        print(
-                            f"Skipping invalid or non-existent image_id: {image_id}")
-                        continue  # Skip to the next image_id if this one is invalid or doesn't exist
+
+                if images_to_remove:
+                    # Count existing images
+                    existing_image_count = product.images.count()
+
+                    # Check if removing all images
+                    if existing_image_count == len(images_to_remove):
+                        return Response(
+                            {"detail": "Removing all images is not allowed."},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                    # Proceed with image removal if not all are being removed
+                    for image_id in images_to_remove:
+                        try:
+                            # Ensure image_id is a valid integer
+                            image_id = int(image_id)
+                            ProductImage.objects.get(id=image_id).delete()
+                        except (ValueError, ProductImage.DoesNotExist):
+                            print(
+                                f"Skipping invalid or non-existent image_id: {image_id}")
+                            continue  # Skip to the next image_id if this one is invalid or doesn't exist
 
             # Update auction fields
             if initial_prize:

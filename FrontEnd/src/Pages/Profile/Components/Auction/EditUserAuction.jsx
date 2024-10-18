@@ -112,6 +112,8 @@ const EditUserAuction = ({ auctionId, onClose }) => {
 		});
 
 		console.log('Saving data...', formValues);
+		console.log(formData);
+		return;
 		updateAuction({ auctionId: auction.id, formData });
 	};
 
