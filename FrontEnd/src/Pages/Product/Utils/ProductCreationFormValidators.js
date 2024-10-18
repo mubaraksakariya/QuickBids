@@ -31,7 +31,14 @@ export const validatePrices = (initialPrize, buyNowPrize) => {
 };
 
 export const validateImages = (images) => {
-	if (images.length === 0) {
+	// Filter out invalid files (null or undefined)
+	const validImages = images.filter(
+		(image) => image !== undefined && image !== null
+	);
+	console.log(images);
+
+	// Check if there are any valid images
+	if (validImages.length === 0) {
 		return 'At least one photo should be there';
 	}
 	return '';

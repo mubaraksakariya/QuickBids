@@ -18,7 +18,7 @@ function CreateProduct() {
 	const { isLoading, isCreationSuccess, createProduct } = useCreateProduct();
 
 	const handleSubmit = () => {
-		createProduct(formState, validate, navigate);
+		createProduct(formState, validate);
 		// console.log(formState);
 	};
 

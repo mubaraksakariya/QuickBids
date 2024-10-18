@@ -6,9 +6,10 @@ const useCreateProduct = () => {
 	const [isCreationSuccess, setIsCreationSuccess] = useState(false);
 	const api = useApi();
 
-	const createProduct = async (formState, validate, navigate) => {
+	const createProduct = async (formState, validate) => {
 		setIsLoading(true);
 		const validationErrors = validate(formState);
+
 		if (Object.keys(validationErrors).length === 0) {
 			try {
 				// Step 1: Create Product
