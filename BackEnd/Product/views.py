@@ -305,6 +305,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 if images_to_remove:
                     # Count existing images
                     existing_image_count = product.images.count()
+                    print(existing_image_count, len(images_to_remove))
 
                     # Check if removing all images
                     if existing_image_count == len(images_to_remove):
