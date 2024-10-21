@@ -29,6 +29,7 @@ import AdminNotifications from './Pages/Admin/Notification/AdminNotifications';
 import AdminMessages from './Pages/Admin/Message/AdminMessages';
 import AdminProtectedRoute from './Components/Route/AdminProtectedRoute';
 import UserProtectedRoute from './Components/Route/UserProtectedRoute';
+import EditProfileAuction from './Pages/Profile/EditProfileAuction';
 
 function App() {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -105,6 +106,16 @@ function App() {
 							element: (
 								<UserProtectedRoute>
 									<EditProfile />
+								</UserProtectedRoute>
+							),
+
+							// loader: Loader,
+						},
+						{
+							path: 'edit-auction/:auctionId',
+							element: (
+								<UserProtectedRoute>
+									<EditProfileAuction />
 								</UserProtectedRoute>
 							),
 

@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 import EmptyProfilePost from './EmptyProfilePost';
 import useProfileProducts from '../../../CustomHooks/userProfileProducts';
 import ProfileProductCard from './ProfileProductCard';
-import EditUserAuction from './Auction/EditUserAuction';
-
+import { useNavigate } from 'react-router-dom';
 function ProfilePosts() {
-	const [auctionEdit, setAuctionEdit] = useState({
-		state: false,
-		acuction: null,
-	});
+	const navigate = useNavigate();
 	const {
 		data: profileProducts,
 		error,
@@ -18,17 +14,12 @@ function ProfilePosts() {
 
 	if (isLoading) return <div>Loading...</div>;
 	if (error) return <div>Error: {error.message}</div>;
-	// if editing aution
-	if (auctionEdit.state)
-		return (
-			<EditUserAuction
-				auctionId={auctionEdit.acuction.id}
-				onClose={() => {
-					setAuctionEdit({ state: false, acuction: null });
-					refetch();
-				}}
-			/>
-		);
+
+	const handleEditAuction = (auction) => {
+		navigate(`edit-auction/${auction.id}`);
+		refetch();
+	};
+
 	return (
 		<>
 			{profileProducts.length > 0 ? (
@@ -37,7 +28,7 @@ function ProfilePosts() {
 						<ProfileProductCard
 							product={product}
 							key={product.id}
-							setAuctionEdit={setAuctionEdit}
+							setAuctionEdit={handleEditAuction}
 						/>
 					))}
 				</div>

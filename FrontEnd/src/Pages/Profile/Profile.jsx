@@ -9,7 +9,6 @@ import UserIcon from '../../Components/Profile/UserIcon';
 
 function Profile() {
 	const user = useSelector((state) => state.auth.user);
-	const baseUrl = import.meta.env.VITE_SERVER_BASE_URL;
 	const navigate = useNavigate();
 
 	return (

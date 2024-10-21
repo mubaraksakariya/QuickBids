@@ -111,14 +111,11 @@ const EditUserAuction = ({ auctionId, onClose }) => {
 			}
 		});
 
-		console.log('Saving data...', formValues);
-		console.log(formData);
-		return;
 		updateAuction({ auctionId: auction.id, formData });
 	};
 
 	return (
-		<div className='flex justify-center'>
+		<div className='flex justify-center py-3'>
 			<div className='xl:w-[50%] w-[70%]'>
 				<EditInputs
 					formValues={formValues}
@@ -131,7 +128,7 @@ const EditUserAuction = ({ auctionId, onClose }) => {
 					onAddImage={handleAddImage}
 					onDeleteImage={handleDeleteImage}
 				/>
-				<div className='mt-6 flex justify-end space-x-2 absolute'>
+				<div className='mt-6 flex  space-x-2'>
 					<button
 						className='bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400'
 						onClick={onClose}>

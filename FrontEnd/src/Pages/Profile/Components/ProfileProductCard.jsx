@@ -27,13 +27,7 @@ const ProfileProductCard = ({ product, setAuctionEdit }) => {
 			onMouseEnter={() => setShowOptions(true)}
 			onMouseLeave={() => setShowOptions(false)}
 			onTouchMove={() => setShowOptions(true)}>
-			{showOptions && (
-				<Options
-					onEdit={() =>
-						setAuctionEdit({ state: true, acuction: auction })
-					}
-				/>
-			)}
+			{showOptions && <Options onEdit={() => setAuctionEdit(auction)} />}
 
 			<ProductImage
 				product={product}
