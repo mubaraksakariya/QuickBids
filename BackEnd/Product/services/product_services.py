@@ -95,3 +95,8 @@ class ProductService:
     def get_users_active_products(user):
         return Product.objects.filter(
             owner=user, is_deleted=False, auction__winner__isnull=True).order_by('-created_at')
+
+    @staticmethod
+    def get_all_user_products(user):
+        return Product.objects.filter(
+            owner=user, is_deleted=False).order_by('-created_at')

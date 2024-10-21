@@ -101,7 +101,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='profile-products')
     def my_products(self, request):
         user = request.user
-        user_products = ProductService.get_users_active_products(
+        user_products = ProductService.get_all_user_products(
             user=user)
         serializer = FullProductSerializer(user_products, many=True)
         return Response(serializer.data)
