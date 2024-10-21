@@ -267,7 +267,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
             # Validate incoming data
             ProductService.validate_product_data_updation(
-                data=request.data, auction=auction)
+                data=request.data, auction=auction, user=request.user)
 
             # Extract data from the request
             title = request.data.get('title')

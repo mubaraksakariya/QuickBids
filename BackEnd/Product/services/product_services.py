@@ -33,14 +33,16 @@ class ProductService:
             )
 
     @staticmethod
-    def validate_product_data_updation(data, auction):
+    def validate_product_data_updation(data, auction, user=None):
 
         highest_bid = BidService.get_highest_bid(auction=auction)
 
         # Buy Now Price and Initial Prize validation
         buy_now_price = float(data.get('buyNowPrice', 0))
         initial_prize = float(data.get('initialPrize', 0))
-
+        if auction.winner and auction.winner != user:
+            raise ValidationError(
+                f"This auction is already won by {auction.winner}. No more editing is possible")
         if highest_bid and buy_now_price and buy_now_price != auction.product.buy_now_prize:
             raise ValidationError(
                 "This auction is being bidded. Buy now price cannot be changed")
