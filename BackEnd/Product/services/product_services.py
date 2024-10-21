@@ -36,10 +36,6 @@ class ProductService:
     def validate_product_data_updation(data, auction):
 
         highest_bid = BidService.get_highest_bid(auction=auction)
-        # Category validation
-        category_name = data.get('category')
-        if category_name and not Category.objects.filter(name=category_name).exists():
-            raise ValidationError("Category does not exist.")
 
         # Buy Now Price and Initial Prize validation
         buy_now_price = float(data.get('buyNowPrice', 0))
@@ -76,20 +72,25 @@ class ProductService:
 
         # Validate when status is set to 'active'
         if status == 'active':
+            if auction.winner:
+                raise ValidationError(
+                    f"Cannot activate, this auction is already won by {auction.winner}.")
             if highest_bid and auction.end_time != timezone.datetime.fromisoformat(end_time):
                 raise ValidationError(
                     "This auction is being bidded, cannot alter the ending time now.")
             if not end_time or timezone.datetime.fromisoformat(end_time) <= timezone.now():
                 raise ValidationError(
                     "Auction cannot be set to active when the End Date is in the past.")
-            if auction.winner:
-                raise ValidationError(
-                    f"Cannot activate, this auction is already won by {auction.winner}.")
 
         # Validate when status is set to 'inactive'
         if status == 'inactive' and highest_bid:
             raise ValidationError(
                 "This auction is being bidded by users, cannot deactivate it now.")
+
+        # Category validation
+        category_name = data.get('category')
+        if category_name and not Category.objects.filter(name=category_name).exists():
+            raise ValidationError("Category does not exist.")
 
     @staticmethod
     def get_users_active_products(user):
