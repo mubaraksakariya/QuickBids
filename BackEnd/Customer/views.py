@@ -34,7 +34,6 @@ from .serializers import AdminTokenObtainSerializer, ChangePasswordSerializer, U
 
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
-# user login
 
 
 class UserFilter(django_filters.FilterSet):
@@ -46,6 +45,8 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = CustomUser
         fields = ['from_date', 'to_date']
+
+# user login
 
 
 class UserTokenObtainView(TokenObtainPairView):
@@ -349,7 +350,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 # For admin uses
-
 
     @action(detail=True, methods=['get'], permission_classes=[IsAdminUser])
     def user_extras(self, request, pk=None):

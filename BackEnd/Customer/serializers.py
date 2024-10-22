@@ -17,15 +17,15 @@ class UserSerializer(ModelSerializer):
         fields = ['first_name', 'last_name', 'auth_provider', 'email', 'is_superuser', 'is_staff',
                   'password', 'id', 'is_verified', 'profile_picture', 'created_at', 'is_active', 'is_blocked']
 
-    # def create(self, validated_data):
-    #     return CustomUser.objects.create_user(  # type: ignore
-    #         first_name=validated_data['first_name'],
-    #         last_name=validated_data['last_name'],
-    #         email=validated_data['email'],
-    #         password=validated_data['password'],
-    #         is_active=validated_data.get('is_active', True),
-    #         is_blocked=validated_data.get('is_blocked', False)
-    #     )
+    def create(self, validated_data):
+        return CustomUser.objects.create_user(  # type: ignore
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            is_active=validated_data.get('is_active', True),
+            is_blocked=validated_data.get('is_blocked', False)
+        )
 
 
 class ChangePasswordSerializer(serializers.Serializer):
