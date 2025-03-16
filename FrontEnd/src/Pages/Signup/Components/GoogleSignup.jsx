@@ -4,7 +4,6 @@ import useApi from '../../../Context/AxiosContext';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../Store/authSlice';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useError } from '../../../Context/ErrorContext';
 function GoogleSignup() {
 	const api = useApi();
